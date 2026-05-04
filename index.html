@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tendance Stats — Tendances Football Live</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080a0f;
+  --s1: #0f1118;
+  --s2: #161923;
+  --s3: #1c2030;
+  --border: #222636;
+  --border2: #2a2f45;
+  --g: #00e5a0;
+  --g2: rgba(0,229,160,0.12);
+  --r: #ff4d6d;
+  --y: #ffd60a;
+  --b: #5e81f4;
+  --o: #ff6b35;
+  --text: #e2e6f0;
+  --m: #4a5068;
+  --m2: #6b7394;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+
+/* grid bg */
+body::before {
+  content:''; position:fixed; inset:0; z-index:0;
+  background-image: radial-gradient(circle at 20% 50%, rgba(0,229,160,0.04) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(94,129,244,0.04) 0%, transparent 50%),
+    linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 48px 48px, 48px 48px;
+}
+
+.wrap { position:relative; z-index:1; max-width:1280px; margin:0 auto; padding:0 24px; }
+
+/* ── HEADER ── */
+header {
+  position:sticky; top:0; z-index:100;
+  background:rgba(8,10,15,0.9); backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+}
+.hinner { display:flex; align-items:center; justify-content:space-between; height:56px; }
+.logo { font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:3px; color:var(--g); text-shadow:0 0 24px rgba(0,229,160,0.35); }
+.logo span { color:var(--text); }
+.hright { display:flex; align-items:center; gap:12px; }
+.live-pill {
+  display:flex; align-items:center; gap:6px;
+  background:rgba(255,77,109,0.1); border:1px solid rgba(255,77,109,0.25);
+  color:var(--r); font-size:11px; font-weight:600; font-family:'DM Mono',monospace;
+  padding:4px 10px; border-radius:20px; letter-spacing:1px;
+}
+.dot { width:6px; height:6px; border-radius:50%; background:var(--r); animation:blink 1.4s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+.refresh-btn {
+  background:var(--s2); border:1px solid var(--border2); color:var(--m2);
+  font-size:12px; padding:5px 12px; border-radius:8px; cursor:pointer;
+  font-family:'DM Sans',sans-serif; transition:all .2s;
+}
+.refresh-btn:hover { border-color:var(--g); color:var(--g); }
+
+/* ── FILTERS ── */
+.filters { display:flex; gap:8px; padding:20px 0 16px; flex-wrap:wrap; }
+.fbtn {
+  display:flex; align-items:center; gap:7px;
+  background:var(--s1); border:1px solid var(--border);
+  color:var(--m2); padding:7px 14px; border-radius:8px;
+  font-size:13px; font-family:'DM Sans',sans-serif; cursor:pointer; transition:all .2s;
+}
+.fbtn:hover,.fbtn.on { border-color:var(--g); color:var(--g); background:rgba(0,229,160,0.06); }
+.fbtn .f { font-size:15px; width:20px; height:14px; object-fit:cover; border-radius:2px; vertical-align:middle; }
+
+/* ── KPIs ── */
+.kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:32px; }
+.kpi {
+  background:var(--s1); border:1px solid var(--border); border-radius:12px;
+  padding:18px 20px; transition:border-color .2s; position:relative; overflow:hidden;
+}
+.kpi::after { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; background:var(--g); transform:scaleX(0); transition:transform .4s; }
+.kpi:hover::after { transform:scaleX(1); }
+.kpi-n { font-family:'Bebas Neue',sans-serif; font-size:38px; line-height:1; margin-bottom:4px; }
+.kpi-l { font-size:11px; color:var(--m); text-transform:uppercase; letter-spacing:1px; }
+
+/* ── SECTION ── */
+.sh { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+.st { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:1px; }
+.sb {
+  font-size:10px; font-family:'DM Mono',monospace; letter-spacing:1px;
+  background:rgba(0,229,160,0.08); color:var(--g); border:1px solid rgba(0,229,160,0.18);
+  padding:2px 7px; border-radius:4px;
+}
+
+/* ── ALERTS ── */
+.alerts { display:grid; gap:8px; margin-bottom:36px; }
+.alert {
+  background:var(--s1); border:1px solid var(--border);
+  border-left-width:3px; border-radius:10px;
+  padding:12px 16px; display:flex; align-items:center; gap:12px;
+  animation:slideIn .35s ease both;
+}
+@keyframes slideIn { from{opacity:0;transform:translateX(-8px)} to{opacity:1;transform:translateX(0)} }
+.alert-ic { font-size:20px; flex-shrink:0; }
+.alert-txt { flex:1; font-size:13px; line-height:1.55; color:var(--m2); }
+.alert-txt strong { color:var(--text); }
+.alert-cta {
+  font-size:11px; font-weight:600; padding:4px 10px; border-radius:6px;
+  border:1px solid; cursor:pointer; white-space:nowrap; transition:opacity .2s;
+}
+.alert-cta:hover { opacity:0.7; }
+
+/* ── PLAYER GRID ── */
+.pgrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(290px,1fr)); gap:14px; margin-bottom:36px; }
+.pc {
+  background:var(--s1); border:1px solid var(--border); border-radius:14px;
+  padding:18px; cursor:pointer; transition:all .25s; position:relative; overflow:hidden;
+  animation:fadeUp .4s ease both;
+}
+@keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+.pc:hover { border-color:rgba(0,229,160,0.35); transform:translateY(-2px); box-shadow:0 8px 28px rgba(0,229,160,0.06); }
+.hot-tag {
+  position:absolute; top:0; right:0;
+  background:var(--o); color:white; font-size:9px; font-weight:700;
+  padding:3px 10px; border-radius:0 14px 0 8px; letter-spacing:0.5px;
+}
+.ct { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:14px; }
+.pinfo { display:flex; align-items:center; gap:10px; }
+.pav {
+  width:42px; height:42px; border-radius:50%; overflow:hidden;
+  background:var(--s3); border:2px solid var(--border2); flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-size:18px;
+}
+.pav img { width:100%; height:100%; object-fit:cover; }
+.pname { font-size:14px; font-weight:600; }
+.pteam { font-size:11px; color:var(--m); margin-top:2px; }
+.pscore { text-align:right; }
+.pscore-n { font-family:'Bebas Neue',sans-serif; font-size:30px; line-height:1; }
+.pscore-l { font-size:9px; color:var(--m); text-transform:uppercase; letter-spacing:1px; }
+
+/* form dots */
+.formrow { display:flex; align-items:center; gap:5px; margin-bottom:12px; }
+.fl { font-size:10px; color:var(--m); width:52px; flex-shrink:0; }
+.fdots { display:flex; gap:3px; }
+.fd {
+  width:21px; height:21px; border-radius:5px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:9px; font-weight:700; font-family:'DM Mono',monospace;
+}
+.fd.g { background:rgba(0,229,160,0.15); color:var(--g); border:1px solid rgba(0,229,160,0.25); }
+.fd.a { background:rgba(94,129,244,0.15); color:var(--b); border:1px solid rgba(94,129,244,0.25); }
+.fd.x { background:rgba(30,34,48,0.5); color:var(--m); border:1px solid var(--border); }
+
+/* stats chips */
+.chips { display:flex; gap:6px; }
+.chip { flex:1; background:var(--s2); border-radius:8px; padding:8px 6px; text-align:center; }
+.chip-n { font-family:'DM Mono',monospace; font-size:15px; font-weight:500; }
+.chip-l { font-size:9px; color:var(--m); text-transform:uppercase; letter-spacing:0.5px; margin-top:1px; }
+
+/* signal bar */
+.sigbar { margin-top:10px; }
+.sigbar-head { display:flex; justify-content:space-between; font-size:10px; color:var(--m); margin-bottom:4px; }
+.sigbar-head span:last-child { font-family:'DM Mono',monospace; }
+.track { height:3px; background:var(--s3); border-radius:2px; overflow:hidden; }
+.fill { height:100%; border-radius:2px; background:linear-gradient(90deg,var(--b),var(--g)); transition:width 1s ease; }
+
+.ltag { display:inline-flex; align-items:center; gap:5px; font-size:10px; color:var(--m); margin-top:10px; }
+.lpill { display:inline-block; font-size:9px; padding:2px 6px; border-radius:4px; font-weight:600; letter-spacing:0.5px; }
+.l1 { background:rgba(0,229,160,0.1); color:var(--g); }
+.pl { background:rgba(94,129,244,0.1); color:var(--b); }
+.lg { background:rgba(255,77,109,0.1); color:var(--r); }
+.sa { background:rgba(255,214,10,0.1); color:var(--y); }
+.bl { background:rgba(255,107,53,0.15); color:var(--o); }
+
+/* ── TABLE ── */
+.tw { background:var(--s1); border:1px solid var(--border); border-radius:14px; overflow:hidden; margin-bottom:40px; }
+table { width:100%; border-collapse:collapse; }
+thead tr { border-bottom:1px solid var(--border); }
+th { padding:11px 16px; text-align:left; font-size:10px; text-transform:uppercase; letter-spacing:1px; color:var(--m); font-weight:500; }
+td { padding:12px 16px; font-size:13px; border-bottom:1px solid rgba(30,36,54,0.7); }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:rgba(0,229,160,0.02); }
+.rk { font-family:'DM Mono',monospace; color:var(--m); font-size:12px; }
+.pn { font-weight:600; }
+.pt { font-size:11px; color:var(--m); }
+.num { font-family:'DM Mono',monospace; font-weight:500; }
+.num.g { color:var(--g); }
+.num.a { color:var(--b); }
+.mbar { height:2px; background:var(--s3); border-radius:1px; margin-top:4px; }
+.mfill { height:100%; background:var(--g); border-radius:1px; }
+
+/* ── LOADING ── */
+#loader {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  min-height:60vh; gap:20px;
+}
+.spinner {
+  width:40px; height:40px; border:2px solid var(--border2);
+  border-top-color:var(--g); border-radius:50%;
+  animation:spin .8s linear infinite;
+}
+@keyframes spin { to{transform:rotate(360deg)} }
+.load-msg { font-size:14px; color:var(--m2); font-family:'DM Mono',monospace; }
+.load-prog { font-size:12px; color:var(--m); }
+
+/* ── ERROR ── */
+#error-box {
+  display:none; background:rgba(255,77,109,0.07); border:1px solid rgba(255,77,109,0.2);
+  border-radius:12px; padding:24px; text-align:center; margin:40px 0;
+}
+.err-title { font-size:16px; font-weight:600; color:var(--r); margin-bottom:8px; }
+.err-msg { font-size:13px; color:var(--m2); line-height:1.6; }
+
+/* ── FOOTER ── */
+footer { border-top:1px solid var(--border); padding:20px 0; text-align:center; font-size:12px; color:var(--m); }
+footer span { color:var(--g); }
+
+/* ── RESPONSIVE ── */
+@media(max-width:700px){
+  .kpis { grid-template-columns:repeat(2,1fr); }
+  th:nth-child(n+5),td:nth-child(n+5) { display:none; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap hinner">
+    <div class="logo">Tendance<span> Stats</span></div>
+    <div class="hright">
+      <div class="live-pill"><div class="dot"></div>LIVE</div>
+      <button class="refresh-btn" onclick="init()">↻ Actualiser</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- FILTERS -->
+  <div class="filters">
+    <button class="fbtn on" data-l="all" onclick="filter('all',this)"><span class="f">🌍</span> Tous</button>
+    <button class="fbtn" data-l="61" onclick="filter('61',this)"><img class="f" src="https://flagcdn.com/w20/fr.png" alt="FR"> Ligue 1</button>
+    <button class="fbtn" data-l="39" onclick="filter('39',this)"><img class="f" src="https://flagcdn.com/w20/gb-eng.png" alt="EN"> Premier League</button>
+    <button class="fbtn" data-l="140" onclick="filter('140',this)"><img class="f" src="https://flagcdn.com/w20/es.png" alt="ES"> La Liga</button>
+    <button class="fbtn" data-l="135" onclick="filter('135',this)"><img class="f" src="https://flagcdn.com/w20/it.png" alt="IT"> Serie A</button>
+    <button class="fbtn" data-l="78" onclick="filter('78',this)"><img class="f" src="https://flagcdn.com/w20/de.png" alt="DE"> Bundesliga</button>
+  </div>
+
+  <!-- LOADER -->
+  <div id="loader">
+    <div class="spinner"></div>
+    <div class="load-msg" id="load-msg">Connexion à l'API...</div>
+    <div class="load-prog" id="load-prog">Chargement des données football</div>
+  </div>
+
+  <!-- ERROR -->
+  <div id="error-box">
+    <div class="err-title">Erreur de connexion</div>
+    <div class="err-msg" id="err-msg"></div>
+  </div>
+
+  <!-- CONTENT (hidden until loaded) -->
+  <div id="content" style="display:none">
+
+    <!-- KPIs -->
+    <div class="kpis">
+      <div class="kpi"><div class="kpi-n" id="k-players" style="color:var(--g)">—</div><div class="kpi-l">Joueurs suivis</div></div>
+      <div class="kpi"><div class="kpi-n" id="k-hot" style="color:var(--o)">—</div><div class="kpi-l">En forme 🔥</div></div>
+      <div class="kpi"><div class="kpi-n" id="k-goals" style="color:var(--g)">—</div><div class="kpi-l">Buts totaux</div></div>
+      <div class="kpi"><div class="kpi-n" id="k-leagues" style="color:var(--b)">5</div><div class="kpi-l">Championnats</div></div>
+    </div>
+
+    <!-- ALERTES -->
+    <div class="sh"><div class="st">⚡ Alertes tendances</div><div class="sb">AUTO</div></div>
+    <div class="alerts" id="alerts"></div>
+
+    <!-- JOUEURS EN FORME -->
+    <div class="sh"><div class="st">🔥 Joueurs en série</div><div class="sb">TOP</div></div>
+    <div class="pgrid" id="pgrid"></div>
+
+    <!-- CLASSEMENT -->
+    <div class="sh"><div class="st">📊 Classement buteurs</div><div class="sb">SAISON</div></div>
+    <div class="tw">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th><th>Joueur</th><th>Ligue</th><th>Buts</th>
+            <th>Passes</th><th>Matchs</th><th>Moy./match</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <strong style="color:var(--text)">Tendance Stats</strong> &nbsp;·&nbsp;
+    Données : <span>API-Football</span> &nbsp;·&nbsp;
+    Saison 2024/2025 &nbsp;·&nbsp;
+    <span id="last-update"></span>
+  </div>
+</footer>
+
+<script>
+const DATA_URL = 'data.json';
+const SEASON = 2024;
+
+const LEAGUES = [
+  { id: 61,  name: 'Ligue 1',        flag: 'fr',     flagAlt:'FR', cls: 'l1',  label: 'L1' },
+  { id: 39,  name: 'Premier League', flag: 'gb-eng', flagAlt:'EN', cls: 'pl',  label: 'PL' },
+  { id: 140, name: 'La Liga',        flag: 'es',     flagAlt:'ES', cls: 'lg',  label: 'LIGA' },
+  { id: 135, name: 'Serie A',        flag: 'it',     flagAlt:'IT', cls: 'sa',  label: 'SA' },
+  { id: 78,  name: 'Bundesliga',     flag: 'de',     flagAlt:'DE', cls: 'bl',  label: 'BL' },
+];
+
+let allPlayers = [];
+let currentLeague = 'all';
+
+async function apiFetch(endpoint) { /* inutilisé — données lues depuis data.json */ }
+
+function setMsg(msg, prog) {
+  document.getElementById('load-msg').textContent = msg;
+  if (prog) document.getElementById('load-prog').textContent = prog;
+}
+
+async function init() {
+  document.getElementById('loader').style.display = 'flex';
+  document.getElementById('content').style.display = 'none';
+  document.getElementById('error-box').style.display = 'none';
+  allPlayers = [];
+
+  try {
+    setMsg('Chargement des données...', 'Lecture du fichier stats');
+    const res = await fetch('data.json?v=' + Date.now());
+    if (!res.ok) throw new Error(`data.json introuvable (HTTP ${res.status})`);
+    const data = await res.json();
+
+    allPlayers = data.players || [];
+
+    const d = new Date(data.updatedAt);
+    document.getElementById('last-update').textContent =
+      'Mis à jour le ' + d.toLocaleDateString('fr-FR') + ' à ' + d.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+
+    render();
+    document.getElementById('loader').style.display = 'none';
+    document.getElementById('content').style.display = 'block';
+
+  } catch (e) {
+    document.getElementById('loader').style.display = 'none';
+    document.getElementById('error-box').style.display = 'block';
+    document.getElementById('err-msg').innerHTML =
+      `Impossible de charger les données : <strong>${e.message}</strong><br><br>
+      Le fichier <code>data.json</code> n'a pas encore été généré.<br>
+      Lance le script GitHub Actions manuellement une première fois.`;
+  }
+}
+
+function buildForm(goals, assists, games) {
+  // Generate a realistic-looking form based on stats
+  const form = [];
+  const rate = (goals + assists * 0.5) / Math.max(games, 1);
+  for (let i = 0; i < 10; i++) {
+    const r = Math.random();
+    if (r < rate * 0.6 && goals > 0) form.push('g');
+    else if (r < rate * 0.9 && assists > 0) form.push('a');
+    else form.push('x');
+  }
+  return form;
+}
+
+function buildRecentForm(goals, assists, games) {
+  const form = [];
+  const rateG = goals / Math.max(games, 1);
+  const rateA = assists / Math.max(games, 1);
+  for (let i = 0; i < 10; i++) {
+    const r = Math.random();
+    const boost = i >= 5 ? 1.2 : 0.85;
+    if (r < rateG * boost && goals > 0) form.push('g');
+    else if (r < (rateG + rateA) * boost && assists > 0) form.push('a');
+    else form.push('x');
+  }
+  return form;
+}
+
+function calcSignal(goals, assists, games, rank) {
+  const base = Math.min(95, 50 + goals * 1.5 + assists * 0.8);
+  const rankPenalty = rank * 1.2;
+  return Math.max(45, Math.round(base - rankPenalty + Math.random() * 5));
+}
+
+function getPlayers() {
+  if (currentLeague === 'all') return allPlayers;
+  return allPlayers.filter(p => p.leagueId === parseInt(currentLeague));
+}
+
+function render() {
+  const list = getPlayers();
+
+  // KPIs
+  const totalGoals = list.reduce((s, p) => s + p.goals, 0);
+  const hotCount = list.filter(p => p.hot || (p.trendScore||0) > 3).length;
+  document.getElementById('k-players').textContent = list.length;
+  document.getElementById('k-hot').textContent = hotCount;
+  document.getElementById('k-goals').textContent = totalGoals;
+
+  renderAlerts(list);
+  renderGrid(list);
+  renderTable(list);
+}
+
+function renderAlerts(list) {
+  // Trier par score récent (buts + passes sur 5 derniers matchs) décroissant
+  const sorted = [...list]
+    .sort((a, b) => (b.trendScore||0) - (a.trendScore||0))
+    .slice(0, 4);
+
+  const c = document.getElementById('alerts');
+  c.innerHTML = '';
+  const colors = ['var(--o)','var(--g)','var(--b)','var(--y)'];
+
+  sorted.forEach((p, i) => {
+    const last5G = p.recent_goals || p.form?.slice(-5).filter(f => f === 'g').length || 0;
+    const last5A = p.recent_assists || p.form?.slice(-5).filter(f => f === 'a').length || 0;
+    const last5Total = last5G + last5A;
+
+    // Label d'intensité
+    let icon, label;
+    if (last5G >= 4)        { icon = '🔥'; label = `<strong>${last5G} buts</strong> sur les 5 derniers matchs`; }
+    else if (last5Total >= 4){ icon = '⚡'; label = `<strong>${last5G} buts + ${last5A} passes</strong> sur les 5 derniers matchs`; }
+    else if (last5G >= 3)   { icon = '📈'; label = `<strong>${last5G} buts</strong> sur les 5 derniers matchs`; }
+    else                    { icon = '🎯'; label = `<strong>${last5G} buts, ${last5A} passes</strong> sur les 5 derniers matchs`; }
+
+    const d = document.createElement('div');
+    d.className = 'alert';
+    d.style.cssText = `border-left-color:${colors[i%4]}; animation-delay:${i*0.08}s`;
+    d.innerHTML = `
+      <div class="alert-ic">${icon}</div>
+      <div class="alert-txt">
+        <strong>${p.name}</strong> (${p.team}) — ${label}.
+        <span style="color:var(--m2)"> Saison : ${p.goals} buts / ${p.assists} passes.</span>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-family:'DM Mono',monospace;font-size:18px;font-weight:500;color:${colors[i%4]}">${last5G}B ${last5A}P</div>
+        <div style="font-size:9px;color:var(--m);text-transform:uppercase;letter-spacing:0.5px">5 matchs</div>
+      </div>
+    `;
+    c.appendChild(d);
+  });
+  if (sorted.length === 0) c.innerHTML = '<div style="color:var(--m);font-size:13px;padding:16px">Aucune alerte active pour cette sélection.</div>';
+}
+
+function renderGrid(list) {
+  const hot = list.filter(p => p.hot || (p.trendScore||0) > 3).slice(0, 12);
+  const c = document.getElementById('pgrid');
+  c.innerHTML = '';
+  hot.forEach((p, i) => {
+    const recent_g = p.recent_goals ?? p.form?.slice(-5).filter(f=>f==='g').length ?? 0;
+    const recent_a = p.recent_assists ?? p.form?.slice(-5).filter(f=>f==='a').length ?? 0;
+    const formHtml = p.form.map(f => {
+      const t = f==='g'?'G':f==='a'?'P':'·';
+      return `<div class="fd ${f}">${t}</div>`;
+    }).join('');
+    const sc = p.signal > 88 ? 'var(--o)' : p.signal > 78 ? 'var(--g)' : 'var(--b)';
+
+    const card = document.createElement('div');
+    card.className = 'pc';
+    card.style.animationDelay = (i*0.06)+'s';
+    card.innerHTML = `
+      <div class="hot-tag">🔥 EN FORME</div>
+      <div class="ct">
+        <div class="pinfo">
+          <div class="pav">
+            <img src="${p.photo}" onerror="this.style.display='none';this.parentNode.innerHTML='⚽'" loading="lazy"/>
+          </div>
+          <div>
+            <div class="pname">${p.name}</div>
+            <div class="pteam">${p.team} <img src="https://flagcdn.com/w20/${p.leagueFlag}.png" alt="${p.leagueFlagAlt}" style="width:14px;height:10px;object-fit:cover;border-radius:1px;vertical-align:middle;margin-left:2px"></div>
+          </div>
+        </div>
+        <div class="pscore">
+          <div class="pscore-n" style="color:${sc}">${p.signal}</div>
+          <div class="pscore-l">TendScore</div>
+        </div>
+      </div>
+      <div class="formrow">
+        <span class="fl">10 matchs</span>
+        <div class="fdots">${formHtml}</div>
+      </div>
+      <div class="chips">
+        <div class="chip"><div class="chip-n" style="color:var(--g)">${p.goals}</div><div class="chip-l">Buts</div></div>
+        <div class="chip"><div class="chip-n" style="color:var(--b)">${p.assists}</div><div class="chip-l">Passes</div></div>
+        <div class="chip"><div class="chip-n" style="color:var(--o)">${recent_g}</div><div class="chip-l">Buts/5J</div></div>
+        <div class="chip"><div class="chip-n" style="color:var(--y)">${p.avg}</div><div class="chip-l">Moy.</div></div>
+      </div>
+      <div class="sigbar">
+        <div class="sigbar-head"><span>TendScore</span><span>${p.signal}%</span></div>
+        <div class="track"><div class="fill" style="width:${p.signal}%"></div></div>
+      </div>
+      <div class="ltag"><span class="lpill ${p.leagueCls}">${p.leagueLabel}</span> <img src="https://flagcdn.com/w20/${p.leagueFlag}.png" alt="${p.leagueFlagAlt}" style="width:14px;height:10px;object-fit:cover;border-radius:1px;vertical-align:middle"> ${p.leagueName}</div>
+    `;
+    c.appendChild(card);
+  });
+  if (hot.length === 0) c.innerHTML = '<div style="color:var(--m);font-size:13px;padding:16px">Aucun joueur "en forme" pour cette sélection.</div>';
+}
+
+function renderTable(list) {
+  const tbody = document.getElementById('tbody');
+  tbody.innerHTML = '';
+  const top = list.slice(0, 30);
+  const maxG = top[0]?.goals || 1;
+  top.forEach((p, i) => {
+    const pct = Math.round(p.goals / maxG * 100);
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="rk">${i+1}</td>
+      <td>
+        <div class="pn">${p.name}</div>
+        <div class="pt">${p.teamName||p.team}</div>
+      </td>
+      <td><span class="lpill ${p.leagueCls}">${p.leagueLabel}</span></td>
+      <td>
+        <span class="num g">${p.goals}</span>
+        <div class="mbar"><div class="mfill" style="width:${pct}%"></div></div>
+      </td>
+      <td><span class="num a">${p.assists}</span></td>
+      <td><span class="num">${p.games}</span></td>
+      <td><span class="num" style="color:${p.signal>85?'var(--o)':'var(--m2)'}">${p.avg}</span></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function filter(league, btn) {
+  currentLeague = league;
+  document.querySelectorAll('.fbtn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  if (allPlayers.length > 0) render();
+}
+
+// Boot
+init();
+</script>
+</body>
+</html>
