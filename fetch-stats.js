@@ -38,7 +38,7 @@ async function apiFetch(url) {
 
 async function getTodayFixtures(leagueId) {
   // Date d'aujourd'hui au format YYYY-MM-DD
-  const today = '2026-05-03'; // DATE TEST — à remettre en dynamique après
+  const today = '2026-05-04'; // DATE TEST — à remettre en dynamique après
   const data  = await apiFetch(
     `https://v3.football.api-sports.io/fixtures?league=${leagueId}&season=${SEASON}&date=${today}&status=FT`
   );
