@@ -1,19 +1,19 @@
 // fetch-stats.js — Tendance Stats
-// Logique : chaque soir, récupère les matchs du jour et stocke cumulativement
+// Source : football-data.org v4 (gratuit, saison en cours)
+// Logique : matchs du jour → buts/assists par joueur → stockage cumulatif
 
-const fs   = require('fs');
-const path = require('path');
+const fs = require('fs');
 
-const API_KEY    = process.env.CLE_1;
-const SEASON     = 2025;
-const DATA_FILE  = 'data.json';
+const API_KEY   = process.env.CLE_1;
+const DATA_FILE = 'data.json';
 
 const LEAGUES = [
-  { id: 61,  name: 'Ligue 1',        flag: 'fr',     flagAlt: 'FR', cls: 'l1',  label: 'L1'   },
-  { id: 39,  name: 'Premier League', flag: 'gb-eng', flagAlt: 'EN', cls: 'pl',  label: 'PL'   },
-  { id: 140, name: 'La Liga',        flag: 'es',     flagAlt: 'ES', cls: 'lg',  label: 'LIGA' },
-  { id: 135, name: 'Serie A',        flag: 'it',     flagAlt: 'IT', cls: 'sa',  label: 'SA'   },
-  { id: 78,  name: 'Bundesliga',     flag: 'de',     flagAlt: 'DE', cls: 'bl',  label: 'BL'   },
+  { code: 'FL1', id: 2015, name: 'Ligue 1',        flag: 'fr',     flagAlt: 'FR', cls: 'l1',  label: 'L1'   },
+  { code: 'PL',  id: 2021, name: 'Premier League', flag: 'gb-eng', flagAlt: 'EN', cls: 'pl',  label: 'PL'   },
+  { code: 'PD',  id: 2014, name: 'La Liga',        flag: 'es',     flagAlt: 'ES', cls: 'lg',  label: 'LIGA' },
+  { code: 'SA',  id: 2019, name: 'Serie A',        flag: 'it',     flagAlt: 'IT', cls: 'sa',  label: 'SA'   },
+  { code: 'BL1', id: 2002, name: 'Bundesliga',     flag: 'de',     flagAlt: 'DE', cls: 'bl',  label: 'BL'   },
+  { code: 'CL',  id: 2001, name: 'Ligue des Champions', flag: 'eu',     flagAlt: 'CL', cls: 'cl',  label: 'CL'   },
 ];
 
 let reqCount = 0;
@@ -23,61 +23,19 @@ let reqCount = 0;
 async function apiFetch(url) {
   reqCount++;
   console.log(`  [${reqCount}] ${url}`);
-  await new Promise(r => setTimeout(r, 1500));
-  const res  = await fetch(url, { headers: { 'x-apisports-key': API_KEY } });
-  const data = await res.json();
-  if (data.errors && Object.keys(data.errors).length > 0) {
-    console.warn(`  ⚠️  Erreurs:`, JSON.stringify(data.errors));
-  } else {
-    console.log(`  ← ${data.results ?? '?'} résultats`);
+  await new Promise(r => setTimeout(r, 6500));
+  const res  = await fetch(url, {
+    headers: { 'X-Auth-Token': API_KEY }
+  });
+  if (!res.ok) {
+    console.warn(`  ⚠️  HTTP ${res.status} : ${res.statusText}`);
+    return null;
   }
+  const data = await res.json();
   return data;
 }
 
-// ── Récupérer les matchs terminés aujourd'hui pour une ligue ─────────────────
-
-async function getTodayFixtures(leagueId) {
-  // Date d'aujourd'hui au format YYYY-MM-DD
-  const today = '2026-05-04'; // DATE TEST — à remettre en dynamique après
-  const data  = await apiFetch(
-    `https://v3.football.api-sports.io/fixtures?league=${leagueId}&season=${SEASON}&date=${today}&status=FT`
-  );
-  return data.response || [];
-}
-
-// ── Récupérer les stats de tous les joueurs d'un match ───────────────────────
-
-async function getFixturePlayers(fixtureId) {
-  const data = await apiFetch(
-    `https://v3.football.api-sports.io/fixtures/players?fixture=${fixtureId}`
-  );
-  const players = [];
-  for (const teamData of (data.response || [])) {
-    const teamId   = teamData.team?.id;
-    const teamName = teamData.team?.name;
-    const teamLogo = teamData.team?.logo;
-    for (const p of (teamData.players || [])) {
-      const s = p.statistics?.[0];
-      if (!s) continue;
-      const minutes = s.games?.minutes || 0;
-      if (minutes === 0) continue; // N'a pas joué
-      players.push({
-        id:      p.player.id,
-        name:    p.player.name,
-        photo:   p.player.photo,
-        teamId,
-        teamName,
-        teamLogo,
-        goals:   s.goals?.total   || 0,
-        assists: s.goals?.assists || 0,
-        minutes,
-      });
-    }
-  }
-  return players;
-}
-
-// ── Calcul TendScore sur les 5 derniers matchs ────────────────────────────────
+// ── Calculs ───────────────────────────────────────────────────────────────────
 
 function calcTrendScore(last5) {
   if (!last5 || last5.length === 0) return 0;
@@ -103,91 +61,212 @@ function buildFormDots(last5) {
   });
 }
 
-// ── Charger / sauvegarder data.json ──────────────────────────────────────────
+// ── Charger data.json ─────────────────────────────────────────────────────────
 
 function loadData() {
   if (fs.existsSync(DATA_FILE)) {
-    try {
-      return JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
-    } catch (e) {
-      console.warn('⚠️  data.json corrompu, on repart de zéro');
-    }
+    try { return JSON.parse(fs.readFileSync(DATA_FILE, 'utf8')); }
+    catch (e) { console.warn('⚠️  data.json corrompu, on repart de zéro'); }
   }
   return { matches: [], players: {} };
 }
 
-function saveData(data) {
-  fs.writeFileSync(DATA_FILE, JSON.stringify(data));
-  console.log(`💾 data.json sauvegardé`);
+// ── Récupérer les matchs terminés aujourd'hui ─────────────────────────────────
+
+async function getTodayMatches(league) {
+  const today = new Date().toISOString().slice(0, 10);
+  const data  = await apiFetch(
+    `https://api.football-data.org/v4/competitions/${league.code}/matches?dateFrom=${today}&dateTo=${today}&status=FINISHED`
+  );
+  if (!data) return [];
+  console.log(`  📅 ${data.matches?.length || 0} match(s) terminé(s)`);
+  return data.matches || [];
 }
 
-// ── Recalculer le classement joueurs depuis l'historique des matchs ───────────
+// ── Récupérer le détail d'un match (buts + assists par joueur) ────────────────
 
-function rebuildPlayers(matches, leagueMap) {
-  // Regrouper les matchs par joueur
-  const playerMatches = {}; // playerId -> [{ goals, assists, played, teamWon, date, leagueId }]
+async function getMatchDetail(matchId) {
+  const data = await apiFetch(`https://api.football-data.org/v4/matches/${matchId}`);
+  if (!data) return null;
+  return data;
+}
 
-  for (const match of matches) {
-    for (const p of (match.players || [])) {
-      if (!playerMatches[p.id]) playerMatches[p.id] = [];
-      playerMatches[p.id].push({
-        goals:    p.goals,
-        assists:  p.assists,
-        played:   true,
-        teamWon:  p.teamWon,
-        date:     match.date,
-        leagueId: match.leagueId,
+// ── Extraire buts et passes d'un match ───────────────────────────────────────
+
+function extractPlayerStats(match, league) {
+  const players = [];
+  const goals   = match.goals || [];
+
+  // Compteurs par joueur
+  const goalsMap   = {};
+  const assistsMap = {};
+  const playerInfo = {};
+
+  const homeId   = match.homeTeam?.id;
+  const homeGoal = match.score?.fullTime?.home ?? 0;
+  const awayGoal = match.score?.fullTime?.away ?? 0;
+
+  for (const goal of goals) {
+    if (goal.type === 'OWN_GOAL') continue; // ignorer les csc
+
+    const scorer  = goal.scorer;
+    const assist  = goal.assist;
+    const teamId  = goal.team?.id;
+    const teamWon = teamId === homeId ? homeGoal > awayGoal : awayGoal > homeGoal;
+
+    if (scorer?.id) {
+      goalsMap[scorer.id]  = (goalsMap[scorer.id]  || 0) + 1;
+      playerInfo[scorer.id] = {
+        id:       scorer.id,
+        name:     scorer.name,
+        photo:    '',
+        teamId,
+        teamName: goal.team?.name || '',
+        teamWon,
+        leagueId:      league.id,
+        leagueName:    league.name,
+        leagueFlag:    league.flag,
+        leagueFlagAlt: league.flagAlt,
+        leagueCls:     league.cls,
+        leagueLabel:   league.label,
+      };
+    }
+
+    if (assist?.id) {
+      assistsMap[assist.id] = (assistsMap[assist.id] || 0) + 1;
+      // Si le passeur n'est pas encore dans playerInfo
+      if (!playerInfo[assist.id]) {
+        playerInfo[assist.id] = {
+          id:       assist.id,
+          name:     assist.name,
+          photo:    '',
+          teamId,
+          teamName: goal.team?.name || '',
+          teamWon,
+          leagueId:      league.id,
+          leagueName:    league.name,
+          leagueFlag:    league.flag,
+          leagueFlagAlt: league.flagAlt,
+          leagueCls:     league.cls,
+          leagueLabel:   league.label,
+        };
+      }
+    }
+  }
+
+  // Construire la liste finale
+  const allIds = new Set([...Object.keys(goalsMap), ...Object.keys(assistsMap)]);
+  for (const id of allIds) {
+    const info = playerInfo[id];
+    if (!info) continue;
+    players.push({
+      ...info,
+      goals:   goalsMap[id]   || 0,
+      assists: assistsMap[id] || 0,
+      played:  true,
+    });
+  }
+
+  // Ajouter aussi les joueurs qui ont joué mais sans but/passe (pour le malus "pas joué")
+  // On les récupère depuis les lineups si disponibles
+  const lineup = match.lineups || [];
+  for (const team of lineup) {
+    const teamId  = team.team?.id;
+    const teamWon = teamId === homeId ? homeGoal > awayGoal : awayGoal > homeGoal;
+    for (const p of [...(team.startXI || []), ...(team.substitutes || [])]) {
+      const pid = p.player?.id;
+      if (!pid || allIds.has(String(pid))) continue;
+      // Joueur qui a joué mais n'a pas contribué — on l'enregistre pour le malus forme
+      players.push({
+        id:       pid,
+        name:     p.player?.name || '',
+        photo:    '',
+        teamId,
+        teamName: team.team?.name || '',
+        teamWon,
+        leagueId:      league.id,
+        leagueName:    league.name,
+        leagueFlag:    league.flag,
+        leagueFlagAlt: league.flagAlt,
+        leagueCls:     league.cls,
+        leagueLabel:   league.label,
+        goals:   0,
+        assists: 0,
+        played:  true,
       });
     }
   }
 
-  const players = {};
+  return players;
+}
 
-  for (const [playerId, allMatches] of Object.entries(playerMatches)) {
-    // Trier du plus récent au plus ancien
-    allMatches.sort((a, b) => new Date(b.date) - new Date(a.date));
+// ── Recalculer le classement depuis l'historique ──────────────────────────────
 
-    const last5         = allMatches.slice(0, 5);
-    const trendScore    = calcTrendScore(last5);
-    const form          = buildFormDots(last5);
+function rebuildPlayers(matches) {
+  const playerMatches = {};
+
+  for (const match of matches) {
+    for (const p of (match.players || [])) {
+      if (!playerMatches[p.id]) playerMatches[p.id] = { info: null, matches: [] };
+      // Garder les infos les plus récentes
+      if (p.goals > 0 || p.assists > 0 || !playerMatches[p.id].info) {
+        playerMatches[p.id].info = p;
+      }
+      playerMatches[p.id].matches.push({
+        goals:    p.goals,
+        assists:  p.assists,
+        played:   p.played,
+        teamWon:  p.teamWon,
+        date:     match.date,
+      });
+    }
+  }
+
+  const players = [];
+
+  for (const [playerId, data] of Object.entries(playerMatches)) {
+    const info = data.info;
+    if (!info?.name) continue;
+
+    // Trier du plus récent
+    data.matches.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    const last5          = data.matches.slice(0, 5);
+    const trendScore     = calcTrendScore(last5);
+    const form           = buildFormDots(last5);
     const recent_goals   = last5.reduce((s, m) => s + m.goals,   0);
     const recent_assists = last5.reduce((s, m) => s + m.assists, 0);
-    const totalGoals     = allMatches.reduce((s, m) => s + m.goals,   0);
-    const totalAssists   = allMatches.reduce((s, m) => s + m.assists, 0);
-    const totalGames     = allMatches.length;
+    const totalGoals     = data.matches.reduce((s, m) => s + m.goals,   0);
+    const totalAssists   = data.matches.reduce((s, m) => s + m.assists, 0);
+    const totalGames     = data.matches.length;
 
-    // Infos joueur depuis le dernier match
-    const lastMatch = matches.find(m => m.players?.some(p => p.id == playerId));
-    const pInfo     = lastMatch?.players?.find(p => p.id == playerId);
-    const leagueId  = lastMatch?.leagueId;
-    const league    = leagueMap[leagueId] || {};
-
-    players[playerId] = {
+    players.push({
       id:            parseInt(playerId),
-      name:          pInfo?.name   || '',
-      photo:         pInfo?.photo  || '',
-      teamName:      pInfo?.teamName || '',
-      teamLogo:      pInfo?.teamLogo || '',
-      leagueId,
-      leagueName:    league.name     || '',
-      leagueFlag:    league.flag     || '',
-      leagueFlagAlt: league.flagAlt  || '',
-      leagueCls:     league.cls      || '',
-      leagueLabel:   league.label    || '',
+      name:          info.name,
+      photo:         info.photo || '',
+      teamName:      info.teamName || '',
+      teamLogo:      '',
+      leagueId:      info.leagueId,
+      leagueName:    info.leagueName,
+      leagueFlag:    info.leagueFlag,
+      leagueFlagAlt: info.leagueFlagAlt,
+      leagueCls:     info.leagueCls,
+      leagueLabel:   info.leagueLabel,
       totalGoals,
       totalAssists,
       totalGames,
-      avg: totalGames > 0 ? parseFloat((totalGoals / totalGames).toFixed(2)) : 0,
+      avg:           totalGames > 0 ? parseFloat((totalGoals / totalGames).toFixed(2)) : 0,
       recent_goals,
       recent_assists,
       trendScore,
       form,
       last5,
-      hot: trendScore > 2 && last5.filter(m => m.played).length >= 2,
-    };
+      signal:        Math.min(98, Math.round(50 + trendScore * 10)),
+      hot:           trendScore > 2 && recent_goals + recent_assists >= 2,
+    });
   }
 
-  return players;
+  return players.sort((a, b) => b.trendScore - a.trendScore || b.totalGoals - a.totalGoals);
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
@@ -197,108 +276,80 @@ async function main() {
   if (!API_KEY) { console.error('❌ Clé API manquante (CLE_1)'); process.exit(1); }
   console.log(`🔑 Clé: ${API_KEY.slice(0, 8)}...`);
 
-  // Charger les données existantes
   const stored = loadData();
-  console.log(`📦 Données existantes: ${stored.matches?.length || 0} matchs, ${Object.keys(stored.players || {}).length} joueurs`);
+  console.log(`📦 Existant: ${stored.matches?.length || 0} matchs, ${stored.players?.length || 0} joueurs`);
 
-  // Index des matchs déjà stockés pour éviter les doublons
-  const storedFixtureIds = new Set((stored.matches || []).map(m => m.fixtureId));
-
-  const leagueMap = Object.fromEntries(LEAGUES.map(l => [l.id, l]));
+  const storedIds  = new Set((stored.matches || []).map(m => m.fixtureId));
   const newMatches = [];
-  let totalNew = 0;
 
-  // Pour chaque ligue, récupérer les matchs du jour
   for (const league of LEAGUES) {
     console.log(`\n⚽ ${league.name}`);
-    const fixtures = await getTodayFixtures(league.id);
-    console.log(`  📅 ${fixtures.length} match(s) terminé(s) aujourd'hui`);
+    const matches = await getTodayMatches(league);
 
-    for (const fixture of fixtures) {
-      const fId = fixture.fixture.id;
-
-      if (storedFixtureIds.has(fId)) {
-        console.log(`  ⏭️  Match ${fId} déjà stocké, on skip`);
+    for (const match of matches) {
+      if (storedIds.has(match.id)) {
+        console.log(`  ⏭️  Match ${match.id} déjà stocké`);
         continue;
       }
 
-      const homeId    = fixture.teams.home.id;
-      const homeGoals = fixture.goals.home ?? 0;
-      const awayGoals = fixture.goals.away ?? 0;
-      const date      = fixture.fixture.date;
+      console.log(`  🎮 ${match.homeTeam.name} ${match.score.fullTime.home}-${match.score.fullTime.away} ${match.awayTeam.name}`);
 
-      console.log(`  🎮 ${fixture.teams.home.name} ${homeGoals}-${awayGoals} ${fixture.teams.away.name}`);
+      // Détail du match pour avoir les buts et assists
+      const detail  = await getMatchDetail(match.id);
+      if (!detail) continue;
 
-      // Stats des joueurs dans ce match
-      const matchPlayers = await getFixturePlayers(fId);
-
-      // Enrichir avec le résultat (victoire/défaite)
-      const enriched = matchPlayers.map(p => ({
-        ...p,
-        teamWon: p.teamId === homeId ? homeGoals > awayGoals : awayGoals > homeGoals,
-      }));
+      const players = extractPlayerStats(detail, league);
+      console.log(`  👥 ${players.filter(p => p.goals > 0 || p.assists > 0).length} joueurs avec contribution`);
 
       newMatches.push({
-        fixtureId:  fId,
-        date,
+        fixtureId:  match.id,
+        date:       match.utcDate,
         leagueId:   league.id,
         leagueName: league.name,
-        homeTeam:   fixture.teams.home.name,
-        awayTeam:   fixture.teams.away.name,
-        homeGoals,
-        awayGoals,
-        players:    enriched,
+        homeTeam:   match.homeTeam.name,
+        awayTeam:   match.awayTeam.name,
+        homeGoals:  match.score.fullTime.home,
+        awayGoals:  match.score.fullTime.away,
+        players,
       });
-
-      totalNew++;
     }
   }
 
-  if (totalNew === 0) {
-    console.log('\n😴 Aucun nouveau match aujourd\'hui — data.json inchangé');
-    // Mettre à jour juste le timestamp
+  if (newMatches.length === 0) {
+    console.log('\n😴 Aucun nouveau match — data.json inchangé');
     stored.updatedAt     = new Date().toISOString();
     stored.totalRequests = reqCount;
-    saveData(stored);
+    fs.writeFileSync(DATA_FILE, JSON.stringify(stored));
     return;
   }
 
-  // Fusionner nouveaux matchs avec l'historique
+  // Fusionner et garder les 100 derniers matchs par ligue
   const allMatches = [...(stored.matches || []), ...newMatches];
-
-  // Garder seulement les 60 derniers matchs par ligue pour ne pas faire grossir le fichier indéfiniment
-  const matchesByLeague = {};
+  const byLeague   = {};
   for (const m of allMatches) {
-    if (!matchesByLeague[m.leagueId]) matchesByLeague[m.leagueId] = [];
-    matchesByLeague[m.leagueId].push(m);
+    if (!byLeague[m.leagueId]) byLeague[m.leagueId] = [];
+    byLeague[m.leagueId].push(m);
   }
-  const trimmedMatches = [];
-  for (const [lid, lMatches] of Object.entries(matchesByLeague)) {
-    lMatches.sort((a, b) => new Date(b.date) - new Date(a.date));
-    trimmedMatches.push(...lMatches.slice(0, 60)); // garder les 60 derniers matchs
+  const trimmed = [];
+  for (const lm of Object.values(byLeague)) {
+    lm.sort((a, b) => new Date(b.date) - new Date(a.date));
+    trimmed.push(...lm.slice(0, 100));
   }
 
-  // Recalculer le classement joueurs
-  const players = rebuildPlayers(trimmedMatches, leagueMap);
+  const players = rebuildPlayers(trimmed);
 
-  // Trier les joueurs par trendScore puis totalGoals
-  const playersList = Object.values(players)
-    .sort((a, b) => b.trendScore - a.trendScore || b.totalGoals - a.totalGoals);
+  fs.writeFileSync(DATA_FILE, JSON.stringify({
+    updatedAt:       new Date().toISOString(),
+    totalMatches:    trimmed.length,
+    totalPlayers:    players.length,
+    totalRequests:   reqCount,
+    newMatchesToday: newMatches.length,
+    matches:         trimmed,
+    players,
+  }));
 
-  const output = {
-    updatedAt:    new Date().toISOString(),
-    season:       SEASON,
-    totalMatches: trimmedMatches.length,
-    totalPlayers: playersList.length,
-    totalRequests: reqCount,
-    newMatchesToday: totalNew,
-    matches:      trimmedMatches,
-    players:      playersList,
-  };
-
-  saveData(output);
-  console.log(`\n✅ Terminé — ${totalNew} nouveau(x) match(s) | ${playersList.length} joueurs | ${reqCount} requêtes`);
-  console.log(`🏆 Top tendance: ${playersList[0]?.name} (${playersList[0]?.trendScore}) | Top buteur: ${playersList.sort((a,b) => b.totalGoals - a.totalGoals)[0]?.name}`);
+  console.log(`\n✅ ${newMatches.length} nouveau(x) match(s) | ${players.length} joueurs | ${reqCount} requêtes`);
+  console.log(`🏆 Top tendance : ${players[0]?.name} (trend: ${players[0]?.trendScore})`);
 }
 
 main().catch(err => { console.error('💥', err); process.exit(1); });
