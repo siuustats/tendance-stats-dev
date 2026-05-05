@@ -2,7 +2,7 @@ name: Mise à jour stats football
 
 on:
   schedule:
-    - cron: '0 0 * * *'   # Minuit UTC — cherche les matchs de la veille
+    - cron: '0 0 * * *'  # Minuit UTC — cherche les matchs de la veille
   workflow_dispatch:
 
 jobs:
@@ -21,7 +21,7 @@ jobs:
 
       - name: Lancer le script
         env:
-          CLE_1: ${{ secrets.CLE_1 }}
+          APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
         run: node fetch-stats.js
 
       - name: Sauvegarder data.json
