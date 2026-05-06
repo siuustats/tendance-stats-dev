@@ -1,37 +1,55 @@
 // fetch-stats.js — Tendance Stats
-// Source : SofaScore API non-officielle + Apify SofaScore Scraper PRO
-// Logique : matchs d'hier → buteurs/passeurs → stockage cumulatif
+// Source : Apify SofaScore Scraper PRO pour tout (matchs + détails)
 
 const fs = require('fs');
 
 const APIFY_TOKEN = process.env.APIFY_TOKEN;
 const DATA_FILE   = 'data.json';
 
-// IDs SofaScore des 6 compétitions
-const TOURNAMENTS = [
-  { id: 34,   name: 'Ligue 1',          flag: 'fr',     flagAlt: 'FR', cls: 'l1',  label: 'L1'   },
-  { id: 17,   name: 'Premier League',   flag: 'gb-eng', flagAlt: 'EN', cls: 'pl',  label: 'PL'   },
-  { id: 8,    name: 'La Liga',          flag: 'es',     flagAlt: 'ES', cls: 'lg',  label: 'LIGA' },
-  { id: 23,   name: 'Serie A',          flag: 'it',     flagAlt: 'IT', cls: 'sa',  label: 'SA'   },
-  { id: 35,   name: 'Bundesliga',       flag: 'de',     flagAlt: 'DE', cls: 'bl',  label: 'BL'   },
-  { id: 7,    name: 'Ligue des Champions', flag: 'eu',  flagAlt: 'CL', cls: 'cl',  label: 'LDC'  },
+// URLs SofaScore des pages de résultats par ligue
+const LEAGUES = [
+  { sofaUrl: 'https://www.sofascore.com/football/tournament/france/ligue-1/34', id: 34,  name: 'Ligue 1',             flag: 'fr',     flagAlt: 'FR', cls: 'l1',  label: 'L1'  },
+  { sofaUrl: 'https://www.sofascore.com/football/tournament/england/premier-league/17', id: 17, name: 'Premier League', flag: 'gb-eng', flagAlt: 'EN', cls: 'pl',  label: 'PL'  },
+  { sofaUrl: 'https://www.sofascore.com/football/tournament/spain/laliga/8',     id: 8,   name: 'La Liga',             flag: 'es',     flagAlt: 'ES', cls: 'lg',  label: 'LIGA'},
+  { sofaUrl: 'https://www.sofascore.com/football/tournament/italy/serie-a/23',   id: 23,  name: 'Serie A',             flag: 'it',     flagAlt: 'IT', cls: 'sa',  label: 'SA'  },
+  { sofaUrl: 'https://www.sofascore.com/football/tournament/germany/bundesliga/35', id: 35, name: 'Bundesliga',        flag: 'de',     flagAlt: 'DE', cls: 'bl',  label: 'BL'  },
+  { sofaUrl: 'https://www.sofascore.com/football/tournament/europe/uefa-champions-league/7', id: 7, name: 'Ligue des Champions', flag: 'eu', flagAlt: 'CL', cls: 'cl', label: 'LDC'},
 ];
 
 let reqCount = 0;
 
+// ── Apify runner ──────────────────────────────────────────────────────────────
+
+async function apifyRun(urls) {
+  reqCount++;
+  console.log(`  [${reqCount}] Apify → ${urls.length} URL(s)`);
+  const res = await fetch(
+    `https://api.apify.com/v2/acts/azzouzana~sofascore-scraper-pro/run-sync-get-dataset-items?token=${APIFY_TOKEN}&timeout=120`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ startUrls: urls }),
+    }
+  );
+  if (!res.ok) {
+    console.warn(`  ⚠️  Apify HTTP ${res.status}: ${await res.text()}`);
+    return [];
+  }
+  return await res.json();
+}
+
 // ── Calculs ───────────────────────────────────────────────────────────────────
 
 function calcTrendScore(last5) {
-  if (!last5 || last5.length === 0) return 0;
+  if (!last5?.length) return 0;
   let score = 0;
   last5.forEach((m, i) => {
-    const weight = i === 0 ? 1.0 : 0.9;
-    score += (m.goals + m.assists) * weight;
+    score += (m.goals + m.assists) * (i === 0 ? 1.0 : 0.9);
     if (m.teamWon) score += 0.5;
   });
   if (!last5[0].played) score -= 3;
   const wins = last5.filter(m => m.teamWon).length;
-  if (wins >= 4)      score += 2;
+  if (wins >= 4) score += 2;
   else if (wins >= 3) score += 1;
   return parseFloat(score.toFixed(2));
 }
@@ -52,171 +70,115 @@ function loadData() {
     try { return JSON.parse(fs.readFileSync(DATA_FILE, 'utf8')); }
     catch (e) { console.warn('⚠️  data.json corrompu'); }
   }
-  return { matches: [], players: {} };
+  return { matches: [], players: [] };
 }
 
-// ── SofaScore API : matchs d'une date par tournoi ─────────────────────────────
+// ── Extraire matchs terminés hier depuis une page ligue ───────────────────────
 
-async function getMatchesByDate(tournamentId, date) {
-  reqCount++;
-  const url = `https://api.sofascore.com/api/v1/sport/football/scheduled-events/${date}`;
-  console.log(`  [${reqCount}] SofaScore API: ${url}`);
-  await new Promise(r => setTimeout(r, 1000));
-  try {
-    const res = await fetch(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-        'Accept': 'application/json',
-      }
+function extractYesterdayMatches(item, league, yesterday) {
+  const matches = [];
+  const events  = item?.data?.events || item?.data?.tournament?.events || [];
+
+  for (const ev of events) {
+    if (ev.status?.type !== 'finished') continue;
+    const evDate = new Date((ev.startTimestamp || 0) * 1000).toISOString().slice(0, 10);
+    if (evDate !== yesterday) continue;
+    matches.push({
+      id:        ev.id,
+      slug:      ev.slug,
+      customId:  ev.customId,
+      homeTeam:  ev.homeTeam?.name,
+      awayTeam:  ev.awayTeam?.name,
+      homeScore: ev.homeScore?.current ?? 0,
+      awayScore: ev.awayScore?.current ?? 0,
+      date:      new Date((ev.startTimestamp || 0) * 1000).toISOString(),
+      url:       `https://www.sofascore.com/football/match/${ev.slug}/${ev.customId}`,
     });
-    if (!res.ok) { console.warn(`  ⚠️  HTTP ${res.status}`); return []; }
-    const data = await res.json();
-    // Filtrer par tournoi et matchs terminés
-    return (data.events || []).filter(e =>
-      e.tournament?.uniqueTournament?.id === tournamentId &&
-      e.status?.type === 'finished'
-    );
-  } catch(e) {
-    console.warn(`  ⚠️  Erreur SofaScore: ${e.message}`);
-    return [];
   }
+  return matches;
 }
 
-// ── Apify : scraper les détails d'un match SofaScore ─────────────────────────
+// ── Extraire buteurs + passeurs depuis incidents ───────────────────────────────
 
-async function scrapeMatchDetails(matchUrl) {
-  reqCount++;
-  console.log(`  [${reqCount}] Apify scrape: ${matchUrl}`);
-  try {
-    const res = await fetch(
-      `https://api.apify.com/v2/acts/azzouzana~sofascore-scraper-pro/run-sync-get-dataset-items?token=${APIFY_TOKEN}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ startUrls: [matchUrl] }),
-      }
-    );
-    if (!res.ok) { console.warn(`  ⚠️  Apify HTTP ${res.status}`); return null; }
-    const items = await res.json();
-    return items?.[0] || null;
-  } catch(e) {
-    console.warn(`  ⚠️  Apify erreur: ${e.message}`);
-    return null;
-  }
-}
-
-// ── Extraire buteurs + passeurs depuis les incidents ─────────────────────────
-
-function extractGoalsAndAssists(item, tournament) {
-  const players = [];
-  if (!item?.data) return players;
-
-  const incidents   = item.data.incidents || [];
-  const homeTeam    = item.data.event?.homeTeam;
-  const awayTeam    = item.data.event?.awayTeam;
-  const homeScore   = item.data.event?.homeScore?.current ?? 0;
-  const awayScore   = item.data.event?.awayScore?.current ?? 0;
-  const matchDate   = item.data.event?.startTimestamp
-    ? new Date(item.data.event.startTimestamp * 1000).toISOString()
+function extractContributions(item, league) {
+  const players   = [];
+  const incidents = item?.data?.incidents || [];
+  const ev        = item?.data?.event || {};
+  const homeScore = ev.homeScore?.current ?? 0;
+  const awayScore = ev.awayScore?.current ?? 0;
+  const date      = ev.startTimestamp
+    ? new Date(ev.startTimestamp * 1000).toISOString()
     : new Date().toISOString();
 
-  // Compteurs par joueur
   const goalsMap   = {};
   const assistsMap = {};
   const infoMap    = {};
 
   for (const inc of incidents) {
     if (inc.incidentType !== 'goal') continue;
-    if (inc.incidentClass === 'ownGoal') continue; // ignorer CSC
+    if (inc.incidentClass === 'ownGoal') continue;
 
-    const isHome = inc.isHome;
-    const team   = isHome ? homeTeam : awayTeam;
+    const isHome  = inc.isHome;
+    const team    = isHome ? ev.homeTeam : ev.awayTeam;
     const teamWon = isHome ? homeScore > awayScore : awayScore > homeScore;
 
     // Buteur
     if (inc.player?.id) {
       const pid = inc.player.id;
-      goalsMap[pid]  = (goalsMap[pid] || 0) + 1;
-      infoMap[pid]   = infoMap[pid] || {
-        id:       pid,
-        name:     inc.player.name,
-        photo:    `https://api.sofascore.com/api/v1/player/${pid}/image`,
-        teamName: team?.name || '',
-        teamWon,
-        leagueId:      tournament.id,
-        leagueName:    tournament.name,
-        leagueFlag:    tournament.flag,
-        leagueFlagAlt: tournament.flagAlt,
-        leagueCls:     tournament.cls,
-        leagueLabel:   tournament.label,
+      goalsMap[pid] = (goalsMap[pid] || 0) + 1;
+      if (!infoMap[pid]) infoMap[pid] = {
+        id: pid, name: inc.player.name,
+        photo: `https://api.sofascore.com/api/v1/player/${pid}/image`,
+        teamName: team?.name || '', teamWon,
+        leagueId: league.id, leagueName: league.name,
+        leagueFlag: league.flag, leagueFlagAlt: league.flagAlt,
+        leagueCls: league.cls, leagueLabel: league.label,
       };
     }
 
-    // Passeur décisif
+    // Passeur dans shotList
     for (const shot of (inc.shotList || [])) {
-      if (shot.eventType === 'assist' && shot.player?.id) {
-        const aid = shot.player.id;
-        assistsMap[aid] = (assistsMap[aid] || 0) + 1;
-        infoMap[aid] = infoMap[aid] || {
-          id:       aid,
-          name:     shot.player.name,
-          photo:    `https://api.sofascore.com/api/v1/player/${aid}/image`,
-          teamName: team?.name || '',
-          teamWon,
-          leagueId:      tournament.id,
-          leagueName:    tournament.name,
-          leagueFlag:    tournament.flag,
-          leagueFlagAlt: tournament.flagAlt,
-          leagueCls:     tournament.cls,
-          leagueLabel:   tournament.label,
-        };
-      }
+      if (shot.eventType !== 'assist') continue;
+      if (!shot.player?.id) continue;
+      const aid = shot.player.id;
+      const team2 = isHome ? ev.homeTeam : ev.awayTeam;
+      const won2  = isHome ? homeScore > awayScore : awayScore > homeScore;
+      assistsMap[aid] = (assistsMap[aid] || 0) + 1;
+      if (!infoMap[aid]) infoMap[aid] = {
+        id: aid, name: shot.player.name,
+        photo: `https://api.sofascore.com/api/v1/player/${aid}/image`,
+        teamName: team2?.name || '', teamWon: won2,
+        leagueId: league.id, leagueName: league.name,
+        leagueFlag: league.flag, leagueFlagAlt: league.flagAlt,
+        leagueCls: league.cls, leagueLabel: league.label,
+      };
     }
   }
 
-  // Construire la liste finale
   const allIds = new Set([...Object.keys(goalsMap), ...Object.keys(assistsMap)]);
   for (const id of allIds) {
     const info = infoMap[id];
     if (!info) continue;
-    players.push({
-      ...info,
-      goals:   goalsMap[id]   || 0,
-      assists: assistsMap[id] || 0,
-      played:  true,
-      date:    matchDate,
-    });
+    players.push({ ...info, goals: goalsMap[id] || 0, assists: assistsMap[id] || 0, played: true, date });
   }
-
   return players;
 }
 
-// ── Recalculer le classement depuis l'historique ──────────────────────────────
+// ── Recalculer classement ─────────────────────────────────────────────────────
 
 function rebuildPlayers(matches) {
-  const playerMatches = {};
-
+  const pm = {};
   for (const match of matches) {
     for (const p of (match.players || [])) {
-      if (!playerMatches[p.id]) {
-        playerMatches[p.id] = { info: p, matches: [] };
-      }
-      if (p.goals > 0 || p.assists > 0) playerMatches[p.id].info = p;
-      playerMatches[p.id].matches.push({
-        goals:   p.goals,
-        assists: p.assists,
-        played:  p.played,
-        teamWon: p.teamWon,
-        date:    p.date || match.date,
-      });
+      if (!pm[p.id]) pm[p.id] = { info: p, matches: [] };
+      if (p.goals > 0 || p.assists > 0) pm[p.id].info = p;
+      pm[p.id].matches.push({ goals: p.goals, assists: p.assists, played: p.played, teamWon: p.teamWon, date: p.date || match.date });
     }
   }
-
   const players = [];
-  for (const [, data] of Object.entries(playerMatches)) {
+  for (const [, data] of Object.entries(pm)) {
     const info = data.info;
     if (!info?.name) continue;
-
     data.matches.sort((a, b) => new Date(b.date) - new Date(a.date));
     const last5          = data.matches.slice(0, 5);
     const trendScore     = calcTrendScore(last5);
@@ -225,33 +187,19 @@ function rebuildPlayers(matches) {
     const recent_assists = last5.reduce((s, m) => s + m.assists, 0);
     const totalGoals     = data.matches.reduce((s, m) => s + m.goals,   0);
     const totalAssists   = data.matches.reduce((s, m) => s + m.assists, 0);
-    const totalGames     = data.matches.length;
-
     players.push({
-      id:            info.id,
-      name:          info.name,
-      photo:         info.photo || '',
-      teamName:      info.teamName || '',
-      leagueId:      info.leagueId,
-      leagueName:    info.leagueName,
-      leagueFlag:    info.leagueFlag,
-      leagueFlagAlt: info.leagueFlagAlt,
-      leagueCls:     info.leagueCls,
-      leagueLabel:   info.leagueLabel,
-      totalGoals,
-      totalAssists,
-      totalGames,
-      avg: totalGames > 0 ? parseFloat((totalGoals / totalGames).toFixed(2)) : 0,
-      recent_goals,
-      recent_assists,
-      trendScore,
-      form,
-      last5,
+      id: info.id, name: info.name, photo: info.photo || '',
+      teamName: info.teamName || '',
+      leagueId: info.leagueId, leagueName: info.leagueName,
+      leagueFlag: info.leagueFlag, leagueFlagAlt: info.leagueFlagAlt,
+      leagueCls: info.leagueCls, leagueLabel: info.leagueLabel,
+      totalGoals, totalAssists, totalGames: data.matches.length,
+      avg: data.matches.length > 0 ? parseFloat((totalGoals / data.matches.length).toFixed(2)) : 0,
+      recent_goals, recent_assists, trendScore, form, last5,
       signal: Math.min(98, Math.round(50 + trendScore * 10)),
       hot: trendScore > 2 && recent_goals + recent_assists >= 2,
     });
   }
-
   return players.sort((a, b) => b.trendScore - a.trendScore || b.totalGoals - a.totalGoals);
 }
 
@@ -261,72 +209,59 @@ async function main() {
   console.log('🚀 Début — ' + new Date().toISOString());
   if (!APIFY_TOKEN) { console.error('❌ APIFY_TOKEN manquant'); process.exit(1); }
 
-  // Date d'hier
   const d = new Date();
   d.setDate(d.getDate() - 1);
   const yesterday = d.toISOString().slice(0, 10);
   console.log(`📅 Date cible : ${yesterday}`);
 
-  const stored        = loadData();
-  const storedIds     = new Set((stored.matches || []).map(m => m.fixtureId));
-  const newMatches    = [];
+  const stored     = loadData();
+  const storedIds  = new Set((stored.matches || []).map(m => m.fixtureId));
+  const newMatches = [];
 
-  for (const tournament of TOURNAMENTS) {
-    console.log(`\n⚽ ${tournament.name}`);
+  // Étape 1 : scraper les pages de chaque ligue pour trouver les matchs d'hier
+  console.log('\n📋 Étape 1 : récupération des matchs d\'hier...');
+  const leagueItems = await apifyRun(LEAGUES.map(l => l.sofaUrl));
 
-    // 1. Récupérer les matchs terminés hier
-    const events = await getMatchesByDate(tournament.id, yesterday);
-    console.log(`  📅 ${events.length} match(s) terminé(s)`);
-
-    for (const event of events) {
-      const fId = event.id;
-      if (storedIds.has(fId)) { console.log(`  ⏭️  ${fId} déjà stocké`); continue; }
-
-      const homeTeam  = event.homeTeam?.name || '?';
-      const awayTeam  = event.awayTeam?.name || '?';
-      const homeScore = event.homeScore?.current ?? 0;
-      const awayScore = event.awayScore?.current ?? 0;
-      const slug      = event.slug || `${event.homeTeam?.slug}-${event.awayTeam?.slug}`;
-      const matchUrl  = `https://www.sofascore.com/football/match/${slug}/${event.customId}`;
-
-      console.log(`  🎮 ${homeTeam} ${homeScore}-${awayScore} ${awayTeam}`);
-      console.log(`     URL: ${matchUrl}`);
-
-      // 2. Scraper les détails via Apify
-      const detail  = await scrapeMatchDetails(matchUrl);
-      if (!detail) { console.warn(`  ⚠️  Pas de détails pour ce match`); continue; }
-
-      // 3. Extraire buteurs + passeurs
-      const players = extractGoalsAndAssists(detail, tournament);
-      const contributors = players.filter(p => p.goals > 0 || p.assists > 0);
-      console.log(`  👥 ${contributors.length} joueur(s) avec contribution`);
-      contributors.forEach(p => console.log(`     ${p.name}: ${p.goals}B ${p.assists}P`));
-
-      newMatches.push({
-        fixtureId:  fId,
-        date:       new Date(event.startTimestamp * 1000).toISOString(),
-        leagueId:   tournament.id,
-        leagueName: tournament.name,
-        homeTeam,
-        awayTeam,
-        homeGoals:  homeScore,
-        awayGoals:  awayScore,
-        players,
-      });
+  const matchesToScrape = []; // { league, match }
+  for (const item of leagueItems) {
+    // Identifier la ligue depuis l'URL
+    const league = LEAGUES.find(l => item.url?.includes(`/${l.id}`) || l.sofaUrl === item.url);
+    if (!league) continue;
+    const matches = extractYesterdayMatches(item, league, yesterday);
+    console.log(`  ${league.name}: ${matches.length} match(s) d'hier`);
+    for (const m of matches) {
+      if (!storedIds.has(m.id)) matchesToScrape.push({ league, match: m });
     }
   }
 
-  if (newMatches.length === 0) {
+  if (matchesToScrape.length === 0) {
     console.log('\n😴 Aucun nouveau match — data.json inchangé');
-    stored.updatedAt     = new Date().toISOString();
-    stored.totalRequests = reqCount;
+    stored.updatedAt = new Date().toISOString();
     fs.writeFileSync(DATA_FILE, JSON.stringify(stored));
     return;
   }
 
-  // Fusionner et garder 100 matchs max par ligue
+  // Étape 2 : scraper les détails de chaque match
+  console.log(`\n📋 Étape 2 : détails de ${matchesToScrape.length} match(s)...`);
+  const matchUrls   = matchesToScrape.map(({ match }) => match.url);
+  const matchItems  = await apifyRun(matchUrls);
+
+  for (let i = 0; i < matchesToScrape.length; i++) {
+    const { league, match } = matchesToScrape[i];
+    const detail = matchItems.find(item => item.url?.includes(match.customId)) || matchItems[i];
+    if (!detail) { console.warn(`  ⚠️  Pas de détails pour ${match.homeTeam} vs ${match.awayTeam}`); continue; }
+
+    const players = extractContributions(detail, league);
+    const contribs = players.filter(p => p.goals > 0 || p.assists > 0);
+    console.log(`  🎮 ${match.homeTeam} ${match.homeGoals}-${match.awayGoals} ${match.awayTeam} → ${contribs.length} contribution(s)`);
+    contribs.forEach(p => console.log(`     ${p.name}: ${p.goals}B ${p.assists}P`));
+
+    newMatches.push({ fixtureId: match.id, date: match.date, leagueId: league.id, leagueName: league.name, homeTeam: match.homeTeam, awayTeam: match.awayTeam, homeGoals: match.homeGoals, awayGoals: match.awayGoals, players });
+  }
+
+  // Fusionner et recalculer
   const allMatches = [...(stored.matches || []), ...newMatches];
-  const byLeague   = {};
+  const byLeague = {};
   for (const m of allMatches) {
     if (!byLeague[m.leagueId]) byLeague[m.leagueId] = [];
     byLeague[m.leagueId].push(m);
@@ -338,21 +273,17 @@ async function main() {
   }
 
   const players = rebuildPlayers(trimmed);
-
   fs.writeFileSync(DATA_FILE, JSON.stringify({
-    updatedAt:       new Date().toISOString(),
-    totalMatches:    trimmed.length,
-    totalPlayers:    players.length,
-    totalRequests:   reqCount,
+    updatedAt: new Date().toISOString(),
+    totalMatches: trimmed.length,
+    totalPlayers: players.length,
+    totalRequests: reqCount,
     newMatchesToday: newMatches.length,
-    matches:         trimmed,
-    players,
+    matches: trimmed, players,
   }));
 
-  console.log(`\n✅ ${newMatches.length} match(s) | ${players.length} joueurs | ${reqCount} requêtes`);
-  if (players.length > 0) {
-    console.log(`🏆 Top tendance : ${players[0].name} (trend: ${players[0].trendScore})`);
-  }
+  console.log(`\n✅ ${newMatches.length} match(s) | ${players.length} joueurs | ${reqCount} requêtes Apify`);
+  if (players.length > 0) console.log(`🏆 Top : ${players[0].name} (trend: ${players[0].trendScore})`);
 }
 
 main().catch(err => { console.error('💥', err); process.exit(1); });
