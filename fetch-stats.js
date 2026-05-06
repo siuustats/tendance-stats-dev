@@ -57,9 +57,35 @@ async function fetchESPN(leagueCode, date) {
   return data.events || [];
 }
 
+// ── ESPN Summary : photos joueurs depuis le roster ───────────────────────────
+
+async function fetchPlayerPhotos(leagueCode, eventId) {
+  const url = `https://site.api.espn.com/apis/site/v2/sports/soccer/${leagueCode}/summary?event=${eventId}`;
+  await new Promise(r => setTimeout(r, 500));
+  try {
+    const res = await fetch(url, {
+      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' }
+    });
+    if (!res.ok) return {};
+    const data = await res.json();
+    const photos = {};
+    for (const team of (data.rosters || [])) {
+      for (const player of (team.roster || [])) {
+        const id = player.athlete?.id;
+        const headshot = player.athlete?.headshot?.href;
+        if (id && headshot) photos[id] = headshot;
+      }
+    }
+    console.log(`  📸 ${Object.keys(photos).length} photo(s) trouvée(s)`);
+    return photos;
+  } catch(e) {
+    return {};
+  }
+}
+
 // ── Extraire les contributions depuis les details ESPN ────────────────────────
 
-function extractContributions(event, league) {
+function extractContributions(event, league, photos = {}) {
   const players = [];
   const comp     = event.competitions?.[0];
   if (!comp) return players;
@@ -93,7 +119,7 @@ function extractContributions(event, league) {
     goalsMap[pid] = (goalsMap[pid] || 0) + 1;
     if (!infoMap[pid]) {
       infoMap[pid] = {
-        id: pid, name, photo: `https://a.espncdn.com/i/headshots/soccer/players/full/${pid}.png`,
+        id: pid, name, photo: photos[pid] || `https://a.espncdn.com/i/headshots/soccer/players/full/${pid}.png`,
         teamName: teamName || '', teamWon,
         leagueId: league.id, leagueName: league.name,
         leagueFlag: league.flag, leagueFlagAlt: league.flagAlt,
@@ -196,7 +222,9 @@ async function main() {
 
       console.log(`  🎮 ${homeName} ${homeScore}-${awayScore} ${awayName}`);
 
-      const players  = extractContributions(event, league);
+      // Récupérer les photos depuis le summary
+      const photos = await fetchPlayerPhotos(league.code, fId);
+      const players  = extractContributions(event, league, photos);
       const contribs = players.filter(p => p.goals > 0);
       contribs.forEach(p => console.log(`     ⚽ ${p.name}: ${p.goals}B (${p.teamName})`));
 
