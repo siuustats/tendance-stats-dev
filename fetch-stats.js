@@ -156,11 +156,14 @@ function rebuildPlayers(matches) {
 async function main() {
   console.log('🚀 Début — ' + new Date().toISOString());
 
-  const d = new Date();
-  d.setDate(d.getDate() - 1);
-  const yesterday     = d.toISOString().slice(0, 10);
-  const yesterdayESPN = yesterday.replace(/-/g, '');
-  console.log(`📅 Date cible : ${yesterday}`);
+  // Chercher sur les 2 derniers jours pour ne rater aucun match
+  const dates = [];
+  for (let i = 1; i <= 2; i++) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    dates.push(d.toISOString().slice(0, 10).replace(/-/g, ''));
+  }
+  console.log(`📅 Dates cibles : ${dates.join(', ')}`);
 
   const stored     = loadData();
   const storedIds  = new Set((stored.matches || []).map(m => m.fixtureId));
@@ -168,7 +171,12 @@ async function main() {
 
   for (const league of LEAGUES) {
     console.log(`\n⚽ ${league.name}`);
-    const events = await fetchESPN(league.code, yesterdayESPN);
+    const allEvents = [];
+    for (const date of dates) {
+      const evs = await fetchESPN(league.code, date);
+      allEvents.push(...evs);
+    }
+    const events = allEvents;
     console.log(`  📅 ${events.length} match(s)`);
 
     for (const event of events) {
