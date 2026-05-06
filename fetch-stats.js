@@ -242,19 +242,36 @@ async function main() {
     targetSports: ['Football (soccer)'],
     daysToFetch: [-1],
     matchStatus: 'Finished',
-    leagueTournamentFilter: [
-      'Champions League',
-      'Premier League',
-      'Ligue 1',
-      'LaLiga',
-      'Serie A',
-      'Bundesliga'
-    ],
+    leagueTournamentFilter: [],
   }, 300);
+
+  // Filtrer côté script avec les URLs exactes des tournois
+  const VALID_TOURNAMENT_URLS = [
+    // Anglais (flashscore.com)
+    'flashscore.com/football/england/premier-league',
+    'flashscore.com/football/france/ligue-1',
+    'flashscore.com/football/spain/laliga',
+    'flashscore.com/football/italy/serie-a',
+    'flashscore.com/football/germany/bundesliga',
+    'flashscore.com/football/europe/champions-league',
+    'flashscore.com/football/europe/uefa-champions-league',
+    // Français (flashscore.fr)
+    'flashscore.fr/football/france/ligue-1',
+    'flashscore.fr/football/espagne/laliga',
+    'flashscore.fr/football/italie/serie-a',
+    'flashscore.fr/football/allemagne/bundesliga',
+    'flashscore.fr/football/europe/ligue-des-champions',
+    'flashscore.fr/football/england/premier-league',
+  ];
 
   // Filtrer nos ligues et matchs non encore stockés
   const matchesToProcess = [];
   for (const item of scoreItems) {
+    // Vérifier d'abord l'URL du tournoi pour exclure les faux positifs
+    const tournamentUrl = item.tournament_url || '';
+    const isValidLeague = VALID_TOURNAMENT_URLS.some(url => tournamentUrl.includes(url));
+    if (!isValidLeague) continue;
+
     const league = identifyLeague(item.tournament_name, item.category_name);
     if (!league) continue;
     if (storedIds.has(item.match_id)) {
