@@ -405,7 +405,7 @@ function render() {
 
   // KPIs
   const totalGoals = list.reduce((s, p) => s + (p.totalGoals||p.goals||0), 0);
-  const hotCount = list.filter(p => p.hot || (p.trendScore||0) > 3).length;
+  const hotCount = list.filter(p => p.hot || (p.trendScore||0) > 0).length;
   document.getElementById('k-players').textContent = list.length;
   document.getElementById('k-hot').textContent = hotCount;
   document.getElementById('k-goals').textContent = totalGoals;
@@ -457,7 +457,7 @@ function renderAlerts(list) {
 }
 
 function renderGrid(list) {
-  const hot = list.filter(p => p.hot || (p.trendScore||0) > 3).slice(0, 12);
+  const hot = list.filter(p => p.hot || (p.trendScore||0) > 0).slice(0, 12);
   const c = document.getElementById('pgrid');
   c.innerHTML = '';
   hot.forEach((p, i) => {
@@ -477,7 +477,7 @@ function renderGrid(list) {
       <div class="ct">
         <div class="pinfo">
           <div class="pav">
-            <img src="${p.photo}" onerror="this.style.display='none';this.parentNode.innerHTML='⚽'" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>
+            <img src="${p.photo||''}" onerror="this.outerHTML='⚽'" onload="if(this.naturalWidth===0)this.outerHTML='⚽'" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>
           </div>
           <div>
             <div class="pname">${p.name}</div>
