@@ -234,28 +234,43 @@ async function fetchMissingPhotos(players, photosCache) {
   console.log(`\n📸 Recherche de ${missing.length} photo(s) manquante(s)...`);
   const updated = { ...photosCache };
 
+  const LEAGUE_MAP = { 17:[39], 34:[61], 8:[140], 23:[135], 35:[78], 7:[2] };
+  const SEASONS = [2024, 2023, 2022];
+
   for (const p of missing) {
-    console.log(`  🔍 ${p.name}`);
-    try {
-      const url = `https://v3.football.api-sports.io/players?search=${encodeURIComponent(p.name)}&season=2024`;
-      const res = await fetch(url, {
-        headers: { 'x-apisports-key': API_KEY, 'x-rapidapi-host': 'v3.football.api-sports.io' }
-      });
-      if (!res.ok) { console.warn(`  ⚠️  HTTP ${res.status}`); continue; }
-      const data = await res.json();
-      const photo = data.response?.[0]?.player?.photo;
-      if (photo) {
-        updated[p.id] = photo;
-        console.log(`  ✅ Photo trouvée`);
-      } else {
-        console.log(`  ❌ Pas de photo`);
-        updated[p.id] = ''; // Marquer comme cherché pour ne pas re-chercher
+    console.log(`  🔍 ${p.name} (${p.leagueName})`);
+    let found = false;
+    const leagueIds = LEAGUE_MAP[p.leagueId] || [39];
+
+    for (const season of SEASONS) {
+      if (found) break;
+      for (const lid of leagueIds) {
+        if (found) break;
+        try {
+          const url = `https://v3.football.api-sports.io/players?search=${encodeURIComponent(p.name)}&league=${lid}&season=${season}`;
+          const res = await fetch(url, {
+            headers: {
+              'x-apisports-key': API_KEY,
+              'x-rapidapi-key': API_KEY,
+              'x-rapidapi-host': 'v3.football.api-sports.io'
+            }
+          });
+          if (!res.ok) continue;
+          const data = await res.json();
+          const photo = data.response?.[0]?.player?.photo;
+          if (photo) {
+            updated[p.id] = photo;
+            console.log(`  ✅ Photo trouvée (saison ${season})`);
+            found = true;
+          }
+        } catch(e) {}
+        await new Promise(r => setTimeout(r, 1200));
       }
-    } catch(e) {
-      console.warn(`  ⚠️  Erreur: ${e.message}`);
     }
-    // Rate limit : 10 req/min sur plan gratuit
-    await new Promise(r => setTimeout(r, 6500));
+    if (!found) {
+      updated[p.id] = '';
+      console.log(`  ❌ Pas trouvé`);
+    }
   }
 
   return updated;
@@ -272,9 +287,10 @@ async function main() {
   }
   console.log(`📸 ${Object.keys(photosCache).length} photo(s) en cache`);
 
-  // Chercher sur les 2 derniers jours pour ne rater aucun match
+  // Chercher sur les 3 derniers jours pour ne rater aucun match
+  // (le script tourne à 21h50 UTC = 23h50 FR, donc aujourd'hui est encore en cours)
   const dates = [];
-  for (let i = 1; i <= 2; i++) {
+  for (let i = 0; i <= 2; i++) {
     const d = new Date();
     d.setDate(d.getDate() - i);
     dates.push(d.toISOString().slice(0, 10).replace(/-/g, ''));
