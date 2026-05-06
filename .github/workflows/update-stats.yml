@@ -2,7 +2,7 @@ name: Mise à jour stats football
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # Minuit UTC — cherche les matchs de la veille
+    - cron: '50 21 * * *'  # 21h50 UTC = 23h50 heure française (été)
   workflow_dispatch:
 
 jobs:
