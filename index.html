@@ -242,12 +242,12 @@ footer span { color:var(--g); }
   <!-- FILTERS -->
   <div class="filters">
     <button class="fbtn on" data-l="all" onclick="filter('all',this)">Tous</button>
-    <button class="fbtn" data-l="61" onclick="filter('61',this)"><img class="f" src="https://flagcdn.com/w20/fr.png" alt="FR"> Ligue 1</button>
-    <button class="fbtn" data-l="39" onclick="filter('39',this)"><img class="f" src="https://flagcdn.com/w20/gb-eng.png" alt="EN"> Premier League</button>
-    <button class="fbtn" data-l="140" onclick="filter('140',this)"><img class="f" src="https://flagcdn.com/w20/es.png" alt="ES"> La Liga</button>
-    <button class="fbtn" data-l="135" onclick="filter('135',this)"><img class="f" src="https://flagcdn.com/w20/it.png" alt="IT"> Serie A</button>
-    <button class="fbtn" data-l="78" onclick="filter('78',this)"><img class="f" src="https://flagcdn.com/w20/de.png" alt="DE"> Bundesliga</button>
-    <button class="fbtn" data-l="2001" onclick="filter('2001',this)"><img class="f" src="https://flagcdn.com/w20/eu.png" alt="EU"> LDC</button>
+    <button class="fbtn" data-l="34" onclick="filter('34',this)"><img class="f" src="https://flagcdn.com/w20/fr.png" alt="FR"> Ligue 1</button>
+    <button class="fbtn" data-l="17" onclick="filter('17',this)"><img class="f" src="https://flagcdn.com/w20/gb-eng.png" alt="EN"> Premier League</button>
+    <button class="fbtn" data-l="8" onclick="filter('8',this)"><img class="f" src="https://flagcdn.com/w20/es.png" alt="ES"> La Liga</button>
+    <button class="fbtn" data-l="23" onclick="filter('23',this)"><img class="f" src="https://flagcdn.com/w20/it.png" alt="IT"> Serie A</button>
+    <button class="fbtn" data-l="35" onclick="filter('35',this)"><img class="f" src="https://flagcdn.com/w20/de.png" alt="DE"> Bundesliga</button>
+    <button class="fbtn" data-l="7" onclick="filter('7',this)"><img class="f" src="https://flagcdn.com/w20/eu.png" alt="EU"> LDC</button>
   </div>
 
   <!-- LOADER -->
@@ -457,7 +457,7 @@ function renderAlerts(list) {
 }
 
 function renderGrid(list) {
-  const hot = list.filter(p => p.hot || (p.trendScore||0) > 0).slice(0, 12);
+  const hot = list.filter(p => p.hot || (p.trendScore||0) > 0).slice(0, 8);
   const c = document.getElementById('pgrid');
   c.innerHTML = '';
   hot.forEach((p, i) => {
