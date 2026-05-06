@@ -338,11 +338,19 @@ async function init() {
 
   try {
     setMsg('Chargement des données...', 'Lecture du fichier stats');
-    const res = await fetch('data.json?v=' + Date.now());
+    const [res, photosRes] = await Promise.all([
+      fetch('data.json?v=' + Date.now()),
+      fetch('photos.json?v=' + Date.now()).catch(() => null)
+    ]);
     if (!res.ok) throw new Error(`data.json introuvable (HTTP ${res.status})`);
     const data = await res.json();
+    const photosMap = photosRes?.ok ? await photosRes.json() : {};
 
-    allPlayers = data.players || [];
+    // Injecter les photos SofaScore
+    allPlayers = (data.players || []).map(p => ({
+      ...p,
+      photo: photosMap[p.id] || p.photo || ''
+    }));
 
     const d = new Date(data.updatedAt);
     document.getElementById('last-update').textContent =
