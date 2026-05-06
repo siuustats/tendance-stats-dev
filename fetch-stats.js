@@ -222,8 +222,55 @@ function rebuildPlayers(matches) {
 
 // ── Main ──────────────────────────────────────────────────────────────────────
 
+// ── API-Football : photos des nouveaux joueurs ───────────────────────────────
+
+async function fetchMissingPhotos(players, photosCache) {
+  const API_KEY = process.env.APIFOOTBALL_KEY;
+  if (!API_KEY) { console.log('ℹ️  APIFOOTBALL_KEY absent — photos ignorées'); return photosCache; }
+
+  const missing = players.filter(p => !photosCache[p.id] && p.name);
+  if (!missing.length) { console.log('✅ Toutes les photos sont en cache'); return photosCache; }
+
+  console.log(`\n📸 Recherche de ${missing.length} photo(s) manquante(s)...`);
+  const updated = { ...photosCache };
+
+  for (const p of missing) {
+    console.log(`  🔍 ${p.name}`);
+    try {
+      const url = `https://v3.football.api-sports.io/players?search=${encodeURIComponent(p.name)}&season=2024`;
+      const res = await fetch(url, {
+        headers: { 'x-apisports-key': API_KEY, 'x-rapidapi-host': 'v3.football.api-sports.io' }
+      });
+      if (!res.ok) { console.warn(`  ⚠️  HTTP ${res.status}`); continue; }
+      const data = await res.json();
+      const photo = data.response?.[0]?.player?.photo;
+      if (photo) {
+        updated[p.id] = photo;
+        console.log(`  ✅ Photo trouvée`);
+      } else {
+        console.log(`  ❌ Pas de photo`);
+        updated[p.id] = ''; // Marquer comme cherché pour ne pas re-chercher
+      }
+    } catch(e) {
+      console.warn(`  ⚠️  Erreur: ${e.message}`);
+    }
+    // Rate limit : 10 req/min sur plan gratuit
+    await new Promise(r => setTimeout(r, 6500));
+  }
+
+  return updated;
+}
+
 async function main() {
   console.log('🚀 Début — ' + new Date().toISOString());
+
+  // Charger le cache de photos API-Football
+  let photosCache = {};
+  if (fs.existsSync('photos.json')) {
+    try { photosCache = JSON.parse(fs.readFileSync('photos.json', 'utf8')); }
+    catch(e) { console.warn('⚠️  photos.json corrompu'); }
+  }
+  console.log(`📸 ${Object.keys(photosCache).length} photo(s) en cache`);
 
   // Chercher sur les 2 derniers jours pour ne rater aucun match
   const dates = [];
@@ -267,7 +314,9 @@ async function main() {
 
       // Récupérer photos et passes depuis le summary
       const { photos, assists } = await fetchSummaryData(league.code, fId);
-      const players  = extractContributions(event, league, photos, assists);
+      // Fusionner photos du summary avec le cache API-Football
+      const mergedPhotos = { ...photosCache, ...photos };
+      const players  = extractContributions(event, league, mergedPhotos, assists);
       const contribs = players.filter(p => p.goals > 0);
       contribs.forEach(p => console.log(`     ⚽ ${p.name}: ${p.goals}B (${p.teamName})`));
 
@@ -301,6 +350,19 @@ async function main() {
   }
 
   const players = rebuildPlayers(trimmed);
+
+  // Récupérer les photos manquantes via API-Football
+  const updatedPhotos = await fetchMissingPhotos(players, photosCache);
+  if (Object.keys(updatedPhotos).length !== Object.keys(photosCache).length) {
+    fs.writeFileSync('photos.json', JSON.stringify(updatedPhotos, null, 2));
+    console.log(`📸 photos.json mis à jour (${Object.keys(updatedPhotos).length} photos)`);
+  }
+
+  // Injecter les photos dans les joueurs
+  for (const p of players) {
+    if (!p.photo && updatedPhotos[p.id]) p.photo = updatedPhotos[p.id];
+  }
+
   fs.writeFileSync(DATA_FILE, JSON.stringify({
     updatedAt:       new Date().toISOString(),
     totalMatches:    trimmed.length,
