@@ -495,18 +495,10 @@ async function loadData() {
 function renderHotPlayers() {
   const grid = document.getElementById('hotPlayers');
   const cdmHot = cdmPlayers.filter(p => p.totalGoals > 0 || p.totalAssists > 0).slice(0, 8);
-
-  if (!cdmHot.length) {
-    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:48px 24px;background:var(--s1);border:1px solid var(--border);border-radius:14px;">' +
-      '<div style="font-family:Bebas Neue,sans-serif;font-size:48px;color:var(--gold);letter-spacing:4px;margin-bottom:8px;">🏆</div>' +
-      '<div style="font-family:Bebas Neue,sans-serif;font-size:24px;letter-spacing:3px;color:var(--text);margin-bottom:8px;">LES STARS ARRIVENT LE 11 JUIN</div>' +
-      '<div style="font-size:13px;color:var(--muted2);">Les buteurs et passeurs de la CDM s\'afficheront automatiquement dès le premier match</div>' +
-    '</div>';
-    return;
-  }
+  const players = cdmHot.length ? cdmHot : TEST_PLAYERS;
 
   grid.innerHTML = '';
-  cdmHot.forEach(function(p, i) {
+  players.forEach(function(p, i) {
     const photo = p.photo || '';
     const sc = p.signal > 88 ? 'var(--o)' : p.signal > 78 ? 'var(--gold)' : 'var(--gold2)';
     const formHtml = (p.last5||[]).map(function(m) {
@@ -521,7 +513,7 @@ function renderHotPlayers() {
     card.onclick = function(){ window.location.href = 'player.html?id=' + p.id; };
 
     card.innerHTML =
-      '<div class="hot-tag">🏆 CDM 2026</div>' +
+      '<div class="hot-tag" style="background:#ff9f43;color:#1a0a00;">🔥 EN FORME</div>' +
       '<div class="ct">' +
         '<div class="pinfo">' +
           '<div class="pav">' +
