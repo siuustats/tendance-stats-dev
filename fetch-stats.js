@@ -134,7 +134,7 @@ function extractContributions(event, league, photos = {}, assists = {}) {
     const teamId   = detail.team?.id;
     const isHome   = teamId === homeId;
     const teamName = isHome ? homeComp?.team?.displayName : awayComp?.team?.displayName;
-    const teamWon  = isHome ? homeScore > awayScore : awayScore > homeScore;
+    const teamWon  = isHome ? (homeScore > awayScore ? true : homeScore === awayScore ? null : false) : (awayScore > homeScore ? true : awayScore === homeScore ? null : false);
 
     goalsMap[pid] = (goalsMap[pid] || 0) + 1;
     if (!infoMap[pid]) {
