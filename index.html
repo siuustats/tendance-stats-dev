@@ -406,7 +406,12 @@ function calcSignal(goals, assists, games, rank) {
 
 function getPlayers() {
   if (currentLeague === 'all') return allPlayers;
-  return allPlayers.filter(p => p.leagueId === parseInt(currentLeague));
+  return allPlayers.filter(p => {
+    const lid = parseInt(currentLeague);
+    // Vérifier dans toutes les ligues du joueur (pas seulement la principale)
+    if (p.allLeagueIds && p.allLeagueIds.length) return p.allLeagueIds.includes(lid);
+    return p.leagueId === lid;
+  });
 }
 
 function render() {
