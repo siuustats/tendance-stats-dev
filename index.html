@@ -540,7 +540,7 @@ function renderTable(list, photosMap={}) {
     const tr = document.createElement('tr');
     const photo = photosMap?.[p.id] || p.photo || '';
     tr.style.cursor = 'pointer';
-    tr.onclick = () => window.location.href = `player.html?id=${p.id}`;
+    tr.onclick = (e) => { window.location.href = `player.html?id=${p.id}`; };
     tr.innerHTML = `
       <td class="rk">${i+1}</td>
       <td style="width:36px;padding:6px 4px">
@@ -549,7 +549,7 @@ function renderTable(list, photosMap={}) {
         </div>
       </td>
       <td>
-        <div class="pn" style="color:var(--g);cursor:pointer">${p.name}</div>
+        <div class="pn">${p.name}</div>
         <div class="pt">${p.teamName||p.team}</div>
       </td>
       <td><span class="lpill ${p.leagueCls}">${p.leagueLabel}</span></td>
@@ -572,6 +572,9 @@ function filter(league, btn) {
 }
 
 // Boot
+window.addEventListener('pageshow', (e) => {
+  if (e.persisted) init(); // Recharger si page vient du cache
+});
 init();
 </script>
 </body>
