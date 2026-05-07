@@ -597,7 +597,7 @@ function renderRanking() {
       <div class="rk ${i<3?'top':''}">${i+1}</div>
       <div class="rplayer">
         <div class="ravatar">
-          ${photo ? `<img src="${photo}" onerror="this.outerHTML='⚽'" alt="${p.name}">` : '⚽'}
+          ${photo ? '<img src="' + photo + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%">' : '⚽'}
         </div>
         <div>
           <div class="rname">${p.name}</div>
