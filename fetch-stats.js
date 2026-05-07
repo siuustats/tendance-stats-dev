@@ -165,10 +165,11 @@ function extractContributions(event, league, photos = {}, assists = {}) {
     }
   }
 
-  for (const [pid, goals] of Object.entries(goalsMap)) {
+  const allIds = new Set([...Object.keys(goalsMap), ...Object.keys(assistsMap)]);
+  for (const pid of allIds) {
     const info = infoMap[pid];
     if (!info) continue;
-    players.push({ ...info, goals, assists: 0, played: true, date });
+    players.push({ ...info, goals: goalsMap[pid] || 0, assists: assistsMap[pid] || 0, played: true, date });
   }
 
   return players;
@@ -231,13 +232,19 @@ async function fetchMissingPhotos(players, photosCache) {
     console.log(`  🔍 ${p.name}`);
     try {
       // Chercher l'ID Transfermarkt
-      const searchRes = await fetch(
-        `https://transfermarkt-api.fly.dev/players/search/${encodeURIComponent(p.name)}`,
-        { headers: { 'User-Agent': 'TendanceStats/1.0' } }
-      );
-      if (!searchRes.ok) { updated[p.id] = ''; continue; }
-      const searchData = await searchRes.json();
-      const playerId = searchData.results?.[0]?.id;
+      // Essayer nom complet puis prénom seul
+      let playerId = null;
+      for (const searchName of [p.name, p.name.split(' ')[0]]) {
+        const searchRes = await fetch(
+          `https://transfermarkt-api.fly.dev/players/search/${encodeURIComponent(searchName)}`,
+          { headers: { 'User-Agent': 'TendanceStats/1.0' } }
+        );
+        if (!searchRes.ok) continue;
+        const searchData = await searchRes.json();
+        playerId = searchData.results?.[0]?.id;
+        if (playerId) break;
+        await new Promise(r => setTimeout(r, 500));
+      }
       if (!playerId) { updated[p.id] = ''; console.log(`  ❌ Pas trouvé`); continue; }
 
       await new Promise(r => setTimeout(r, 500));
