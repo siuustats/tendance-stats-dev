@@ -272,59 +272,70 @@
     }
 
     /* Cartes joueurs — identiques au site principal */
-    .pgrid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:36px; }
-    .pc {
-      background:var(--s1); border:1px solid var(--border); border-radius:14px;
-      padding:16px; cursor:pointer; position:relative; overflow:hidden;
-      transition:border-color .2s, transform .15s;
-      animation:fadeUp .4s ease both;
-    }
-    .pc:hover { border-color:rgba(212,168,67,0.4); transform:translateY(-2px); }
-    @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
-    .hot-tag {
-      position:absolute; top:0; right:0;
-      background:#ff9f43; color:#1a0a00;
-      font-size:9px; font-weight:700; letter-spacing:1px;
-      padding:4px 10px; border-radius:0 14px 0 8px;
-    }
-    .ct { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:14px; }
-    .pinfo { display:flex; align-items:center; gap:10px; }
-    .pav {
-      width:52px; height:52px; border-radius:50%; flex-shrink:0;
-      background:var(--s3); overflow:hidden;
-      border:2px solid rgba(212,168,67,0.25);
-    }
-    .pav img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
-    .pname { font-size:14px; font-weight:600; color:var(--text); }
-    .pteam { font-size:11px; color:var(--muted); margin-top:2px; }
-    .pscore { text-align:right; flex-shrink:0; }
-    .pscore-n { font-family:'Bebas Neue',sans-serif; font-size:30px; line-height:1; }
-    .pscore-l { font-size:9px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
-    .formrow { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
-    .fl { font-size:10px; color:var(--muted); width:52px; flex-shrink:0; }
-    .fdots { display:flex; gap:3px; }
-    .fd { width:22px; height:22px; border-radius:4px; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center; font-family:'DM Mono',monospace; }
-    .fd.g { background:rgba(0,229,160,0.15); color:#00e5a0; border:1px solid rgba(0,229,160,0.25); }
-    .fd.r { background:rgba(255,80,80,0.15); color:#ff5050; border:1px solid rgba(255,80,80,0.25); }
-    .fd.x { background:rgba(30,34,48,0.5); color:var(--muted); border:1px solid var(--border); }
-    .chips { display:flex; gap:6px; margin-bottom:12px; }
-    .chip { background:var(--s3); border-radius:8px; padding:8px 6px; text-align:center; flex:1; }
-    .chip-n { font-family:'DM Mono',monospace; font-size:15px; font-weight:500; }
-    .chip-l { font-size:9px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; margin-top:1px; }
-    .sigbar { margin-top:10px; margin-bottom:10px; }
-    .sigbar-head { display:flex; justify-content:space-between; font-size:10px; color:var(--muted); margin-bottom:4px; }
-    .sigbar-head span:last-child { font-family:'DM Mono',monospace; }
-    .track { height:3px; background:var(--s3); border-radius:2px; overflow:hidden; }
-    .fill { height:100%; border-radius:2px; background:linear-gradient(90deg,var(--gold),var(--gold2)); transition:width 1s ease; }
-    .ltag { display:inline-flex; align-items:center; gap:5px; font-size:10px; color:var(--muted); margin-top:10px; justify-content:space-between; width:100%; }
-    .lpill { display:inline-block; font-size:9px; padding:2px 6px; border-radius:4px; font-weight:600; letter-spacing:0.5px; }
-    .cl-cdm { background:rgba(212,168,67,0.15); color:var(--gold); border:1px solid rgba(212,168,67,0.25); }
+    .pgrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(290px,1fr)); gap:14px; margin-bottom:36px; }
+.pc {
+  background:var(--s1); border:1px solid var(--border); border-radius:14px;
+  padding:18px; cursor:pointer; transition:all .25s; position:relative; overflow:hidden;
+  animation:fadeUp .4s ease both;
+}
+@keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+.pc:hover { border-color:rgba(0,229,160,0.35); transform:translateY(-2px); box-shadow:0 8px 28px rgba(0,229,160,0.06); }
+.hot-tag {
+  position:absolute; top:0; right:0;
+  background:var(--o); color:white; font-size:9px; font-weight:700;
+  padding:3px 10px; border-radius:0 14px 0 8px; letter-spacing:0.5px;
+}
+.ct { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:14px; }
+.pinfo { display:flex; align-items:center; gap:10px; }
+.pav {
+  width:42px; height:42px; border-radius:50%; overflow:hidden;
+  background:var(--s3); border:2px solid var(--border2); flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-size:18px;
+}
+.pav img { width:100%; height:100%; object-fit:cover; }
+.pname { font-size:14px; font-weight:600; }
+.pteam { font-size:11px; color:var(--m); margin-top:2px; }
+.pscore { text-align:right; }
+.pscore-n { font-family:'Bebas Neue',sans-serif; font-size:30px; line-height:1; }
+.pscore-l { font-size:9px; color:var(--m); text-transform:uppercase; letter-spacing:1px; }
 
-    @media(max-width:600px) {
-      .ranking-head, .ranking-row { grid-template-columns:36px 1fr 60px 60px; }
-      .ranking-head span:nth-child(5), .ranking-head span:nth-child(6),
-      .ranking-row > *:nth-child(5), .ranking-row > *:nth-child(6) { display:none; }
-    }
+/* form dots */
+.formrow { display:flex; align-items:center; gap:5px; margin-bottom:12px; }
+.fl { font-size:10px; color:var(--m); width:52px; flex-shrink:0; }
+.fdots { display:flex; gap:3px; }
+.fd {
+  width:21px; height:21px; border-radius:5px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:9px; font-weight:700; font-family:'DM Mono',monospace;
+}
+.fd.g { background:rgba(0,229,160,0.15); color:var(--g); border:1px solid rgba(0,229,160,0.25); }
+.fd.a { background:rgba(94,129,244,0.15); color:var(--b); border:1px solid rgba(94,129,244,0.25); }
+.fd.r { background:rgba(255,80,80,0.15); color:#ff5050; border:1px solid rgba(255,80,80,0.25); }
+.fd.x { background:rgba(30,34,48,0.5); color:var(--m); border:1px solid var(--border); }
+
+/* stats chips */
+.chips { display:flex; gap:6px; }
+.chip { flex:1; background:var(--s2); border-radius:8px; padding:8px 6px; text-align:center; }
+.chip-n { font-family:'DM Mono',monospace; font-size:15px; font-weight:500; }
+.chip-l { font-size:9px; color:var(--m); text-transform:uppercase; letter-spacing:0.5px; margin-top:1px; }
+
+/* signal bar */
+.sigbar { margin-top:10px; }
+.sigbar-head { display:flex; justify-content:space-between; font-size:10px; color:var(--m); margin-bottom:4px; }
+.sigbar-head span:last-child { font-family:'DM Mono',monospace; }
+.track { height:3px; background:var(--s3); border-radius:2px; overflow:hidden; }
+.fill { height:100%; border-radius:2px; background:linear-gradient(90deg,var(--b),var(--g)); transition:width 1s ease; }
+
+.ltag { display:inline-flex; align-items:center; gap:5px; font-size:10px; color:var(--m); margin-top:10px; }
+.lpill { display:inline-block; font-size:9px; padding:2px 6px; border-radius:4px; font-weight:600; letter-spacing:0.5px; }
+.l1 { background:rgba(0,229,160,0.1); color:var(--g); }
+.pl { background:rgba(94,129,244,0.1); color:var(--b); }
+.lg { background:rgba(255,77,109,0.1); color:var(--r); }
+.sa { background:rgba(255,214,10,0.1); color:var(--y); }
+.bl { background:rgba(255,107,53,0.15); color:var(--o); }
+.cl  { background:rgba(0,100,255,0.12); color:#4d9fff; }
+.el  { background:rgba(255,159,67,0.15); color:var(--o); }
+.ecl { background:rgba(0,200,150,0.15); color:#00c896; }
   </style>
 </head>
 <body>
@@ -494,68 +505,69 @@ async function loadData() {
 
 // ── JOUEURS À SURVEILLER ──────────────────────────────────────────────────
 function renderHotPlayers() {
-  const grid = document.getElementById('hotPlayers');
-  const cdmHot = cdmPlayers.filter(p => p.totalGoals > 0 || p.totalAssists > 0).slice(0, 8);
-  const players = cdmHot.length ? cdmHot : TEST_PLAYERS;
-
-  grid.innerHTML = '';
-  players.forEach(function(p, i) {
-    const photo = p.photo || '';
-    const sc = p.signal > 88 ? 'var(--o)' : p.signal > 78 ? 'var(--gold)' : 'var(--gold2)';
-    const formHtml = (p.last5||[]).map(function(m) {
-      const l = m.teamWon===true?'V':m.teamWon===false?'D':'N';
-      const c = m.teamWon===true?'g':m.teamWon===false?'r':'x';
-      return '<div class="fd ' + c + '">' + l + '</div>';
+  const list = allPlayers;
+  const hot = list.filter(p => p.hot || (p.trendScore||0) > 0 || p.id.startsWith('t')).slice(0, 8);
+  const c = document.getElementById('pgrid');
+  c.innerHTML = '';
+  hot.forEach((p, i) => {
+    const recent_g = p.recent_goals ?? p.form?.slice(-5).filter(f=>f==='g').length ?? 0;
+    const recent_a = p.recent_assists ?? p.form?.slice(-5).filter(f=>f==='a').length ?? 0;
+    const formHtml = (p.last5 || p.form || []).map((f, i) => {
+      const match = p.last5?.[i];
+      const won = match?.teamWon;
+      const label = won === true ? 'V' : won === false ? 'D' : 'N';
+      const cls   = won === true ? 'g' : won === false ? 'r' : 'x';
+      return `<div class="fd ${cls}">${label}</div>`;
     }).join('');
+    const sc = p.signal > 88 ? 'var(--o)' : p.signal > 78 ? 'var(--g)' : 'var(--b)';
 
     const card = document.createElement('div');
     card.className = 'pc';
     card.style.animationDelay = (i*0.06)+'s';
-    card.onclick = function(){ window.location.href = 'player.html?id=' + p.id; };
-
-    card.innerHTML =
-      '<div class="hot-tag" style="background:#ff9f43;color:#1a0a00;">🔥 EN FORME</div>' +
-      '<div class="ct">' +
-        '<div class="pinfo">' +
-          '<div class="pav">' +
-            (photo ? '<img src="' + photo + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%">' : '<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:20px;">⚽</div>') +
-          '</div>' +
-          '<div>' +
-            '<div class="pname">' + p.name + '</div>' +
-            '<div class="pteam">' + (p.teamName||'') + '</div>' +
-          '</div>' +
-        '</div>' +
-        '<div class="pscore"><div class="pscore-n" style="color:' + sc + '">' + (p.signal||0) + '</div><div class="pscore-l">TendScore</div></div>' +
-      '</div>' +
-      '<div class="formrow">' +
-        '<span class="fl">' + (p.totalGames||0) + ' match' + ((p.totalGames||0)>1?'s':'') + '</span>' +
-        '<div class="fdots">' + formHtml + '</div>' +
-      '</div>' +
-      '<div class="chips">' +
-        '<div class="chip"><div class="chip-n" style="color:#00e5a0">' + (p.totalGoals||0) + '</div><div class="chip-l">Buts</div></div>' +
-        '<div class="chip"><div class="chip-n" style="color:#5e81f4">' + (p.totalAssists||0) + '</div><div class="chip-l">Passes</div></div>' +
-        '<div class="chip"><div class="chip-n" style="color:var(--o)">' + (p.recent_goals||0) + '</div><div class="chip-l">Buts/5J</div></div>' +
-        '<div class="chip"><div class="chip-n" style="color:var(--gold)">' + (p.avg||0) + '</div><div class="chip-l">Moy.</div></div>' +
-      '</div>' +
-      '<div class="sigbar">' +
-        '<div class="sigbar-head"><span>TendScore</span><span>' + (p.signal||0) + '%</span></div>' +
-        '<div class="track"><div class="fill" style="width:' + (p.signal||0) + '%"></div></div>' +
-      '</div>' +
-      '<div class="ltag">' +
-        '<span class="lpill cl-cdm">CDM</span>' +
-        '<a href="https://www.winamax.fr/paris-sportifs/sports/1?code=CMONBN" target="_blank" rel="noopener sponsored" onclick="event.stopPropagation()" style="font-size:10px;font-weight:700;color:#fff;background:#e30613;padding:4px 10px;border-radius:4px;text-decoration:none;white-space:nowrap;">Voir la cote →</a>' +
-      '</div>';
-
-    grid.appendChild(card);
+    card.style.cursor = 'pointer';
+    if (!p.id.startsWith('t')) card.onclick = () => window.location.href = `player.html?id=${p.id}`;
+    card.innerHTML = `
+      <div class="hot-tag">🔥 EN FORME</div>
+      <div class="ct">
+        <div class="pinfo">
+          <div class="pav">
+            <img src="${p.photo||''}" onerror="this.outerHTML='⚽'" onload="if(this.naturalWidth===0)this.outerHTML='⚽'" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>
+          </div>
+          <div>
+            <div class="pname">${p.name}</div>
+            <div class="pteam">${p.teamName||p.team||''} <img src="https://flagcdn.com/w20/${p.leagueFlag}.png" alt="${p.leagueFlagAlt}" style="width:16px;height:11px;object-fit:cover;border-radius:2px;vertical-align:middle;margin-left:2px"></div>
+          </div>
+        </div>
+        <div class="pscore">
+          <div class="pscore-n" style="color:${sc}">${p.signal}</div>
+          <div class="pscore-l">TendScore</div>
+        </div>
+      </div>
+      <div class="formrow">
+        <span class="fl">${p.totalGames||p.last5?.length||1} match${(p.totalGames||1)>1?'s':''}</span>
+        <div class="fdots">${formHtml}</div>
+      </div>
+      <div class="chips">
+        <div class="chip"><div class="chip-n" style="color:var(--g)">${p.totalGoals||p.goals||0}</div><div class="chip-l">Buts</div></div>
+        <div class="chip"><div class="chip-n" style="color:var(--b)">${p.totalAssists||p.assists||0}</div><div class="chip-l">Passes</div></div>
+        <div class="chip"><div class="chip-n" style="color:var(--o)">${recent_g}</div><div class="chip-l">Buts/5J</div></div>
+        <div class="chip"><div class="chip-n" style="color:var(--y)">${p.avg||0}</div><div class="chip-l">Moy.</div></div>
+      </div>
+      <div class="sigbar">
+        <div class="sigbar-head"><span>TendScore</span><span>${p.signal}%</span></div>
+        <div class="track"><div class="fill" style="width:${p.signal}%"></div></div>
+      </div>
+      <div class="ltag" style="display:flex;align-items:center;justify-content:space-between;">
+        <div><span class="lpill ${p.leagueCls}">${p.leagueLabel}</span> <img src="https://flagcdn.com/w20/${p.leagueFlag}.png" alt="${p.leagueFlagAlt}" style="width:16px;height:11px;object-fit:cover;border-radius:2px;vertical-align:middle"> ${p.leagueName}</div>
+        <a href="https://www.winamax.fr/paris-sportifs/sports/1?code=CMONBN" target="_blank" rel="noopener sponsored" onclick="event.stopPropagation()"
+           style="font-size:10px;font-weight:700;color:#fff;background:#e30613;padding:4px 10px;border-radius:4px;text-decoration:none;white-space:nowrap;">
+          Voir la cote →
+        </a>
+      </div>
+    `;
+    c.appendChild(card);
   });
-}
-
-// ── CLASSEMENT ─────────────────────────────────────────────────────────────
-function setPhase(phase, btn) {
-  currentPhase = phase;
-  document.querySelectorAll('.phase-btn').forEach(b => b.classList.remove('on'));
-  btn.classList.add('on');
-  renderRanking();
+  if (hot.length === 0) c.innerHTML = '<div style="color:var(--m);font-size:13px;padding:16px">Aucun joueur "en forme" pour cette sélection.</div>';
 }
 
 function renderRanking() {
