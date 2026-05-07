@@ -307,6 +307,18 @@ footer span { color:var(--g); }
 </div>
 
 <footer>
+  <!-- Bannière Winamax -->
+  <div style="background:linear-gradient(90deg,#e30613,#c0000f);padding:10px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+    <div style="color:#fff;font-size:13px;font-weight:600;">🎁 Winamax — Jusqu'à <strong>200€ offerts</strong> sur votre 1er dépôt</div>
+    <a href="https://www.winamax.fr/parrain?code=CMONBN" target="_blank" rel="noopener sponsored"
+       style="background:#fff;color:#e30613;font-size:12px;font-weight:700;padding:7px 16px;border-radius:6px;text-decoration:none;white-space:nowrap;letter-spacing:0.5px;">
+      J'en profite →
+    </a>
+  </div>
+  <div style="background:#0a0b0f;text-align:center;padding:4px;font-size:10px;color:#6b7280;">
+    18+ | Jeu responsable | <a href="https://www.joueurs-info-service.fr" target="_blank" style="color:#6b7280;">joueurs-info-service.fr</a> — 09 74 75 13 13
+  </div>
+
   <div class="wrap">
     <strong style="color:var(--text)">Tendance Stats</strong> &nbsp;·&nbsp;
     Données : <span>ESPN API</span> &nbsp;·&nbsp;
@@ -529,7 +541,13 @@ function renderGrid(list) {
         <div class="sigbar-head"><span>TendScore</span><span>${p.signal}%</span></div>
         <div class="track"><div class="fill" style="width:${p.signal}%"></div></div>
       </div>
-      <div class="ltag"><span class="lpill ${p.leagueCls}">${p.leagueLabel}</span> <img src="https://flagcdn.com/w20/${p.leagueFlag}.png" alt="${p.leagueFlagAlt}" style="width:16px;height:11px;object-fit:cover;border-radius:2px;vertical-align:middle"> ${p.leagueName}</div>
+      <div class="ltag" style="display:flex;align-items:center;justify-content:space-between;">
+        <div><span class="lpill ${p.leagueCls}">${p.leagueLabel}</span> <img src="https://flagcdn.com/w20/${p.leagueFlag}.png" alt="${p.leagueFlagAlt}" style="width:16px;height:11px;object-fit:cover;border-radius:2px;vertical-align:middle"> ${p.leagueName}</div>
+        <a href="https://www.winamax.fr/parrain?code=CMONBN" target="_blank" rel="noopener sponsored" onclick="event.stopPropagation()"
+           style="font-size:10px;font-weight:700;color:#fff;background:#e30613;padding:4px 10px;border-radius:4px;text-decoration:none;white-space:nowrap;">
+          Parier →
+        </a>
+      </div>
     `;
     c.appendChild(card);
   });
