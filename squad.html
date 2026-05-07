@@ -299,8 +299,16 @@ function showTeams() {
   document.getElementById('squadView').style.display = 'none';
 }
 
-// Init
-renderTeams();
+// Init — vérifier si un team ID est passé en paramètre
+const urlParams = new URLSearchParams(window.location.search);
+const teamParam = urlParams.get('team');
+if (teamParam && TEAM_MAP[teamParam]) {
+  const team = TEAM_MAP[teamParam];
+  const group = TEAM_GROUPS[teamParam] || '?';
+  loadSquad(teamParam, team, group);
+} else {
+  renderTeams();
+}
 </script>
 </body>
 </html>
