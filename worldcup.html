@@ -511,7 +511,7 @@ async function loadData() {
 function renderHotPlayers() {
   const list = allPlayers;
   const hot = list.filter(p => p.hot || (p.trendScore||0) > 0 || p.id.startsWith('t')).slice(0, 8);
-  const c = document.getElementById('pgrid');
+  const c = document.getElementById('hotPlayers');
   c.innerHTML = '';
   hot.forEach((p, i) => {
     const recent_g = p.recent_goals ?? p.form?.slice(-5).filter(f=>f==='g').length ?? 0;
