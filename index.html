@@ -484,6 +484,8 @@ function renderGrid(list) {
     const card = document.createElement('div');
     card.className = 'pc';
     card.style.animationDelay = (i*0.06)+'s';
+    card.style.cursor = 'pointer';
+    card.onclick = () => window.location.href = `player.html?id=${p.id}`;
     card.innerHTML = `
       <div class="hot-tag">🔥 EN FORME</div>
       <div class="ct">
