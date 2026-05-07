@@ -459,7 +459,7 @@ function renderAlerts(list) {
     d.innerHTML = `
       <div class="alert-ic">${icon}</div>
       <div class="alert-txt">
-        <strong>${p.name}</strong> (${p.teamName||p.team||''}) — ${label}.
+        <strong style="cursor:pointer;color:var(--text)" onclick="window.location.href='player.html?id=${p.id}'">${p.name}</strong> (${p.teamName||p.team||''}) — ${label}.
         <span style="color:var(--m2)"> Saison : ${p.totalGoals||p.goals||0} buts / ${p.totalAssists||p.assists||0} passes.</span>
       </div>
       <div style="text-align:right;flex-shrink:0">
