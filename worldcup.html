@@ -283,7 +283,7 @@
 <!-- NAV -->
 <nav class="topnav">
   <a href="index.html" class="nav-back">← Tendance Stats</a>
-  <span class="nav-logo">🏆 CDM 2026</span>
+  <span class="nav-logo" style="position:absolute;left:50%;transform:translateX(-50%);">🏆 CDM 2026</span>
   <span class="nav-tag">LIVE</span>
 </nav>
 
@@ -296,9 +296,9 @@
     <div class="hero-title">WORLD</div>
     <div class="hero-year">CUP 2026</div>
     <div class="hero-hosts">
-      <span>🇺🇸 USA</span><span class="sep">·</span>
-      <span>🇨🇦 CANADA</span><span class="sep">·</span>
-      <span>🇲🇽 MEXIQUE</span>
+      <span>USA</span><span class="sep">·</span>
+      <span>CANADA</span><span class="sep">·</span>
+      <span>MEXIQUE</span>
     </div>
     <div class="hero-hosts" style="margin-top:-12px">
       <span style="color:var(--muted2);font-size:13px">11 juin — 19 juillet 2026</span>
@@ -384,25 +384,34 @@
 
 <script>
 // ── COMPTE À REBOURS ───────────────────────────────────────────────────────
-const CDM_DATE = new Date('2026-06-11T18:00:00Z');
+const CDM_DATE = new Date('2026-06-11T17:00:00Z'); // 19h heure française
 function updateCountdown() {
   const now  = new Date();
   const diff = CDM_DATE - now;
+  const cdEl = document.getElementById('countdown');
+  if (!cdEl) return;
   if (diff <= 0) {
-    document.getElementById('countdown').innerHTML = '<div style="font-family:Bebas Neue,sans-serif;font-size:32px;color:var(--gold);letter-spacing:4px;">🏆 LA CDM EST LANCÉE !</div>';
+    cdEl.innerHTML = '<div style="font-family:Bebas Neue,sans-serif;font-size:32px;color:var(--gold);letter-spacing:4px;">🏆 LA CDM EST LANCÉE !</div>';
     return;
   }
   const j = Math.floor(diff / 86400000);
   const h = Math.floor((diff % 86400000) / 3600000);
   const m = Math.floor((diff % 3600000) / 60000);
   const s = Math.floor((diff % 60000) / 1000);
-  document.getElementById('cd-j').textContent = String(j).padStart(2,'0');
-  document.getElementById('cd-h').textContent = String(h).padStart(2,'0');
-  document.getElementById('cd-m').textContent = String(m).padStart(2,'0');
-  document.getElementById('cd-s').textContent = String(s).padStart(2,'0');
+  const jEl = document.getElementById('cd-j');
+  const hEl = document.getElementById('cd-h');
+  const mEl = document.getElementById('cd-m');
+  const sEl = document.getElementById('cd-s');
+  if (jEl) jEl.textContent = String(j).padStart(2,'0');
+  if (hEl) hEl.textContent = String(h).padStart(2,'0');
+  if (mEl) mEl.textContent = String(m).padStart(2,'0');
+  if (sEl) sEl.textContent = String(s).padStart(2,'0');
 }
-updateCountdown();
-setInterval(updateCountdown, 1000);
+document.addEventListener('DOMContentLoaded', () => {
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+  renderGroups(); // Groupes statiques — pas besoin d'attendre les données
+});
 
 // ── DONNÉES ────────────────────────────────────────────────────────────────
 let cdmPlayers = [];
@@ -430,7 +439,6 @@ async function loadData() {
 
     renderHotPlayers(allPlayers);
     renderRanking();
-    renderGroups();
   } catch(e) {
     document.getElementById('hotPlayers').innerHTML = '<div class="empty">Données indisponibles</div>';
   }
@@ -562,7 +570,6 @@ function renderGroups() {
       <div class="group-header">${g.name}</div>
       ${g.nations.map(n => `
         <div class="nation-row">
-          <img class="nation-flag" src="https://flagcdn.com/w40/${n.flag}.png" alt="${n.name}">
           <span class="nation-name">${n.name}</span>
           <span class="nation-arrow">→</span>
         </div>
