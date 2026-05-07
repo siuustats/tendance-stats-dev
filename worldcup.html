@@ -358,14 +358,9 @@
 <section class="section">
   <div class="section-header">
     <div class="section-title">🌍 Les 48 nations</div>
-    <div style="display:flex;gap:10px;align-items:center;">
-      <span class="section-badge">CDM 2026</span>
-      <a href="squad.html" style="font-size:11px;font-weight:700;letter-spacing:1px;color:#d4a843;background:rgba(212,168,67,0.12);border:1px solid rgba(212,168,67,0.3);padding:5px 12px;border-radius:6px;text-decoration:none;white-space:nowrap;">Effectifs →</a>
-    </div>
+    <span class="section-badge">CDM 2026</span>
   </div>
-  <div class="groups-grid" id="groupsGrid">
-    <div class="loading">Chargement des groupes...</div>
-  </div>
+  <div id="groupsGrid"></div>
 </section>
 
 <!-- WINAMAX BANNER -->
@@ -562,19 +557,75 @@ const GROUPS = [
   { name: "Groupe L", nations: ["Angleterre","Croatie","Ghana","Panama"] },
 ];
 
+// Mapping nom → ID ESPN pour les logos
+const NATION_IDS = {
+  "Mexique":"203","Afrique du Sud":"467","Corée du Sud":"451","Tchéquie":"450",
+  "Canada":"206","Bosnie-Herzégovine":"452","Qatar":"4398","Suisse":"475",
+  "Brésil":"205","Maroc":"2869","Haïti":"2654","Écosse":"580",
+  "États-Unis":"660","Paraguay":"210","Australie":"628","Turquie":"465",
+  "Allemagne":"481","Curaçao":"11678","Côte d'Ivoire":"4789","Équateur":"209",
+  "Pays-Bas":"449","Japon":"627","Suède":"466","Tunisie":"659",
+  "Belgique":"459","Égypte":"2620","Iran":"469","Nouvelle-Zélande":"2666",
+  "Espagne":"164","Cap-Vert":"2597","Arabie Saoudite":"655","Uruguay":"212",
+  "France":"478","Sénégal":"654","Irak":"4375","Norvège":"464",
+  "Argentine":"202","Algérie":"624","Autriche":"474","Jordanie":"2917",
+  "Portugal":"482","RD Congo":"2850","Ouzbékistan":"2570","Colombie":"208",
+  "Angleterre":"448","Croatie":"477","Ghana":"4469","Panama":"2659"
+};
+
+function getLogoUrl(name) {
+  const id = NATION_IDS[name];
+  if (!id) return '';
+  const slugMap = {
+    "203":"mex","467":"rsa","451":"kors","450":"cze","206":"can","452":"bih",
+    "4398":"qat","475":"sui","205":"bra","2869":"mar","2654":"hai","580":"sco",
+    "660":"usa","210":"par","628":"aus","465":"tur","481":"ger","11678":null,
+    "4789":"civ","209":"ecu","449":"ned","627":"jpn","466":"swe","659":"tun",
+    "459":"bel","2620":"egy","469":"irn","2666":"nzl","164":"esp","2597":"cpv",
+    "655":"ksa","212":"uru","478":"fra","654":"sen","4375":"irq","464":"nor",
+    "202":"arg","624":"alg","474":"aut","2917":"jor","482":"por","2850":"rdc",
+    "2570":"uzb","208":"col","448":"eng","477":"cro","4469":"gha","2659":"pan"
+  };
+  const slug = slugMap[id];
+  if (!slug) return "https://a.espncdn.com/i/teamlogos/soccer/500/" + id + ".png";
+  return "https://a.espncdn.com/i/teamlogos/countries/500/" + slug + ".png";
+}
+
 function renderGroups() {
   const grid = document.getElementById('groupsGrid');
   if (!grid) return;
   grid.innerHTML = '';
+
   GROUPS.forEach(function(g) {
-    const card = document.createElement('div');
-    card.className = 'group-card';
-    let rows = '';
+    // Titre du groupe
+    const groupDiv = document.createElement('div');
+    groupDiv.style.cssText = 'margin-bottom:32px;';
+
+    const title = document.createElement('div');
+    title.style.cssText = 'font-family:Bebas Neue,sans-serif;font-size:22px;letter-spacing:3px;color:var(--gold);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(212,168,67,0.2);';
+    title.textContent = g.name;
+    groupDiv.appendChild(title);
+
+    // Grille des 4 équipes
+    const teamsRow = document.createElement('div');
+    teamsRow.style.cssText = 'display:grid;grid-template-columns:repeat(4,1fr);gap:10px;';
+
     g.nations.forEach(function(n) {
-      rows += '<div class="nation-row"><span class="nation-name">' + n + '</span><a href="squad.html" style="font-size:10px;color:var(--gold);text-decoration:none;">Effectif →</a></div>';
+      const logo = getLogoUrl(n);
+      const id = NATION_IDS[n];
+      const card = document.createElement('div');
+      card.style.cssText = 'background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:16px 12px;text-align:center;cursor:pointer;transition:border-color .2s,transform .15s;';
+      card.onmouseover = function(){ this.style.borderColor='rgba(212,168,67,0.35)'; this.style.transform='translateY(-2px)'; };
+      card.onmouseout  = function(){ this.style.borderColor='var(--border)'; this.style.transform=''; };
+      if (id) card.onclick = function(){ window.location.href = 'squad.html?team=' + id; };
+      card.innerHTML = logo
+        ? '<img src="' + logo + '" style="width:48px;height:48px;object-fit:contain;margin:0 auto 8px;display:block;" onerror="this.style.opacity=0.2"><div style="font-size:12px;font-weight:500;">' + n + '</div>'
+        : '<div style="font-size:28px;margin-bottom:6px;">🏳️</div><div style="font-size:12px;font-weight:500;">' + n + '</div>';
+      teamsRow.appendChild(card);
     });
-    card.innerHTML = '<div class="group-header">' + g.name + '</div>' + rows;
-    grid.appendChild(card);
+
+    groupDiv.appendChild(teamsRow);
+    grid.appendChild(groupDiv);
   });
 }
 
