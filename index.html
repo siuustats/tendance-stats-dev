@@ -591,6 +591,7 @@ function renderTable(list, photosMap={}) {
 
 function filter(league, btn) {
   currentLeague = league;
+  sessionStorage.setItem('lastLeague', league);
   document.querySelectorAll('.fbtn').forEach(b => b.classList.remove('on'));
   btn.classList.add('on');
   if (allPlayers.length > 0) render();
@@ -598,9 +599,23 @@ function filter(league, btn) {
 
 // Boot
 window.addEventListener('pageshow', (e) => {
-  if (e.persisted) init(); // Recharger si page vient du cache
+  if (e.persisted) {
+    init().then(() => {
+      const saved = sessionStorage.getItem('lastLeague');
+      if (saved && saved !== 'all') {
+        const btn = document.querySelector(`.fbtn[data-l="${saved}"]`);
+        if (btn) filter(saved, btn);
+      }
+    });
+  }
 });
-init();
+init().then(() => {
+  const saved = sessionStorage.getItem('lastLeague');
+  if (saved && saved !== 'all') {
+    const btn = document.querySelector(`.fbtn[data-l="${saved}"]`);
+    if (btn) filter(saved, btn);
+  }
+});
 </script>
 </body>
 </html>
