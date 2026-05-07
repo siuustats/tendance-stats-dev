@@ -243,13 +243,13 @@ footer span { color:var(--g); }
   <!-- FILTERS -->
   <div class="filters">
     <button class="fbtn on" data-l="all" onclick="filter('all',this)">Tous</button>
-    <button class="fbtn" data-l="34" onclick="filter('34',this)"><img class="f" src="https://flagcdn.com/w20/fr.png" alt="FR"> Ligue 1</button>
-    <button class="fbtn" data-l="17" onclick="filter('17',this)"><img class="f" src="https://flagcdn.com/w20/gb-eng.png" alt="EN"> Premier League</button>
-    <button class="fbtn" data-l="8" onclick="filter('8',this)"><img class="f" src="https://flagcdn.com/w20/es.png" alt="ES"> La Liga</button>
-    <button class="fbtn" data-l="23" onclick="filter('23',this)"><img class="f" src="https://flagcdn.com/w20/it.png" alt="IT"> Serie A</button>
-    <button class="fbtn" data-l="35" onclick="filter('35',this)"><img class="f" src="https://flagcdn.com/w20/de.png" alt="DE"> Bundesliga</button>
-    <button class="fbtn" data-l="7" onclick="filter('7',this)"><img class="f" src="https://flagcdn.com/w20/eu.png" alt="EU"> LDC</button>
-    <button class="fbtn" data-l="5" onclick="filter('5',this)"><img class="f" src="https://flagcdn.com/w20/eu.png" alt="EU"> Europa</button>
+    <button class="fbtn" data-l="34" onclick="filter('34',this)"><img class="f" src="https://a.espncdn.com/i/leaguelogos/soccer/500/9.png" alt="L1"> Ligue 1</button>
+    <button class="fbtn" data-l="17" onclick="filter('17',this)"><img class="f" src="https://a.espncdn.com/i/leaguelogos/soccer/500/23.png" alt="PL"> Premier League</button>
+    <button class="fbtn" data-l="8" onclick="filter('8',this)"><img class="f" src="https://a.espncdn.com/i/leaguelogos/soccer/500/15.png" alt="Liga"> La Liga</button>
+    <button class="fbtn" data-l="23" onclick="filter('23',this)"><img class="f" src="https://a.espncdn.com/i/leaguelogos/soccer/500/12.png" alt="SA"> Serie A</button>
+    <button class="fbtn" data-l="35" onclick="filter('35',this)"><img class="f" src="https://a.espncdn.com/i/leaguelogos/soccer/500/10.png" alt="BL"> Bundesliga</button>
+    <button class="fbtn" data-l="7" onclick="filter('7',this)"><img class="f" src="https://a.espncdn.com/i/leaguelogos/soccer/500/2.png" alt="LDC"> LDC</button>
+    <button class="fbtn" data-l="5" onclick="filter('5',this)"><img class="f" src="https://a.espncdn.com/i/leaguelogos/soccer/500/2310.png" alt="EL"> Europa</button>
   </div>
 
   <!-- LOADER -->
@@ -502,7 +502,7 @@ function renderGrid(list) {
           </div>
           <div>
             <div class="pname">${p.name}</div>
-            <div class="pteam">${p.teamName||p.team||''} <img src="https://flagcdn.com/w20/${p.leagueFlag}.png" alt="${p.leagueFlagAlt}" style="width:14px;height:10px;object-fit:cover;border-radius:1px;vertical-align:middle;margin-left:2px"></div>
+            <div class="pteam">${p.teamName||p.team||''} <img src="${p.leagueFlag}" alt="${p.leagueFlagAlt}" style="width:16px;height:16px;object-fit:contain;vertical-align:middle;margin-left:2px"></div>
           </div>
         </div>
         <div class="pscore">
@@ -524,7 +524,7 @@ function renderGrid(list) {
         <div class="sigbar-head"><span>TendScore</span><span>${p.signal}%</span></div>
         <div class="track"><div class="fill" style="width:${p.signal}%"></div></div>
       </div>
-      <div class="ltag"><span class="lpill ${p.leagueCls}">${p.leagueLabel}</span> <img src="https://flagcdn.com/w20/${p.leagueFlag}.png" alt="${p.leagueFlagAlt}" style="width:14px;height:10px;object-fit:cover;border-radius:1px;vertical-align:middle"> ${p.leagueName}</div>
+      <div class="ltag"><span class="lpill ${p.leagueCls}">${p.leagueLabel}</span> <img src="${p.leagueFlag}" alt="${p.leagueFlagAlt}" style="width:16px;height:16px;object-fit:contain;vertical-align:middle"> ${p.leagueName}</div>
     `;
     c.appendChild(card);
   });
