@@ -475,14 +475,14 @@ let currentPhase = 'all';
 
 
 const TEST_PLAYERS = [
-  {id:"t1", name:"Kylian Mbappe",     teamName:"France",     signal:85, totalGoals:0, totalAssists:0, avg:0, totalGames:0, recent_goals:0, last5:[], photo:"https://img.a.transfermarkt.technology/portrait/header/342229-1682683695.jpg"},
-  {id:"t2", name:"Vinicius Jr",        teamName:"Bresil",     signal:83, totalGoals:0, totalAssists:0, avg:0, totalGames:0, recent_goals:0, last5:[], photo:"https://img.a.transfermarkt.technology/portrait/header/371998-1698058455.jpg"},
-  {id:"t3", name:"Pedri",              teamName:"Espagne",    signal:80, totalGoals:0, totalAssists:0, avg:0, totalGames:0, recent_goals:0, last5:[], photo:"https://img.a.transfermarkt.technology/portrait/header/622612-1697467489.jpg"},
-  {id:"t4", name:"Cristiano Ronaldo",  teamName:"Portugal",   signal:82, totalGoals:0, totalAssists:0, avg:0, totalGames:0, recent_goals:0, last5:[], photo:"https://img.a.transfermarkt.technology/portrait/header/8198-1681484897.jpg"},
-  {id:"t5", name:"Erling Haaland",     teamName:"Norvege",    signal:84, totalGoals:0, totalAssists:0, avg:0, totalGames:0, recent_goals:0, last5:[], photo:"https://img.a.transfermarkt.technology/portrait/header/418560-1695292452.jpg"},
-  {id:"t6", name:"Jude Bellingham",    teamName:"Angleterre", signal:81, totalGoals:0, totalAssists:0, avg:0, totalGames:0, recent_goals:0, last5:[], photo:"https://img.a.transfermarkt.technology/portrait/header/581678-1695292054.jpg"},
-  {id:"t7", name:"Lamine Yamal",       teamName:"Espagne",    signal:79, totalGoals:0, totalAssists:0, avg:0, totalGames:0, recent_goals:0, last5:[], photo:"https://img.a.transfermarkt.technology/portrait/header/939624-1714117017.jpg"},
-  {id:"t8", name:"Lionel Messi",       teamName:"Argentine",  signal:88, totalGoals:0, totalAssists:0, avg:0, totalGames:0, recent_goals:0, last5:[], photo:"https://img.a.transfermarkt.technology/portrait/header/28003-1695290264.jpg"},
+  {id:"t1",name:"Kylian Mbappe",teamName:"France",signal:85,totalGoals:0,totalAssists:0,avg:0,totalGames:1,recent_goals:0,recent_assists:0,last5:[],hot:true,trendScore:85,leagueId:6,leagueName:"Coupe du Monde",leagueFlag:"eu",leagueFlagAlt:"CDM",leagueCls:"cl",leagueLabel:"CDM",photo:"https://img.a.transfermarkt.technology/portrait/header/342229-1682683695.jpg?lm=1"},
+  {id:"t2",name:"Vinicius Jr",teamName:"Bresil",signal:83,totalGoals:0,totalAssists:0,avg:0,totalGames:1,recent_goals:0,recent_assists:0,last5:[],hot:true,trendScore:83,leagueId:6,leagueName:"Coupe du Monde",leagueFlag:"eu",leagueFlagAlt:"CDM",leagueCls:"cl",leagueLabel:"CDM",photo:"https://img.a.transfermarkt.technology/portrait/header/371998-1698058455.jpg?lm=1"},
+  {id:"t3",name:"Pedri",teamName:"Espagne",signal:80,totalGoals:0,totalAssists:0,avg:0,totalGames:1,recent_goals:0,recent_assists:0,last5:[],hot:true,trendScore:80,leagueId:6,leagueName:"Coupe du Monde",leagueFlag:"eu",leagueFlagAlt:"CDM",leagueCls:"cl",leagueLabel:"CDM",photo:"https://img.a.transfermarkt.technology/portrait/header/622612-1697467489.jpg?lm=1"},
+  {id:"t4",name:"Cristiano Ronaldo",teamName:"Portugal",signal:82,totalGoals:0,totalAssists:0,avg:0,totalGames:1,recent_goals:0,recent_assists:0,last5:[],hot:true,trendScore:82,leagueId:6,leagueName:"Coupe du Monde",leagueFlag:"eu",leagueFlagAlt:"CDM",leagueCls:"cl",leagueLabel:"CDM",photo:"https://img.a.transfermarkt.technology/portrait/header/8198-1681484897.jpg?lm=1"},
+  {id:"t5",name:"Erling Haaland",teamName:"Norvege",signal:84,totalGoals:0,totalAssists:0,avg:0,totalGames:1,recent_goals:0,recent_assists:0,last5:[],hot:true,trendScore:84,leagueId:6,leagueName:"Coupe du Monde",leagueFlag:"eu",leagueFlagAlt:"CDM",leagueCls:"cl",leagueLabel:"CDM",photo:"https://img.a.transfermarkt.technology/portrait/header/418560-1695292452.jpg?lm=1"},
+  {id:"t6",name:"Jude Bellingham",teamName:"Angleterre",signal:81,totalGoals:0,totalAssists:0,avg:0,totalGames:1,recent_goals:0,recent_assists:0,last5:[],hot:true,trendScore:81,leagueId:6,leagueName:"Coupe du Monde",leagueFlag:"eu",leagueFlagAlt:"CDM",leagueCls:"cl",leagueLabel:"CDM",photo:"https://img.a.transfermarkt.technology/portrait/header/581678-1695292054.jpg?lm=1"},
+  {id:"t7",name:"Lamine Yamal",teamName:"Espagne",signal:79,totalGoals:0,totalAssists:0,avg:0,totalGames:1,recent_goals:0,recent_assists:0,last5:[],hot:true,trendScore:79,leagueId:6,leagueName:"Coupe du Monde",leagueFlag:"eu",leagueFlagAlt:"CDM",leagueCls:"cl",leagueLabel:"CDM",photo:"https://img.a.transfermarkt.technology/portrait/header/939624-1714117017.jpg?lm=1"},
+  {id:"t8",name:"Lionel Messi",teamName:"Argentine",signal:88,totalGoals:0,totalAssists:0,avg:0,totalGames:1,recent_goals:0,recent_assists:0,last5:[],hot:true,trendScore:88,leagueId:6,leagueName:"Coupe du Monde",leagueFlag:"eu",leagueFlagAlt:"CDM",leagueCls:"cl",leagueLabel:"CDM",photo:"https://img.a.transfermarkt.technology/portrait/header/28003-1695290264.jpg?lm=1"}
 ];
 
 let allPlayers = [];
@@ -510,7 +510,7 @@ async function loadData() {
 // ── JOUEURS À SURVEILLER ──────────────────────────────────────────────────
 function renderHotPlayers() {
   const list = allPlayers;
-  const hot = list.filter(p => p.hot || (p.trendScore||0) > 0 || p.id.startsWith('t')).slice(0, 8);
+  const hot = list.slice(0, 8);
   const c = document.getElementById('hotPlayers');
   c.innerHTML = '';
   hot.forEach((p, i) => {
@@ -552,10 +552,10 @@ function renderHotPlayers() {
         <div class="fdots">${formHtml}</div>
       </div>
       <div class="chips">
-        <div class="chip"><div class="chip-n" style="color:#00e5a0">${p.totalGoals||p.goals||0}</div><div class="chip-l">Buts</div></div>
-        <div class="chip"><div class="chip-n" style="color:#5e81f4">${p.totalAssists||p.assists||0}</div><div class="chip-l">Passes</div></div>
-        <div class="chip"><div class="chip-n" style="color:#ff6b35">${recent_g}</div><div class="chip-l">Buts/5J</div></div>
-        <div class="chip"><div class="chip-n" style="color:#ffd60a">${p.avg||0}</div><div class="chip-l">Moy.</div></div>
+        <div class="chip"><div class="chip-n" style="color:var(--g)">${p.totalGoals||p.goals||0}</div><div class="chip-l">Buts</div></div>
+        <div class="chip"><div class="chip-n" style="color:var(--b)">${p.totalAssists||p.assists||0}</div><div class="chip-l">Passes</div></div>
+        <div class="chip"><div class="chip-n" style="color:var(--o)">${recent_g}</div><div class="chip-l">Buts/5J</div></div>
+        <div class="chip"><div class="chip-n" style="color:var(--y)">${p.avg||0}</div><div class="chip-l">Moy.</div></div>
       </div>
       <div class="sigbar">
         <div class="sigbar-head"><span>TendScore</span><span>${p.signal}%</span></div>
