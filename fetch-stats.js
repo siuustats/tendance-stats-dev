@@ -225,52 +225,49 @@ function rebuildPlayers(matches) {
 // ── API-Football : photos des nouveaux joueurs ───────────────────────────────
 
 async function fetchMissingPhotos(players, photosCache) {
-  const API_KEY = process.env.APIFOOTBALL_KEY;
-  if (!API_KEY) { console.log('ℹ️  APIFOOTBALL_KEY absent — photos ignorées'); return photosCache; }
+  // Utiliser Transfermarkt API (gratuit, sans clé, sans CORS)
 
   const missing = players.filter(p => !photosCache[p.id] && p.name);
   if (!missing.length) { console.log('✅ Toutes les photos sont en cache'); return photosCache; }
 
-  console.log(`\n📸 Recherche de ${missing.length} photo(s) manquante(s)...`);
+  console.log(`\n📸 Recherche de ${missing.length} photo(s) via Transfermarkt...`);
   const updated = { ...photosCache };
 
-  const LEAGUE_MAP = { 17:[39], 34:[61], 8:[140], 23:[135], 35:[78], 7:[2] };
-  const SEASONS = [2024, 2023, 2022];
-
   for (const p of missing) {
-    console.log(`  🔍 ${p.name} (${p.leagueName})`);
-    let found = false;
-    const leagueIds = LEAGUE_MAP[p.leagueId] || [39];
+    console.log(`  🔍 ${p.name}`);
+    try {
+      // Chercher l'ID Transfermarkt
+      const searchRes = await fetch(
+        `https://transfermarkt-api.fly.dev/players/search/${encodeURIComponent(p.name)}`,
+        { headers: { 'User-Agent': 'TendanceStats/1.0' } }
+      );
+      if (!searchRes.ok) { updated[p.id] = ''; continue; }
+      const searchData = await searchRes.json();
+      const playerId = searchData.results?.[0]?.id;
+      if (!playerId) { updated[p.id] = ''; console.log(`  ❌ Pas trouvé`); continue; }
 
-    for (const season of SEASONS) {
-      if (found) break;
-      for (const lid of leagueIds) {
-        if (found) break;
-        try {
-          const url = `https://v3.football.api-sports.io/players?search=${encodeURIComponent(p.name)}&league=${lid}&season=${season}`;
-          const res = await fetch(url, {
-            headers: {
-              'x-apisports-key': API_KEY,
-              'x-rapidapi-key': API_KEY,
-              'x-rapidapi-host': 'v3.football.api-sports.io'
-            }
-          });
-          if (!res.ok) continue;
-          const data = await res.json();
-          const photo = data.response?.[0]?.player?.photo;
-          if (photo) {
-            updated[p.id] = photo;
-            console.log(`  ✅ Photo trouvée (saison ${season})`);
-            found = true;
-          }
-        } catch(e) {}
-        await new Promise(r => setTimeout(r, 1200));
+      await new Promise(r => setTimeout(r, 500));
+
+      // Récupérer la photo
+      const profileRes = await fetch(
+        `https://transfermarkt-api.fly.dev/players/${playerId}/profile`,
+        { headers: { 'User-Agent': 'TendanceStats/1.0' } }
+      );
+      if (!profileRes.ok) { updated[p.id] = ''; continue; }
+      const profile = await profileRes.json();
+      const photo = profile.imageUrl;
+
+      if (photo) {
+        updated[p.id] = photo;
+        console.log(`  ✅ Photo trouvée`);
+      } else {
+        updated[p.id] = '';
+        console.log(`  ❌ Pas de photo`);
       }
-    }
-    if (!found) {
+    } catch(e) {
       updated[p.id] = '';
-      console.log(`  ❌ Pas trouvé`);
     }
+    await new Promise(r => setTimeout(r, 1000));
   }
 
   return updated;
