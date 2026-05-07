@@ -344,7 +344,15 @@ async function main() {
   }
 
   if (newMatches.length === 0) {
-    console.log('\n😴 Aucun nouveau match');
+    console.log('\n😴 Aucun nouveau match — vérification photos manquantes...');
+    // Chercher quand même les photos manquantes pour les joueurs existants
+    const existingPlayers = rebuildPlayers(stored.matches || []);
+    const updatedPhotos = await fetchMissingPhotos(existingPlayers, photosCache);
+    if (Object.keys(updatedPhotos).length !== Object.keys(photosCache).length ||
+        JSON.stringify(updatedPhotos) !== JSON.stringify(photosCache)) {
+      fs.writeFileSync('photos.json', JSON.stringify(updatedPhotos, null, 2));
+      console.log('📸 photos.json mis à jour');
+    }
     stored.updatedAt = new Date().toISOString();
     fs.writeFileSync(DATA_FILE, JSON.stringify(stored));
     return;
