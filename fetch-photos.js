@@ -1,76 +1,80 @@
-// fetch-photos.js — Script one-shot pour récupérer les photos depuis API-Football
-// A lancer UNE SEULE FOIS pour générer photos.json
+// fetch-photos.js — Photos via Transfermarkt API (gratuit, sans clé, sans CORS)
 // node fetch-photos.js
 
 const fs = require('fs');
 
-const API_KEY  = '3e9f54e72603755f88994308302b2207';
-const DATA_FILE  = 'data.json';
+const DATA_FILE   = 'data.json';
 const PHOTOS_FILE = 'photos.json';
 
-// Charger les joueurs existants depuis data.json
 function loadPlayers() {
   if (!fs.existsSync(DATA_FILE)) { console.error('❌ data.json introuvable'); process.exit(1); }
-  const data = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
-  return data.players || [];
+  return JSON.parse(fs.readFileSync(DATA_FILE, 'utf8')).players || [];
 }
 
-// Charger les photos existantes
 function loadPhotos() {
   if (fs.existsSync(PHOTOS_FILE)) {
-    try { return JSON.parse(fs.readFileSync(PHOTOS_FILE, 'utf8')); }
-    catch(e) {}
+    try { return JSON.parse(fs.readFileSync(PHOTOS_FILE, 'utf8')); } catch(e) {}
   }
   return {};
 }
 
-// Rechercher un joueur sur API-Football par nom
-async function searchPlayer(name) {
-  const url = `https://v3.football.api-sports.io/players?search=${encodeURIComponent(name)}&season=2024`;
-  const res = await fetch(url, {
-    headers: {
-      'x-apisports-key': API_KEY,
-      'x-rapidapi-host': 'v3.football.api-sports.io'
-    }
-  });
-  if (!res.ok) { console.warn(`  ⚠️  HTTP ${res.status} pour ${name}`); return null; }
-  const data = await res.json();
-  const results = data.response || [];
-  if (!results.length) return null;
-  // Prendre le premier résultat
-  return results[0]?.player?.photo || null;
+async function getTransfermarktPhoto(name) {
+  try {
+    // 1. Chercher le joueur par nom
+    const searchUrl = `https://transfermarkt-api.fly.dev/players/search/${encodeURIComponent(name)}`;
+    const searchRes = await fetch(searchUrl, {
+      headers: { 'User-Agent': 'TendanceStats/1.0' }
+    });
+    if (!searchRes.ok) return null;
+    const searchData = await searchRes.json();
+    const playerId = searchData.results?.[0]?.id;
+    if (!playerId) return null;
+
+    await new Promise(r => setTimeout(r, 500));
+
+    // 2. Récupérer le profil avec la photo
+    const profileUrl = `https://transfermarkt-api.fly.dev/players/${playerId}/profile`;
+    const profileRes = await fetch(profileUrl, {
+      headers: { 'User-Agent': 'TendanceStats/1.0' }
+    });
+    if (!profileRes.ok) return null;
+    const profile = await profileRes.json();
+    return profile.imageUrl || null;
+  } catch(e) { return null; }
 }
 
 async function main() {
-  console.log('🚀 Récupération des photos...');
+  console.log('🚀 Récupération des photos via Transfermarkt...');
   const players = loadPlayers();
   const photos  = loadPhotos();
 
-  console.log(`📋 ${players.length} joueur(s) à traiter`);
+  // Trouver les joueurs sans photo valide
+  const missing = players.filter(p => {
+    const photo = photos[p.id];
+    return !photo || photo.includes('sofascore') || photo.includes('espncdn') || photo === '';
+  });
+
+  console.log(`📋 ${missing.length} joueur(s) à mettre à jour\n`);
 
   let updated = 0;
-  for (const p of players) {
-    const espnId = p.id;
-    // Sauter si déjà une photo ESPN valide ou déjà dans photos.json
-    if (photos[espnId]) { console.log(`  ⏭️  ${p.name} — déjà en cache`); continue; }
-
-    console.log(`  🔍 Recherche: ${p.name}`);
-    const photo = await searchPlayer(p.name);
+  for (const p of missing) {
+    console.log(`🔍 ${p.name}`);
+    const photo = await getTransfermarktPhoto(p.name);
 
     if (photo) {
-      photos[espnId] = photo;
-      console.log(`  ✅ ${p.name} → ${photo}`);
+      photos[p.id] = photo;
+      console.log(`✅ ${photo}`);
+      fs.writeFileSync(PHOTOS_FILE, JSON.stringify(photos, null, 2));
       updated++;
     } else {
-      console.log(`  ❌ ${p.name} — pas trouvé`);
+      console.log(`❌ Pas trouvé`);
     }
 
-    // Respecter le rate limit API-Football (10 req/min sur plan gratuit)
-    await new Promise(r => setTimeout(r, 6500));
+    await new Promise(r => setTimeout(r, 1000));
   }
 
   fs.writeFileSync(PHOTOS_FILE, JSON.stringify(photos, null, 2));
-  console.log(`\n✅ ${updated} nouvelle(s) photo(s) | Total: ${Object.keys(photos).length}`);
+  console.log(`\n✅ ${updated}/${missing.length} photos mises à jour`);
 }
 
 main().catch(err => { console.error('💥', err); process.exit(1); });
