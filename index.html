@@ -151,6 +151,7 @@ header {
 }
 .fd.g { background:rgba(0,229,160,0.15); color:var(--g); border:1px solid rgba(0,229,160,0.25); }
 .fd.a { background:rgba(94,129,244,0.15); color:var(--b); border:1px solid rgba(94,129,244,0.25); }
+.fd.r { background:rgba(255,80,80,0.15); color:#ff5050; border:1px solid rgba(255,80,80,0.25); }
 .fd.x { background:rgba(30,34,48,0.5); color:var(--m); border:1px solid var(--border); }
 
 /* stats chips */
@@ -471,9 +472,12 @@ function renderGrid(list) {
   hot.forEach((p, i) => {
     const recent_g = p.recent_goals ?? p.form?.slice(-5).filter(f=>f==='g').length ?? 0;
     const recent_a = p.recent_assists ?? p.form?.slice(-5).filter(f=>f==='a').length ?? 0;
-    const formHtml = p.form.map(f => {
-      const t = f==='g'?'G':f==='a'?'P':'·';
-      return `<div class="fd ${f}">${t}</div>`;
+    const formHtml = (p.last5 || p.form || []).map((f, i) => {
+      const match = p.last5?.[i];
+      const won = match?.teamWon;
+      const label = won === true ? 'W' : won === false ? 'L' : 'D';
+      const cls   = won === true ? 'g' : won === false ? 'r' : 'x';
+      return `<div class="fd ${cls}">${label}</div>`;
     }).join('');
     const sc = p.signal > 88 ? 'var(--o)' : p.signal > 78 ? 'var(--g)' : 'var(--b)';
 
