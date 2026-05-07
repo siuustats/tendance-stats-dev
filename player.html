@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bukayo Saka — Tendance Stats</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:    #0a0b0f;
+      --s1:    #111318;
+      --s2:    #161820;
+      --s3:    #1e2130;
+      --g:     #00e5a0;
+      --b:     #5e81f4;
+      --o:     #ff9f43;
+      --r:     #ff5050;
+      --y:     #ffd32a;
+      --m:     #6b7280;
+      --m2:    #9ca3af;
+      --text:  #f0f2f8;
+      --border:#1e2130;
+    }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; min-height:100vh; }
+
+    /* Header */
+    .header { display:flex; align-items:center; gap:16px; padding:20px 24px; border-bottom:1px solid var(--border); }
+    .back { color:var(--m); text-decoration:none; font-size:13px; display:flex; align-items:center; gap:6px; transition:color .2s; }
+    .back:hover { color:var(--g); }
+    .site-name { font-family:'Bebas Neue',sans-serif; font-size:20px; color:var(--g); letter-spacing:2px; }
+
+    /* Hero */
+    .hero {
+      position:relative; overflow:hidden;
+      background: linear-gradient(135deg, #0d1117 0%, #111827 50%, #0a0f1a 100%);
+      border-bottom:1px solid var(--border);
+      padding:40px 24px 32px;
+    }
+    .hero::before {
+      content:''; position:absolute; top:-60px; right:-40px;
+      width:300px; height:300px; border-radius:50%;
+      background:radial-gradient(circle, rgba(0,229,160,0.08) 0%, transparent 70%);
+      pointer-events:none;
+    }
+    .hero-inner { max-width:700px; margin:0 auto; display:flex; align-items:center; gap:28px; }
+    .hero-avatar {
+      width:100px; height:100px; border-radius:50%;
+      border:3px solid rgba(0,229,160,0.3);
+      object-fit:cover; flex-shrink:0;
+      background:var(--s3);
+      font-size:36px; display:flex; align-items:center; justify-content:center;
+    }
+    .hero-avatar img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
+    .hero-info { flex:1; }
+    .hero-name { font-family:'Bebas Neue',sans-serif; font-size:42px; letter-spacing:2px; line-height:1; }
+    .hero-meta { display:flex; align-items:center; gap:12px; margin-top:6px; flex-wrap:wrap; }
+    .hero-team { font-size:14px; color:var(--m2); }
+    .hero-badge {
+      font-size:11px; font-weight:600; padding:3px 8px; border-radius:4px;
+      background:rgba(0,229,160,0.15); color:var(--g); border:1px solid rgba(0,229,160,0.25);
+    }
+    .hero-trend { margin-top:16px; display:flex; align-items:center; gap:8px; }
+    .trend-label { font-size:12px; color:var(--m); font-family:'DM Mono',monospace; }
+    .trend-bar { flex:1; height:6px; background:var(--s3); border-radius:3px; max-width:200px; }
+    .trend-fill { height:100%; border-radius:3px; background:linear-gradient(90deg, var(--g), #00ffb3); transition:width .8s ease; }
+    .trend-score { font-family:'Bebas Neue',sans-serif; font-size:28px; color:var(--g); }
+
+    /* Content */
+    .content { max-width:700px; margin:0 auto; padding:24px; }
+
+    /* KPIs */
+    .kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:24px; }
+    .kpi { background:var(--s1); border:1px solid var(--border); border-radius:12px; padding:16px; text-align:center; }
+    .kpi-n { font-family:'Bebas Neue',sans-serif; font-size:32px; }
+    .kpi-l { font-size:10px; color:var(--m); text-transform:uppercase; letter-spacing:1px; margin-top:2px; }
+
+    /* Section */
+    .section { margin-bottom:24px; }
+    .section-title {
+      font-family:'Bebas Neue',sans-serif; font-size:16px; letter-spacing:2px;
+      color:var(--m2); margin-bottom:12px; display:flex; align-items:center; gap:8px;
+    }
+    .section-title::after { content:''; flex:1; height:1px; background:var(--border); }
+
+    /* Matchs */
+    .match-row {
+      display:flex; align-items:center; gap:12px;
+      background:var(--s1); border:1px solid var(--border); border-radius:10px;
+      padding:12px 16px; margin-bottom:8px;
+    }
+    .match-date { font-size:11px; color:var(--m); width:70px; flex-shrink:0; font-family:'DM Mono',monospace; }
+    .match-teams { flex:1; font-size:13px; }
+    .match-score { font-family:'DM Mono',monospace; font-size:13px; color:var(--m2); width:40px; text-align:center; }
+    .match-stats { display:flex; gap:8px; }
+    .stat-pill {
+      font-size:11px; font-family:'DM Mono',monospace; padding:3px 8px; border-radius:4px;
+      background:var(--s3);
+    }
+    .stat-pill.goal { background:rgba(0,229,160,0.15); color:var(--g); }
+    .stat-pill.assist { background:rgba(94,129,244,0.15); color:var(--b); }
+    .result-badge {
+      font-size:11px; font-weight:700; width:24px; height:24px; border-radius:4px;
+      display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    }
+    .result-badge.w { background:rgba(0,229,160,0.15); color:var(--g); }
+    .result-badge.l { background:rgba(255,80,80,0.15); color:var(--r); }
+    .result-badge.d { background:rgba(107,114,128,0.15); color:var(--m); }
+
+    /* Form dots */
+    .form-section { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .fd {
+      width:28px; height:28px; border-radius:6px; font-size:11px; font-weight:700;
+      display:flex; align-items:center; justify-content:center; font-family:'DM Mono',monospace;
+    }
+    .fd.w { background:rgba(0,229,160,0.15); color:var(--g); border:1px solid rgba(0,229,160,0.25); }
+    .fd.l { background:rgba(255,80,80,0.15); color:var(--r); border:1px solid rgba(255,80,80,0.25); }
+    .fd.d { background:rgba(107,114,128,0.15); color:var(--m); border:1px solid var(--border); }
+
+    /* Analyse */
+    .analysis { background:var(--s1); border:1px solid var(--border); border-radius:12px; padding:20px; }
+    .analysis-row { display:flex; align-items:center; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border); }
+    .analysis-row:last-child { border-bottom:none; }
+    .analysis-label { font-size:13px; color:var(--m2); }
+    .analysis-value { font-size:13px; font-family:'DM Mono',monospace; color:var(--text); }
+    .analysis-value.green { color:var(--g); }
+    .analysis-value.orange { color:var(--o); }
+
+    /* Back link */
+    .footer { text-align:center; padding:32px 24px; color:var(--m); font-size:12px; }
+    .footer a { color:var(--g); text-decoration:none; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <a href="index.html" class="back">← Retour</a>
+  <div class="site-name">TENDANCE STATS</div>
+</div>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-avatar" id="avatar">⚽</div>
+    <div class="hero-info">
+      <div class="hero-name" id="playerName">—</div>
+      <div class="hero-meta">
+        <span class="hero-team" id="playerTeam">—</span>
+        <span class="hero-badge" id="playerLeague">—</span>
+      </div>
+      <div class="hero-trend">
+        <span class="trend-label">TENDSCORE</span>
+        <div class="trend-bar"><div class="trend-fill" id="trendFill" style="width:0%"></div></div>
+        <span class="trend-score" id="trendScore">—</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- KPIs -->
+  <div class="kpis">
+    <div class="kpi">
+      <div class="kpi-n" style="color:var(--g)" id="kGoals">—</div>
+      <div class="kpi-l">Buts</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-n" style="color:var(--b)" id="kAssists">—</div>
+      <div class="kpi-l">Passes</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-n" style="color:var(--o)" id="kGames">—</div>
+      <div class="kpi-l">Matchs</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-n" style="color:var(--y)" id="kAvg">—</div>
+      <div class="kpi-l">Moy./match</div>
+    </div>
+  </div>
+
+  <!-- Forme récente -->
+  <div class="section">
+    <div class="section-title">🔥 Forme récente</div>
+    <div class="form-section" id="formSection"></div>
+  </div>
+
+  <!-- Historique matchs -->
+  <div class="section">
+    <div class="section-title">📋 Historique</div>
+    <div id="matchHistory"></div>
+  </div>
+
+  <!-- Analyse -->
+  <div class="section">
+    <div class="section-title">📊 Analyse tendance</div>
+    <div class="analysis" id="analysis"></div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <a href="index.html">← Retour à Tendance Stats</a> · Données ESPN API · Saison 2025/2026
+</div>
+
+<script>
+async function init() {
+  // Récupérer l'ID depuis l'URL
+  const params = new URLSearchParams(window.location.search);
+  const playerId = params.get('id') || '280555';
+
+  const [dataRes, photosRes] = await Promise.all([
+    fetch('data.json?v=' + Date.now()),
+    fetch('photos.json?v=' + Date.now()).catch(() => null)
+  ]);
+
+  const data    = await dataRes.json();
+  const photosMap = photosRes?.ok ? await photosRes.json() : {};
+
+  const player = data.players?.find(p => String(p.id) === String(playerId));
+  if (!player) { document.body.innerHTML = '<p style="padding:40px;color:#fff">Joueur introuvable</p>'; return; }
+
+  // Photo
+  const photo = photosMap[player.id] || photosMap[Number(player.id)] || player.photo || '';
+  const avatarEl = document.getElementById('avatar');
+  if (photo) {
+    avatarEl.innerHTML = `<img src="${photo}" onerror="this.outerHTML='⚽'" alt="${player.name}">`;
+  }
+
+  // Hero
+  document.title = `${player.name} — Tendance Stats`;
+  document.getElementById('playerName').textContent = player.name;
+  document.getElementById('playerTeam').textContent = player.teamName || '—';
+  document.getElementById('playerLeague').textContent = player.leagueLabel || '—';
+  document.getElementById('trendScore').textContent = player.signal || 0;
+  document.getElementById('trendFill').style.width = (player.signal || 0) + '%';
+
+  // KPIs
+  document.getElementById('kGoals').textContent   = player.totalGoals || 0;
+  document.getElementById('kAssists').textContent = player.totalAssists || 0;
+  document.getElementById('kGames').textContent   = player.totalGames || 0;
+  document.getElementById('kAvg').textContent     = player.avg || 0;
+
+  // Forme
+  const formEl = document.getElementById('formSection');
+  (player.last5 || []).forEach(m => {
+    const won   = m.teamWon;
+    const label = won === true ? 'W' : won === false ? 'L' : 'D';
+    const cls   = won === true ? 'w' : won === false ? 'l' : 'd';
+    const div   = document.createElement('div');
+    div.className = `fd ${cls}`;
+    div.textContent = label;
+    formEl.appendChild(div);
+  });
+
+  // Historique matchs
+  const histEl = document.getElementById('matchHistory');
+  const playerMatches = [];
+  for (const m of (data.matches || [])) {
+    const found = (m.players || []).find(p => String(p.id) === String(playerId));
+    if (found) playerMatches.push({ match: m, stats: found });
+  }
+  playerMatches.sort((a, b) => new Date(b.match.date) - new Date(a.match.date));
+
+  if (!playerMatches.length) {
+    histEl.innerHTML = '<p style="color:var(--m);font-size:13px">Aucun match enregistré</p>';
+  } else {
+    playerMatches.forEach(({ match, stats }) => {
+      const date   = new Date(match.date).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'});
+      const won    = stats.teamWon;
+      const label  = won === true ? 'W' : won === false ? 'L' : 'D';
+      const cls    = won === true ? 'w' : won === false ? 'l' : 'd';
+      const row    = document.createElement('div');
+      row.className = 'match-row';
+      row.innerHTML = `
+        <span class="match-date">${date}</span>
+        <div class="match-teams">${match.homeTeam} <span style="color:var(--m)">vs</span> ${match.awayTeam}</div>
+        <span class="match-score">${match.homeGoals}-${match.awayGoals}</span>
+        <div class="match-stats">
+          ${stats.goals > 0 ? `<span class="stat-pill goal">⚽ ${stats.goals}B</span>` : ''}
+          ${stats.assists > 0 ? `<span class="stat-pill assist">🎯 ${stats.assists}P</span>` : ''}
+        </div>
+        <div class="result-badge ${cls}">${label}</div>
+      `;
+      histEl.appendChild(row);
+    });
+  }
+
+  // Analyse
+  const wins  = (player.last5 || []).filter(m => m.teamWon === true).length;
+  const total = (player.last5 || []).length;
+  const winRate = total ? Math.round(wins / total * 100) : 0;
+  const hotStreak = player.recent_goals > 0 || player.recent_assists > 0;
+
+  document.getElementById('analysis').innerHTML = `
+    <div class="analysis-row">
+      <span class="analysis-label">Taux de victoire (5 derniers)</span>
+      <span class="analysis-value ${winRate >= 60 ? 'green' : winRate >= 40 ? 'orange' : ''}">${winRate}%</span>
+    </div>
+    <div class="analysis-row">
+      <span class="analysis-label">Buts sur 5 derniers matchs</span>
+      <span class="analysis-value green">${player.recent_goals || 0}</span>
+    </div>
+    <div class="analysis-row">
+      <span class="analysis-label">Passes sur 5 derniers matchs</span>
+      <span class="analysis-value" style="color:var(--b)">${player.recent_assists || 0}</span>
+    </div>
+    <div class="analysis-row">
+      <span class="analysis-label">Tendance actuelle</span>
+      <span class="analysis-value ${hotStreak ? 'green' : ''}">${hotStreak ? '🔥 En forme' : '→ Stable'}</span>
+    </div>
+    <div class="analysis-row">
+      <span class="analysis-label">TendScore</span>
+      <span class="analysis-value green">${player.trendScore || 0} / 10</span>
+    </div>
+  `;
+}
+
+init().catch(console.error);
+</script>
+</body>
+</html>
