@@ -408,7 +408,6 @@ function updateCountdown() {
 // Exécuter immédiatement — le script est en bas du body donc DOM prêt
 updateCountdown();
 setInterval(updateCountdown, 1000);
-renderGroups();
 
 // ── DONNÉES ────────────────────────────────────────────────────────────────
 let cdmPlayers = [];
@@ -629,6 +628,7 @@ function renderGroups() {
   });
 }
 
+renderGroups();
 loadData();
 </script>
 </body>
