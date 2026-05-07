@@ -6,13 +6,13 @@ const fs = require('fs');
 const DATA_FILE = 'data.json';
 
 const LEAGUES = [
-  { code: 'eng.1',         id: 17, name: 'Premier League',      flag: 'https://a.espncdn.com/i/leaguelogos/soccer/500/23.png',   flagAlt: 'PL',  cls: 'pl',  label: 'PL'   },
-  { code: 'fra.1',         id: 34, name: 'Ligue 1',             flag: 'https://a.espncdn.com/i/leaguelogos/soccer/500/9.png',    flagAlt: 'L1',  cls: 'l1',  label: 'L1'   },
-  { code: 'esp.1',         id: 8,  name: 'La Liga',             flag: 'https://a.espncdn.com/i/leaguelogos/soccer/500/15.png',   flagAlt: 'Liga',cls: 'lg',  label: 'LIGA' },
-  { code: 'ita.1',         id: 23, name: 'Serie A',             flag: 'https://a.espncdn.com/i/leaguelogos/soccer/500/12.png',   flagAlt: 'SA',  cls: 'sa',  label: 'SA'   },
-  { code: 'ger.1',         id: 35, name: 'Bundesliga',          flag: 'https://a.espncdn.com/i/leaguelogos/soccer/500/10.png',   flagAlt: 'BL',  cls: 'bl',  label: 'BL'   },
-  { code: 'uefa.champions',id: 7,  name: 'Ligue des Champions', flag: 'https://a.espncdn.com/i/leaguelogos/soccer/500/2.png',    flagAlt: 'LDC', cls: 'cl',  label: 'LDC'  },
-  { code: 'uefa.europa',   id: 5,  name: 'Europa League',       flag: 'https://a.espncdn.com/i/leaguelogos/soccer/500/2310.png', flagAlt: 'EL',  cls: 'el',  label: 'EL'   },
+  { code: 'eng.1',         id: 17, name: 'Premier League',      flag: 'gb-eng', flagAlt: 'EN', cls: 'pl',  label: 'PL'   },
+  { code: 'fra.1',         id: 34, name: 'Ligue 1',             flag: 'fr',     flagAlt: 'FR', cls: 'l1',  label: 'L1'   },
+  { code: 'esp.1',         id: 8,  name: 'La Liga',             flag: 'es',     flagAlt: 'ES', cls: 'lg',  label: 'LIGA' },
+  { code: 'ita.1',         id: 23, name: 'Serie A',             flag: 'it',     flagAlt: 'IT', cls: 'sa',  label: 'SA'   },
+  { code: 'ger.1',         id: 35, name: 'Bundesliga',          flag: 'de',     flagAlt: 'DE', cls: 'bl',  label: 'BL'   },
+  { code: 'uefa.champions',id: 7,  name: 'Ligue des Champions', flag: 'eu',     flagAlt: 'CL', cls: 'cl',  label: 'LDC'  },
+  { code: 'uefa.europa',   id: 5,  name: 'Europa League',       flag: 'eu',     flagAlt: 'EL', cls: 'el',  label: 'EL'   },
 ];
 
 // ── Calculs ───────────────────────────────────────────────────────────────────
