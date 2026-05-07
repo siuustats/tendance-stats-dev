@@ -212,7 +212,7 @@ function rebuildPlayers(matches) {
       leagueFlag: leagueInfo.leagueFlag, leagueFlagAlt: leagueInfo.leagueFlagAlt,
       leagueCls: leagueInfo.leagueCls, leagueLabel: leagueInfo.leagueLabel,
       totalGoals, totalAssists, totalGames: data.matches.length,
-      avg: data.matches.length > 0 ? parseFloat((totalGoals / data.matches.length).toFixed(2)) : 0,
+      avg: data.matches.length > 0 ? parseFloat(((totalGoals + totalAssists) / data.matches.length).toFixed(2)) : 0,
       recent_goals, recent_assists, trendScore,
       form: buildFormDots(last5), last5,
       signal: Math.min(98, Math.round(50 + trendScore * 10)),
