@@ -485,6 +485,8 @@ const TEST_PLAYERS = [
   {id:"t8", name:"Lionel Messi",       teamName:"Argentine",  signal:88, totalGoals:0, totalAssists:0, avg:0, totalGames:0, recent_goals:0, last5:[], photo:"https://img.a.transfermarkt.technology/portrait/header/28003-1695290264.jpg"},
 ];
 
+let allPlayers = [];
+
 async function loadData() {
   try {
     const [dataRes, photosRes] = await Promise.all([
@@ -496,9 +498,11 @@ async function loadData() {
     window._photosMap = photosMap;
     cdmMatches = (data.matches || []).filter(m => m.leagueId === 6);
     cdmPlayers = [];
+    allPlayers = TEST_PLAYERS;
     renderHotPlayers();
     renderRanking();
   } catch(e) {
+    allPlayers = TEST_PLAYERS;
     renderHotPlayers();
   }
 }
