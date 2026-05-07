@@ -498,7 +498,7 @@ function renderGrid(list) {
         </div>
       </div>
       <div class="formrow">
-        <span class="fl">10 matchs</span>
+        <span class="fl">${p.totalGames||p.last5?.length||1} match${(p.totalGames||1)>1?'s':''}</span>
         <div class="fdots">${formHtml}</div>
       </div>
       <div class="chips">
