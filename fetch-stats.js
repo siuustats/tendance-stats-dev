@@ -285,6 +285,10 @@ async function fetchMissingPhotos(players, photosCache) {
 async function main() {
   console.log('🚀 Début — ' + new Date().toISOString());
 
+  // Charger les données existantes EN PREMIER
+  const stored    = loadData();
+  const storedIds = new Set((stored.matches || []).map(m => m.fixtureId));
+
   // Charger le cache de photos
   let photosCache = {};
   if (fs.existsSync('photos.json')) {
@@ -293,18 +297,16 @@ async function main() {
   }
   console.log(`📸 ${Object.keys(photosCache).length} photo(s) en cache`);
 
-  // Charger les joueurs connus (nouvelle saison) pour conserver photos/noms
+  // Charger les joueurs connus pour conserver photos/noms
   const knownPlayers = stored.knownPlayers || {};
   if (Object.keys(knownPlayers).length) {
     console.log(`👥 ${Object.keys(knownPlayers).length} joueur(s) connus de la saison précédente`);
-    // Injecter leurs photos dans le cache si absentes
     for (const [id, p] of Object.entries(knownPlayers)) {
       if (!photosCache[id] && p.photo) photosCache[id] = p.photo;
     }
   }
 
-  // Chercher sur les 3 derniers jours pour ne rater aucun match
-  // (le script tourne à 21h50 UTC = 23h50 FR, donc aujourd'hui est encore en cours)
+  // Chercher sur les 3 derniers jours
   const dates = [];
   for (let i = 0; i <= 2; i++) {
     const d = new Date();
@@ -312,9 +314,6 @@ async function main() {
     dates.push(d.toISOString().slice(0, 10).replace(/-/g, ''));
   }
   console.log(`📅 Dates cibles : ${dates.join(', ')}`);
-
-  const stored     = loadData();
-  const storedIds  = new Set((stored.matches || []).map(m => m.fixtureId));
   const newMatches = [];
 
   for (const league of LEAGUES) {
