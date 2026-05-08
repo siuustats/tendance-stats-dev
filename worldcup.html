@@ -486,14 +486,14 @@ let currentPhase = 'all';
 
 
 const TEST_PLAYERS = [
-  {id:"t1",name:"Kylian Mbappe",teamName:"France",signal:85,totalGoals:0,totalAssists:0,avg:0,totalGames:1,recent_goals:0,recent_assists:0,last5:[],hot:true,trendScore:85,leagueId:6,leagueName:"Coupe du Monde",leagueFlag:"fr",leagueFlagAlt:"CDM",leagueCls:"cl",leagueLabel:"CDM",photo:"https://img.a.transfermarkt.technology/portrait/header/342229-1682683695.jpg?lm=1"},
-  {id:"t2",name:"Vinicius Jr",teamName:"Bresil",signal:83,totalGoals:0,totalAssists:0,avg:0,totalGames:1,recent_goals:0,recent_assists:0,last5:[],hot:true,trendScore:83,leagueId:6,leagueName:"Coupe du Monde",leagueFlag:"br",leagueFlagAlt:"CDM",leagueCls:"cl",leagueLabel:"CDM",photo:"https://img.a.transfermarkt.technology/portrait/header/371998-1698058455.jpg?lm=1"},
-  {id:"t3",name:"Pedri",teamName:"Espagne",signal:80,totalGoals:0,totalAssists:0,avg:0,totalGames:1,recent_goals:0,recent_assists:0,last5:[],hot:true,trendScore:80,leagueId:6,leagueName:"Coupe du Monde",leagueFlag:"es",leagueFlagAlt:"CDM",leagueCls:"cl",leagueLabel:"CDM",photo:"https://img.a.transfermarkt.technology/portrait/header/622612-1697467489.jpg?lm=1"},
-  {id:"t4",name:"Cristiano Ronaldo",teamName:"Portugal",signal:82,totalGoals:0,totalAssists:0,avg:0,totalGames:1,recent_goals:0,recent_assists:0,last5:[],hot:true,trendScore:82,leagueId:6,leagueName:"Coupe du Monde",leagueFlag:"pt",leagueFlagAlt:"CDM",leagueCls:"cl",leagueLabel:"CDM",photo:"https://img.a.transfermarkt.technology/portrait/header/8198-1681484897.jpg?lm=1"},
-  {id:"t5",name:"Erling Haaland",teamName:"Norvege",signal:84,totalGoals:0,totalAssists:0,avg:0,totalGames:1,recent_goals:0,recent_assists:0,last5:[],hot:true,trendScore:84,leagueId:6,leagueName:"Coupe du Monde",leagueFlag:"no",leagueFlagAlt:"CDM",leagueCls:"cl",leagueLabel:"CDM",photo:"https://img.a.transfermarkt.technology/portrait/header/418560-1695292452.jpg?lm=1"},
-  {id:"t6",name:"Jude Bellingham",teamName:"Angleterre",signal:81,totalGoals:0,totalAssists:0,avg:0,totalGames:1,recent_goals:0,recent_assists:0,last5:[],hot:true,trendScore:81,leagueId:6,leagueName:"Coupe du Monde",leagueFlag:"gb-eng",leagueFlagAlt:"CDM",leagueCls:"cl",leagueLabel:"CDM",photo:"https://img.a.transfermarkt.technology/portrait/header/581678-1695292054.jpg?lm=1"},
-  {id:"t7",name:"Lamine Yamal",teamName:"Espagne",signal:79,totalGoals:0,totalAssists:0,avg:0,totalGames:1,recent_goals:0,recent_assists:0,last5:[],hot:true,trendScore:79,leagueId:6,leagueName:"Coupe du Monde",leagueFlag:"es",leagueFlagAlt:"CDM",leagueCls:"cl",leagueLabel:"CDM",photo:"https://img.a.transfermarkt.technology/portrait/header/939624-1714117017.jpg?lm=1"},
-  {id:"t8",name:"Lionel Messi",teamName:"Argentine",signal:88,totalGoals:0,totalAssists:0,avg:0,totalGames:1,recent_goals:0,recent_assists:0,last5:[],hot:true,trendScore:88,leagueId:6,leagueName:"Coupe du Monde",leagueFlag:"ar",leagueFlagAlt:"CDM",leagueCls:"cl",leagueLabel:"CDM",photo:"https://img.a.transfermarkt.technology/portrait/header/28003-1695290264.jpg?lm=1"}
+  {id:"t1", espnId:189108,  name:"Kylian Mbappe",    teamName:"France",     signal:85, totalGoals:0, totalAssists:0, avg:0, totalGames:0, recent_goals:0, recent_assists:0, last5:[], hot:true, trendScore:85, leagueId:6, leagueName:"Coupe du Monde", leagueFlag:"fr",     leagueFlagAlt:"FR",  leagueCls:"cl", leagueLabel:"CDM", photo:""},
+  {id:"t2", espnId:279615,  name:"Vinicius Jr",       teamName:"Bresil",     signal:83, totalGoals:0, totalAssists:0, avg:0, totalGames:0, recent_goals:0, recent_assists:0, last5:[], hot:true, trendScore:83, leagueId:6, leagueName:"Coupe du Monde", leagueFlag:"br",     leagueFlagAlt:"BR",  leagueCls:"cl", leagueLabel:"CDM", photo:""},
+  {id:"t3", espnId:302854,  name:"Pedri",             teamName:"Espagne",    signal:80, totalGoals:0, totalAssists:0, avg:0, totalGames:0, recent_goals:0, recent_assists:0, last5:[], hot:true, trendScore:80, leagueId:6, leagueName:"Coupe du Monde", leagueFlag:"es",     leagueFlagAlt:"ES",  leagueCls:"cl", leagueLabel:"CDM", photo:""},
+  {id:"t4", espnId:47431,   name:"Cristiano Ronaldo", teamName:"Portugal",   signal:82, totalGoals:0, totalAssists:0, avg:0, totalGames:0, recent_goals:0, recent_assists:0, last5:[], hot:true, trendScore:82, leagueId:6, leagueName:"Coupe du Monde", leagueFlag:"pt",     leagueFlagAlt:"PT",  leagueCls:"cl", leagueLabel:"CDM", photo:""},
+  {id:"t5", espnId:253989,  name:"Erling Haaland",    teamName:"Norvege",    signal:84, totalGoals:0, totalAssists:0, avg:0, totalGames:0, recent_goals:0, recent_assists:0, last5:[], hot:true, trendScore:84, leagueId:6, leagueName:"Coupe du Monde", leagueFlag:"no",     leagueFlagAlt:"NO",  leagueCls:"cl", leagueLabel:"CDM", photo:""},
+  {id:"t6", espnId:303859,  name:"Jude Bellingham",   teamName:"Angleterre", signal:81, totalGoals:0, totalAssists:0, avg:0, totalGames:0, recent_goals:0, recent_assists:0, last5:[], hot:true, trendScore:81, leagueId:6, leagueName:"Coupe du Monde", leagueFlag:"gb-eng", leagueFlagAlt:"EN",  leagueCls:"cl", leagueLabel:"CDM", photo:""},
+  {id:"t7", espnId:372944,  name:"Lamine Yamal",      teamName:"Espagne",    signal:79, totalGoals:0, totalAssists:0, avg:0, totalGames:0, recent_goals:0, recent_assists:0, last5:[], hot:true, trendScore:79, leagueId:6, leagueName:"Coupe du Monde", leagueFlag:"es",     leagueFlagAlt:"ES",  leagueCls:"cl", leagueLabel:"CDM", photo:""},
+  {id:"t8", espnId:45843,   name:"Lionel Messi",      teamName:"Argentine",  signal:88, totalGoals:0, totalAssists:0, avg:0, totalGames:0, recent_goals:0, recent_assists:0, last5:[], hot:true, trendScore:88, leagueId:6, leagueName:"Coupe du Monde", leagueFlag:"ar",     leagueFlagAlt:"AR",  leagueCls:"cl", leagueLabel:"CDM", photo:""},
 ];
 
 let allPlayers = [];
@@ -507,9 +507,30 @@ async function loadData() {
     const data      = await dataRes.json();
     const photosMap = photosRes?.ok ? await photosRes.json() : {};
     window._photosMap = photosMap;
+
+    // Joueurs CDM réels si disponibles
+    const cdmReal = (data.players || []).filter(p => p.leagueId === 6).map(p => ({
+      ...p, photo: photosMap[p.id] || photosMap[String(p.id)] || p.photo || ''
+    }));
+
+    // Injecter les photos de photos.json dans TEST_PLAYERS par nom
+    // Construire un index nom → photo depuis data.json
+    const nameToPhoto = {};
+    (data.players || []).forEach(p => {
+      if (p.photo || photosMap[p.id]) {
+        nameToPhoto[p.name] = photosMap[p.id] || photosMap[String(p.id)] || p.photo;
+      }
+    });
+
+    // Appliquer aux joueurs tests si photo trouvée par nom
+    const testWithPhotos = TEST_PLAYERS.map(p => ({
+      ...p,
+      photo: nameToPhoto[p.name] || p.photo || ''
+    }));
+
+    allPlayers = cdmReal.length ? cdmReal : testWithPhotos;
     cdmMatches = (data.matches || []).filter(m => m.leagueId === 6);
-    cdmPlayers = [];
-    allPlayers = TEST_PLAYERS;
+    cdmPlayers = cdmReal;
     renderHotPlayers();
     renderRanking();
   } catch(e) {
