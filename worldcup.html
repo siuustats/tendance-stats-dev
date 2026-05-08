@@ -267,7 +267,7 @@
     .page-footer a { color:var(--muted2); }
 
     /* ── PAGINATION ──────────────────────────────────────────────── */
-    .pagination { display:flex; align-items:center; justify-content:center; gap:8px; margin-top:16px; }
+    .pagination { display:flex; align-items:center; justify-content:center; gap:8px; margin-top:12px; margin-bottom:8px; }
     .pag-btn {
       background:var(--s2); border:1px solid var(--border); color:var(--muted2);
       font-size:12px; font-family:'Oswald',sans-serif; padding:6px 14px;
@@ -532,6 +532,26 @@ const RANKING_PLAYERS = [
   {id:"r18", espnId:148871,  name:"Joshua Kimmich",      teamName:"Allemagne",  totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:62, photo:"", leagueFlag:"de"},
   {id:"r19", espnId:214616,  name:"Niclas Fullkrug",     teamName:"Allemagne",  totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:60, photo:"", leagueFlag:"de"},
   {id:"r20", espnId:164469,  name:"Alvaro Morata",       teamName:"Espagne",    totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:58, photo:"", leagueFlag:"es"},
+  {id:"r21", espnId:267831,  name:"Federico Valverde",    teamName:"Uruguay",    totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:57, photo:"", leagueFlag:"uy"},
+  {id:"r22", espnId:172843,  name:"Riyad Mahrez",         teamName:"Algérie",    totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:56, photo:"", leagueFlag:"dz"},
+  {id:"r23", espnId:241351,  name:"Achraf Hakimi",        teamName:"Maroc",      totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:55, photo:"", leagueFlag:"ma"},
+  {id:"r24", espnId:193669,  name:"Victor Osimhen",       teamName:"Nigeria",    totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:54, photo:"", leagueFlag:"ng"},
+  {id:"r25", espnId:156145,  name:"Son Heung-min",        teamName:"Corée du Sud",totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:53, photo:"", leagueFlag:"kr"},
+  {id:"r26", espnId:221728,  name:"Florian Wirtz",        teamName:"Allemagne",  totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:52, photo:"", leagueFlag:"de"},
+  {id:"r27", espnId:193041,  name:"Nico Williams",        teamName:"Espagne",    totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:51, photo:"", leagueFlag:"es"},
+  {id:"r28", espnId:328702,  name:"Kobbie Mainoo",        teamName:"Angleterre", totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:50, photo:"", leagueFlag:"gb-eng"},
+  {id:"r29", espnId:169880,  name:"Neymar Jr",            teamName:"Brésil",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:49, photo:"", leagueFlag:"br"},
+  {id:"r30", espnId:152083,  name:"Robert Lewandowski",   teamName:"Pologne",    totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:48, photo:"", leagueFlag:"pl"},
+  {id:"r31", espnId:191580,  name:"Bernardo Silva",       teamName:"Portugal",   totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:47, photo:"", leagueFlag:"pt"},
+  {id:"r32", espnId:179703,  name:"Marcos Llorente",      teamName:"Espagne",    totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:46, photo:"", leagueFlag:"es"},
+  {id:"r33", espnId:158732,  name:"Memphis Depay",        teamName:"Pays-Bas",   totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:45, photo:"", leagueFlag:"nl"},
+  {id:"r34", espnId:193174,  name:"Cody Gakpo",           teamName:"Pays-Bas",   totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:44, photo:"", leagueFlag:"nl"},
+  {id:"r35", espnId:212331,  name:"Evan Ferguson",        teamName:"Irlande",    totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:43, photo:"", leagueFlag:"ie"},
+  {id:"r36", espnId:197031,  name:"Martin Odegaard",      teamName:"Norvège",    totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:42, photo:"", leagueFlag:"no"},
+  {id:"r37", espnId:258921,  name:"Rodrygo",              teamName:"Brésil",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:41, photo:"", leagueFlag:"br"},
+  {id:"r38", espnId:139919,  name:"Romelu Lukaku",        teamName:"Belgique",   totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:40, photo:"", leagueFlag:"be"},
+  {id:"r39", espnId:233029,  name:"Jamal Musiala",        teamName:"Allemagne",  totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:39, photo:"", leagueFlag:"de"},
+  {id:"r40", espnId:194023,  name:"Hakim Ziyech",         teamName:"Maroc",      totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:38, photo:"", leagueFlag:"ma"},
 ];
 
 async function loadData() {
