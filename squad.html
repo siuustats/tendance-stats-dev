@@ -230,6 +230,7 @@ function renderTeams() {
 }
 
 async function loadSquad(teamId, team, group) {
+  window.currentTeamName = team.name;
   // Afficher la vue effectif
   document.getElementById('teamsView').style.display = 'none';
   const squadView = document.getElementById('squadView');
@@ -269,11 +270,17 @@ async function loadSquad(teamId, team, group) {
     for (const [pos, players] of sorted) {
       html += `<div class="pos-section"><div class="pos-title">${pos.toUpperCase()}</div><div class="players-grid">`;
       for (const p of players) {
-        const photo = p.headshot?.href || '';
-        const jersey = p.jersey || '';
-        const name = p.athlete?.displayName || p.displayName || p.fullName || '—';
+        const photo    = p.headshot?.href || '';
+        const jersey   = p.jersey || '';
+        const name     = p.athlete?.displayName || p.displayName || p.fullName || '—';
+        const pid      = p.athlete?.id || p.id || '';
+        const photoEnc = encodeURIComponent(photo);
+        const nameEnc  = encodeURIComponent(name);
+        const teamEnc  = encodeURIComponent(currentTeamName || '');
+        const posEnc   = encodeURIComponent(pos);
+        const url      = `player-cdm.html?id=${pid}&name=${nameEnc}&photo=${photoEnc}&pos=${posEnc}&jersey=${jersey}&teamName=${teamEnc}`;
         html += `
-          <div class="player-card">
+          <div class="player-card" style="cursor:pointer" onclick="window.location.href='${url}'">
             <div class="player-jersey">${jersey}</div>
             <div class="player-avatar">
               ${photo ? `<img src="${photo}" onerror="this.outerHTML='⚽'" alt="${name}">` : '⚽'}
