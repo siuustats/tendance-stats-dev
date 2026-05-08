@@ -217,7 +217,7 @@ async function init() {
   const data    = await dataRes.json();
   const photosMap = photosRes?.ok ? await photosRes.json() : {};
 
-  const player = data.players?.find(p => String(p.id) === String(playerId));
+  const player = data.players?.find(p => String(p.id) === String(playerId) && p.leagueId !== 6);
   if (!player) { document.body.innerHTML = '<p style="padding:40px;color:#fff">Joueur introuvable</p>'; return; }
 
   // Photo
@@ -257,6 +257,7 @@ async function init() {
   const histEl = document.getElementById('matchHistory');
   const playerMatches = [];
   for (const m of (data.matches || [])) {
+    if (m.leagueId === 6) continue; // exclure matchs CDM — réservés à player-cdm.html
     const found = (m.players || []).find(p => String(p.id) === String(playerId));
     if (found) playerMatches.push({ match: m, stats: found });
   }
