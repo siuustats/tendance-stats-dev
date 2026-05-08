@@ -499,26 +499,26 @@ const TEST_PLAYERS = [
 let allPlayers = [];
 
 const RANKING_PLAYERS = [
-  {id:"r1", name:"Kylian Mbappe",      teamName:"France",     totalGoals:0, totalAssists:0, totalGames:0, avg:0,  signal:95, photo:"", leagueFlag:"fr"},
-  {id:"r2", name:"Lionel Messi",       teamName:"Argentine",  totalGoals:0, totalAssists:0, totalGames:0, avg:0,  signal:92, photo:"", leagueFlag:"ar"},
-  {id:"r3", name:"Erling Haaland",     teamName:"Norvege",    totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:90, photo:"", leagueFlag:"no"},
-  {id:"r4", name:"Vinicius Jr",        teamName:"Bresil",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:88, photo:"", leagueFlag:"br"},
-  {id:"r5", name:"Cristiano Ronaldo",  teamName:"Portugal",   totalGoals:0, totalAssists:0, totalGames:0, avg:0,  signal:85, photo:"", leagueFlag:"pt"},
-  {id:"r6", name:"Jude Bellingham",    teamName:"Angleterre", totalGoals:0, totalAssists:0, totalGames:0, avg:0,  signal:83, photo:"", leagueFlag:"gb-eng"},
-  {id:"r7", name:"Lamine Yamal",       teamName:"Espagne",    totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:82, photo:"", leagueFlag:"es"},
-  {id:"r8", name:"Pedri",              teamName:"Espagne",    totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:80, photo:"", leagueFlag:"es"},
-  {id:"r9", name:"Bukayo Saka",        teamName:"Angleterre", totalGoals:0, totalAssists:0, totalGames:0, avg:0,  signal:78, photo:"", leagueFlag:"gb-eng"},
-  {id:"r10",name:"Gavi",               teamName:"Espagne",    totalGoals:0, totalAssists:0, totalGames:0, avg:0,  signal:76, photo:"", leagueFlag:"es"},
-  {id:"r11",name:"Phil Foden",         teamName:"Angleterre", totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:74, photo:"", leagueFlag:"gb-eng"},
-  {id:"r12",name:"Raphinha",           teamName:"Bresil",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:72, photo:"", leagueFlag:"br"},
-  {id:"r13",name:"Antoine Griezmann",  teamName:"France",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:71, photo:"", leagueFlag:"fr"},
-  {id:"r14",name:"Bruno Fernandes",    teamName:"Portugal",   totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:70, photo:"", leagueFlag:"pt"},
-  {id:"r15",name:"Rodrigo De Paul",    teamName:"Argentine",  totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:68, photo:"", leagueFlag:"ar"},
-  {id:"r16",name:"Declan Rice",        teamName:"Angleterre", totalGoals:0, totalAssists:0, totalGames:0, avg:0,  signal:66, photo:"", leagueFlag:"gb-eng"},
-  {id:"r17",name:"Aurelien Tchouameni",teamName:"France",     totalGoals:0, totalAssists:0, totalGames:0, avg:0,  signal:64, photo:"", leagueFlag:"fr"},
-  {id:"r18",name:"Joshua Kimmich",     teamName:"Allemagne",  totalGoals:0, totalAssists:0, totalGames:0, avg:0,  signal:62, photo:"", leagueFlag:"de"},
-  {id:"r19",name:"Niclas Fullkrug",    teamName:"Allemagne",  totalGoals:0, totalAssists:0, totalGames:0, avg:0,  signal:60, photo:"", leagueFlag:"de"},
-  {id:"r20",name:"Alvaro Morata",      teamName:"Espagne",    totalGoals:0, totalAssists:0, totalGames:0, avg:0,  signal:58, photo:"", leagueFlag:"es"},
+  {id:"r1",  espnId:189108,  name:"Kylian Mbappe",      teamName:"France",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:95, photo:"", leagueFlag:"fr"},
+  {id:"r2",  espnId:45843,   name:"Lionel Messi",        teamName:"Argentine",  totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:92, photo:"", leagueFlag:"ar"},
+  {id:"r3",  espnId:253989,  name:"Erling Haaland",      teamName:"Norvege",    totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:90, photo:"", leagueFlag:"no"},
+  {id:"r4",  espnId:279615,  name:"Vinicius Jr",         teamName:"Bresil",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:88, photo:"", leagueFlag:"br"},
+  {id:"r5",  espnId:47431,   name:"Cristiano Ronaldo",   teamName:"Portugal",   totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:85, photo:"", leagueFlag:"pt"},
+  {id:"r6",  espnId:303859,  name:"Jude Bellingham",     teamName:"Angleterre", totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:83, photo:"", leagueFlag:"gb-eng"},
+  {id:"r7",  espnId:372944,  name:"Lamine Yamal",        teamName:"Espagne",    totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:82, photo:"", leagueFlag:"es"},
+  {id:"r8",  espnId:302854,  name:"Pedri",               teamName:"Espagne",    totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:80, photo:"", leagueFlag:"es"},
+  {id:"r9",  espnId:282679,  name:"Bukayo Saka",         teamName:"Angleterre", totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:78, photo:"", leagueFlag:"gb-eng"},
+  {id:"r10", espnId:318143,  name:"Gavi",                teamName:"Espagne",    totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:76, photo:"", leagueFlag:"es"},
+  {id:"r11", espnId:279299,  name:"Phil Foden",          teamName:"Angleterre", totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:74, photo:"", leagueFlag:"gb-eng"},
+  {id:"r12", espnId:289668,  name:"Raphinha",            teamName:"Bresil",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:72, photo:"", leagueFlag:"br"},
+  {id:"r13", espnId:54679,   name:"Antoine Griezmann",   teamName:"France",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:71, photo:"", leagueFlag:"fr"},
+  {id:"r14", espnId:193184,  name:"Bruno Fernandes",     teamName:"Portugal",   totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:70, photo:"", leagueFlag:"pt"},
+  {id:"r15", espnId:199216,  name:"Rodrigo De Paul",     teamName:"Argentine",  totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:68, photo:"", leagueFlag:"ar"},
+  {id:"r16", espnId:300447,  name:"Declan Rice",         teamName:"Angleterre", totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:66, photo:"", leagueFlag:"gb-eng"},
+  {id:"r17", espnId:325354,  name:"Aurelien Tchouameni", teamName:"France",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:64, photo:"", leagueFlag:"fr"},
+  {id:"r18", espnId:148871,  name:"Joshua Kimmich",      teamName:"Allemagne",  totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:62, photo:"", leagueFlag:"de"},
+  {id:"r19", espnId:214616,  name:"Niclas Fullkrug",     teamName:"Allemagne",  totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:60, photo:"", leagueFlag:"de"},
+  {id:"r20", espnId:164469,  name:"Alvaro Morata",       teamName:"Espagne",    totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:58, photo:"", leagueFlag:"es"},
 ];
 
 async function loadData() {
@@ -545,15 +545,21 @@ async function loadData() {
       }
     });
 
-    // Appliquer aux joueurs tests si photo trouvée par nom
+    // Appliquer aux joueurs tests si photo trouvée par nom ou espnId
     const testWithPhotos = TEST_PLAYERS.map(p => ({
       ...p,
-      photo: nameToPhoto[p.name] || p.photo || ''
+      photo: photosMap[p.espnId] || photosMap[String(p.espnId)] || nameToPhoto[p.name] || p.photo || ''
+    }));
+
+    // Injecter les photos dans RANKING_PLAYERS via espnId
+    const rankingWithPhotos = RANKING_PLAYERS.map(p => ({
+      ...p,
+      photo: photosMap[p.espnId] || photosMap[String(p.espnId)] || nameToPhoto[p.name] || p.photo || ''
     }));
 
     allPlayers = cdmReal.length ? cdmReal : testWithPhotos;
     cdmMatches = (data.matches || []).filter(m => m.leagueId === 6);
-    cdmPlayers = cdmReal;
+    cdmPlayers = cdmReal.length ? cdmReal : rankingWithPhotos;
     renderHotPlayers();
     renderRanking();
   } catch(e) {
@@ -656,7 +662,7 @@ function renderRanking() {
     const tr = document.createElement('div');
     tr.className = 'ranking-row';
     tr.onclick = () => {
-      const pid = p.id && p.id.startsWith('t') ? (p.espnId || p.id) : p.id;
+      const pid = (p.espnId) ? p.espnId : p.id;
       window.location.href = `player-cdm.html?id=${pid}&name=${encodeURIComponent(p.name)}&teamName=${encodeURIComponent(p.teamName||'')}&photo=${encodeURIComponent(p.photo||'')}`;
     };
     tr.innerHTML = `
