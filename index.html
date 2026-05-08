@@ -601,8 +601,8 @@ function renderTable(list, photosMap={}, page=1) {
       <td><span class="lpill ${p.leagueCls}">${p.leagueLabel}</span></td>
       <td><span class="num g">${p.totalGoals||p.goals||0}</span></td>
       <td><span class="num a">${p.totalAssists||p.assists||0}</span></td>
-      <td><span class="num">${p.totalGames||p.games||0}</span></td>
-      <td><span class="num" style="color:${p.signal>85?'var(--o)':'var(--m2)'}">${p.avg||0}</span></td>
+      <td><span class="num" style="color:var(--m2)">${p.totalGames||p.games||0}</span></td>
+      <td><span class="num" style="color:var(--y)">${p.avg||0}</span></td>
     `;
     tbody.appendChild(tr);
   });
