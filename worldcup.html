@@ -652,7 +652,8 @@ function renderHotPlayers() {
   if (hot.length === 0) c.innerHTML = '<div style="color:var(--m);font-size:13px;padding:16px">Aucun joueur "en forme" pour cette sélection.</div>';
 }
 
-function renderRanking() {
+function renderRanking(page=1) {
+  currentPageCDM = page;
   const table = document.getElementById('rankingTable');
   const empty = document.getElementById('rankingEmpty');
 
@@ -660,17 +661,22 @@ function renderRanking() {
   const sorted = [...source]
     .sort((a,b) => (b.totalGoals+b.totalAssists) - (a.totalGoals+a.totalAssists));
 
-  // Garder seulement le head + empty ou rows
   const existingRows = table.querySelectorAll('.ranking-row');
   existingRows.forEach(r => r.remove());
 
   if (!sorted.length) {
     if (empty) empty.style.display = 'block';
+    renderPaginationCDM(0, page);
     return;
   }
   if (empty) empty.style.display = 'none';
 
-  sorted.forEach((p, i) => {
+  const total = Math.min(sorted.length, 40);
+  const start = (page - 1) * CDM_PAGE_SIZE;
+  const slice = sorted.slice(start, Math.min(start + CDM_PAGE_SIZE, total));
+
+  slice.forEach((p, i) => {
+    const rank = start + i + 1;
     const photo = p.photo || '';
     const tr = document.createElement('div');
     tr.className = 'ranking-row';
@@ -696,6 +702,7 @@ function renderRanking() {
     `;
     table.appendChild(tr);
   });
+  renderPaginationCDM(sorted.length, page);
 }
 
 function renderPaginationCDM(total, page) {
