@@ -14,6 +14,7 @@ const LEAGUES = [
   { code: 'uefa.champions',id: 7,  name: 'Ligue des Champions', flag: 'eu',     flagAlt: 'CL', cls: 'cl',  label: 'LDC'  },
   { code: 'uefa.europa',      id: 5,     name: 'Europa League',        flag: 'eu', flagAlt: 'EL',  cls: 'el',  label: 'EL'   },
   { code: 'uefa.europa.conf', id: 20296, name: 'Conference League',    flag: 'eu', flagAlt: 'ECL', cls: 'ecl', label: 'ECL'  },
+  { code: 'fifa.world',       id: 6,     name: 'Coupe du Monde',        flag: 'eu', flagAlt: 'CDM', cls: 'cl',  label: 'CDM'  },
 ];
 
 // ── Calculs ───────────────────────────────────────────────────────────────────
@@ -180,46 +181,67 @@ function extractContributions(event, league, photos = {}, assists = {}) {
 // ── Recalculer classement ─────────────────────────────────────────────────────
 
 function rebuildPlayers(matches) {
-  const pm = {};
+  const pm  = {}; // joueurs club (leagueId !== 6)
+  const cdm = {}; // joueurs CDM  (leagueId === 6)
   const CHAMP_IDS = new Set([17, 34, 8, 23, 35]); // PL, L1, Liga, SA, BL
 
   for (const match of matches) {
     for (const p of (match.players || [])) {
+      // ── CDM → bucket séparé ───────────────────────────────────────
+      if (p.leagueId === 6) {
+        if (!cdm[p.id]) cdm[p.id] = { info: p, matches: [] };
+        if (p.goals > 0) cdm[p.id].info = p;
+        cdm[p.id].matches.push({ goals: p.goals, assists: p.assists, played: p.played, teamWon: p.teamWon, date: p.date || match.date, leagueId: 6 });
+        continue;
+      }
+      // ── Club → bucket normal ──────────────────────────────────────
       if (!pm[p.id]) pm[p.id] = { info: p, champInfo: null, matches: [] };
-      // Prioriser la ligue championnat pour l'affichage
       if (CHAMP_IDS.has(p.leagueId)) pm[p.id].champInfo = p;
       if (p.goals > 0) pm[p.id].info = p;
-      pm[p.id].matches.push({ goals: p.goals, assists: p.assists, played: p.played, teamWon: p.teamWon, date: p.date || match.date });
+      pm[p.id].matches.push({ goals: p.goals, assists: p.assists, played: p.played, teamWon: p.teamWon, date: p.date || match.date, leagueId: p.leagueId });
     }
   }
-  const players = [];
-  for (const [, data] of Object.entries(pm)) {
-    const info = data.info;
-    if (!info?.name) continue;
-    data.matches.sort((a, b) => new Date(b.date) - new Date(a.date));
-    const last5          = data.matches.slice(0, 5);
+
+  function buildEntry(info, matches, leagueInfo) {
+    matches.sort((a, b) => new Date(b.date) - new Date(a.date));
+    const last5          = matches.slice(0, 5);
     const trendScore     = calcTrendScore(last5);
-    const form           = buildFormDots(last5);
     const recent_goals   = last5.reduce((s, m) => s + m.goals,   0);
     const recent_assists = last5.reduce((s, m) => s + m.assists, 0);
-    const totalGoals     = data.matches.reduce((s, m) => s + m.goals,   0);
-    const totalAssists   = data.matches.reduce((s, m) => s + m.assists, 0);
-    // Utiliser la ligue championnat en priorité
-    const leagueInfo = data.champInfo || info;
-    players.push({
+    const totalGoals     = matches.reduce((s, m) => s + m.goals,   0);
+    const totalAssists   = matches.reduce((s, m) => s + m.assists, 0);
+    return {
       id: info.id, name: info.name, photo: info.photo || '',
       teamName: info.teamName,
       leagueId: leagueInfo.leagueId, leagueName: leagueInfo.leagueName,
       leagueFlag: leagueInfo.leagueFlag, leagueFlagAlt: leagueInfo.leagueFlagAlt,
       leagueCls: leagueInfo.leagueCls, leagueLabel: leagueInfo.leagueLabel,
-      totalGoals, totalAssists, totalGames: data.matches.length,
-      avg: data.matches.length > 0 ? parseFloat(((totalGoals + totalAssists) / data.matches.length).toFixed(2)) : 0,
+      totalGoals, totalAssists, totalGames: matches.length,
+      avg: matches.length > 0 ? parseFloat(((totalGoals + totalAssists) / matches.length).toFixed(2)) : 0,
       recent_goals, recent_assists, trendScore,
       form: buildFormDots(last5), last5,
       signal: Math.min(98, Math.round(50 + trendScore * 10)),
       hot: trendScore > 2 && recent_goals >= 2,
-    });
+    };
   }
+
+  const players = [];
+
+  // ── Joueurs club ──────────────────────────────────────────────────
+  for (const [, data] of Object.entries(pm)) {
+    const info = data.info;
+    if (!info?.name) continue;
+    const leagueInfo = data.champInfo || info;
+    players.push(buildEntry(info, data.matches, leagueInfo));
+  }
+
+  // ── Joueurs CDM (leagueId: 6) — entrées distinctes ───────────────
+  for (const [, data] of Object.entries(cdm)) {
+    const info = data.info;
+    if (!info?.name) continue;
+    players.push(buildEntry(info, data.matches, info));
+  }
+
   return players.sort((a, b) => b.trendScore - a.trendScore || b.totalGoals - a.totalGoals);
 }
 
