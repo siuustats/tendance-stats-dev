@@ -161,6 +161,16 @@ header {
 .chip-n { font-family:'DM Mono',monospace; font-size:15px; font-weight:500; }
 .chip-l { font-size:9px; color:var(--m); text-transform:uppercase; letter-spacing:0.5px; margin-top:1px; }
 
+/* pagination */
+.pagination { display:flex; align-items:center; justify-content:center; gap:8px; margin-top:16px; }
+.pag-btn {
+  background:var(--s2); border:1px solid var(--border2); color:var(--m2);
+  font-size:12px; font-family:'DM Sans',sans-serif; padding:6px 14px;
+  border-radius:8px; cursor:pointer; transition:all .2s;
+}
+.pag-btn:hover, .pag-btn.on { border-color:var(--g); color:var(--g); background:rgba(0,229,160,0.06); }
+.pag-info { font-size:11px; color:var(--m); font-family:'DM Mono',monospace; }
+
 /* signal bar */
 .sigbar { margin-top:10px; }
 .sigbar-head { display:flex; justify-content:space-between; font-size:10px; color:var(--m); margin-bottom:4px; }
@@ -304,6 +314,7 @@ footer span { color:var(--g); }
         <tbody id="tbody"></tbody>
       </table>
     </div>
+    <div class="pagination" id="paginationIndex"></div>
 
   </div>
 </div>
@@ -345,6 +356,8 @@ const LEAGUES = [
 
 let allPlayers = [];
 let currentLeague = 'all';
+let currentPageIndex = 1;
+const PAGE_SIZE = 20;
 
 async function apiFetch(endpoint) { /* inutilisé — données lues depuis data.json */ }
 
@@ -560,19 +573,22 @@ function renderGrid(list) {
   if (hot.length === 0) c.innerHTML = '<div style="color:var(--m);font-size:13px;padding:16px">Aucun joueur "en forme" pour cette sélection.</div>';
 }
 
-function renderTable(list, photosMap={}) {
+function renderTable(list, photosMap={}, page=1) {
+  currentPageIndex = page;
   const tbody = document.getElementById('tbody');
   tbody.innerHTML = '';
-  const top = list.slice(0, 30);
-  const maxG = top[0]?.goals || 1;
-  top.forEach((p, i) => {
-    const pct = Math.round(p.goals / maxG * 100);
+  const total = Math.min(list.length, 40);
+  const start = (page - 1) * PAGE_SIZE;
+  const slice = list.slice(start, start + PAGE_SIZE);
+
+  slice.forEach((p, i) => {
+    const rank = start + i + 1;
     const tr = document.createElement('tr');
     const photo = photosMap?.[p.id] || p.photo || '';
     tr.style.cursor = 'pointer';
-    tr.onclick = (e) => { window.location.href = `player.html?id=${p.id}`; };
+    tr.onclick = () => { window.location.href = `player.html?id=${p.id}`; };
     tr.innerHTML = `
-      <td class="rk">${i+1}</td>
+      <td class="rk">${rank}</td>
       <td style="width:36px;padding:6px 4px">
         <div style="width:32px;height:32px;border-radius:50%;overflow:hidden;background:var(--s3);display:flex;align-items:center;justify-content:center;font-size:14px">
           ${photo ? `<img src="${photo}" style="width:100%;height:100%;object-fit:cover" onerror="this.outerHTML='⚽'">` : '⚽'}
@@ -583,19 +599,43 @@ function renderTable(list, photosMap={}) {
         <div class="pt">${p.teamName||p.team}</div>
       </td>
       <td><span class="lpill ${p.leagueCls}">${p.leagueLabel}</span></td>
-      <td>
-        <span class="num g">${p.totalGoals||p.goals||0}</span>
-      </td>
+      <td><span class="num g">${p.totalGoals||p.goals||0}</span></td>
       <td><span class="num a">${p.totalAssists||p.assists||0}</span></td>
       <td><span class="num">${p.totalGames||p.games||0}</span></td>
       <td><span class="num" style="color:${p.signal>85?'var(--o)':'var(--m2)'}">${p.avg||0}</span></td>
     `;
     tbody.appendChild(tr);
   });
+
+  // Pagination
+  const pages = Math.ceil(total / PAGE_SIZE);
+  const pag = document.getElementById('paginationIndex');
+  if (!pag) return;
+  pag.innerHTML = '';
+  if (pages <= 1) return;
+  const prev = document.createElement('button');
+  prev.className = 'pag-btn' + (page === 1 ? ' disabled' : '');
+  prev.textContent = '← Précédent';
+  prev.style.opacity = page === 1 ? '0.4' : '1';
+  prev.onclick = () => { if (page > 1) renderTable(list, photosMap, page - 1); };
+  pag.appendChild(prev);
+
+  const info = document.createElement('span');
+  info.className = 'pag-info';
+  info.textContent = `${start + 1}–${Math.min(start + PAGE_SIZE, total)} / ${total}`;
+  pag.appendChild(info);
+
+  const next = document.createElement('button');
+  next.className = 'pag-btn' + (page === pages ? ' disabled' : '');
+  next.textContent = 'Suivant →';
+  next.style.opacity = page === pages ? '0.4' : '1';
+  next.onclick = () => { if (page < pages) renderTable(list, photosMap, page + 1); };
+  pag.appendChild(next);
 }
 
 function filter(league, btn) {
   currentLeague = league;
+  currentPageIndex = 1;
   sessionStorage.setItem('lastLeague', league);
   document.querySelectorAll('.fbtn').forEach(b => b.classList.remove('on'));
   btn.classList.add('on');
