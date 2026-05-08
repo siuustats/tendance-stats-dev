@@ -261,7 +261,29 @@ async function init() {
   const displayName = name || '—';
   document.title = `${displayName} — CDM 2026 — Tendance Stats`;
   document.getElementById('playerName').textContent = displayName;
-  document.getElementById('playerTeam').textContent = teamName || '—';
+  // Mapping nom pays → ID ESPN pour lien vers effectif
+  const TEAM_IDS = {
+    'Algérie':624,'Argentine':202,'Australia':628,'Autriche':474,
+    'Belgique':459,'Bosnie':452,'Brésil':205,'Brasil':205,'Canada':206,
+    'Cap-Vert':2597,'Colombie':208,'Congo DR':2850,'Croatie':477,
+    'Curaçao':11678,'Tchéquie':450,'Équateur':209,'Égypte':2620,
+    'Angleterre':448,'France':478,'Allemagne':481,'Ghana':4469,
+    'Haïti':2654,'Iran':469,'Irak':4375,"Côte d'Ivoire":4789,
+    'Japon':627,'Jordanie':2917,'Mexique':203,'Maroc':2869,
+    'Pays-Bas':449,'Nouvelle-Zélande':2666,'Norvège':464,'Norvege':464,
+    'Panama':2659,'Paraguay':210,'Portugal':482,'Qatar':4398,
+    'Arabie Saoudite':655,'Écosse':580,'Sénégal':654,
+    'Afrique du Sud':467,'Corée du Sud':451,'Espagne':164,
+    'Suède':466,'Suisse':475,'Tunisie':659,'Turquie':465,
+    'États-Unis':660,'Uruguay':212,'Ouzbékistan':2570,
+  };
+  const teamId = teamName ? TEAM_IDS[teamName] : null;
+  const teamEl = document.getElementById('playerTeam');
+  if (teamId) {
+    teamEl.innerHTML = `<a href="squad.html?team=${teamId}" style="color:var(--m2);text-decoration:none;border-bottom:1px solid rgba(212,168,67,0.4);padding-bottom:1px;cursor:pointer;transition:color .2s" onmouseover="this.style.color='var(--g)'" onmouseout="this.style.color='var(--m2)'">${teamName}</a>`;
+  } else {
+    teamEl.textContent = teamName || '—';
+  }
   document.getElementById('playerLeague').textContent = 'CDM 2026';
   document.getElementById('trendScore').textContent = '—';
   document.getElementById('trendFill').style.width = '0%';
