@@ -222,7 +222,8 @@ async function init() {
   const photosMap = photosRes?.ok ? await photosRes.json() : {};
 
   // Chercher d'abord dans data.json, sinon construire depuis les paramètres URL
-  let player = data.players?.find(p => String(p.id) === String(playerId));
+  let player = data.players?.find(p => String(p.id) === String(playerId))
+    || data.players?.find(p => String(p.espnId) === String(playerId));
   if (!player && name) {
     // Joueur de l'effectif ESPN — pas encore dans data.json
     player = {
@@ -238,8 +239,10 @@ async function init() {
   }
   if (!player) { document.body.innerHTML = '<p style="padding:40px;color:#fff">Joueur introuvable</p>'; return; }
 
-  // Photo — priorité : photos.json > paramètre URL > player.photo
-  const playerPhoto = photosMap[player.id] || photosMap[Number(player.id)] || photo || player.photo || '';
+  // Photo — priorité : photos.json (par id ou espnId) > paramètre URL > player.photo
+  const playerPhoto = photosMap[player.id] || photosMap[String(player.id)] || photosMap[Number(player.id)]
+    || (player.espnId && (photosMap[player.espnId] || photosMap[String(player.espnId)]))
+    || photo || player.photo || '';
   const avatarEl = document.getElementById('avatar');
   if (playerPhoto) {
     avatarEl.innerHTML = `<img src="${playerPhoto}" referrerpolicy="no-referrer" onerror="this.outerHTML='⚽'" alt="${player.name}">`;
