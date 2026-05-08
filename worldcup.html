@@ -357,6 +357,49 @@
 .cl  { background:rgba(0,100,255,0.12); color:#4d9fff; }
 .el  { background:rgba(255,159,67,0.15); color:var(--o); }
 .ecl { background:rgba(0,200,150,0.15); color:#00c896; }
+
+  @media(max-width:768px){
+    /* ── GÉNÉRAL ── */
+    .section { padding:40px 12px; }
+
+    /* ── HERO — Option A : empilé centré ── */
+    .hero { padding:40px 16px 32px; }
+    .hero-content { text-align:center; }
+    .hero-eyebrow { font-size:10px; letter-spacing:4px; }
+    .hero-title { font-size:clamp(42px, 11vw, 72px); }
+    .hero-year { font-size:clamp(56px, 14vw, 100px); }
+    .hero-hosts { font-size:12px; letter-spacing:2px; margin:16px 0; }
+    .countdown { justify-content:center; gap:12px; margin:20px 0; }
+    .cd-num { font-size:38px; }
+    .cd-box { min-width:54px; padding:10px 8px; }
+    .hero-cta { width:100%; max-width:280px; margin:0 auto; display:block; text-align:center; }
+
+    /* ── CADRES JOUEURS — 1 colonne ── */
+    .pgrid { grid-template-columns:1fr; gap:10px; }
+
+    /* ── CLASSEMENT — scroll horizontal ── */
+    .ranking { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+    .ranking-head, .ranking-row { min-width:480px; }
+
+    /* ── PHASES ── */
+    .phases { flex-wrap:nowrap; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; padding-bottom:4px; }
+    .phases::-webkit-scrollbar { display:none; }
+    .phase-btn { flex-shrink:0; white-space:nowrap; }
+
+    /* ── PAGINATION ── */
+    .pagination { gap:6px; margin-top:10px; }
+    .pag-btn { padding:5px 10px; font-size:11px; }
+    .pag-info { font-size:10px; }
+
+    /* ── 48 NATIONS — 2 groupes côte à côte, équipes empilées ── */
+    .groups-grid { grid-template-columns:1fr 1fr; gap:10px; }
+    .group-card { border-radius:10px; }
+    .group-header { padding:10px 12px; }
+    .nation-row { padding:8px 10px; gap:8px; }
+    .nation-name { font-size:12px; }
+    .nation-flag { width:22px; height:16px; }
+    .nation-arrow { display:none; }
+  }
   </style>
 </head>
 <body>
