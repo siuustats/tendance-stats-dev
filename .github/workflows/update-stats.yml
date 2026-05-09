@@ -2,6 +2,8 @@ name: Mise à jour stats football
 
 on:
   schedule:
+    - cron: '30 15 * * *'  # 15h30 UTC = 17h30 heure française (été)
+    - cron: '30 17 * * *'  # 17h30 UTC = 19h30 heure française (été)
     - cron: '50 21 * * *'  # 21h50 UTC = 23h50 heure française (été)
   workflow_dispatch:
 
