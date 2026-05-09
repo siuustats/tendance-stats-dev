@@ -7,6 +7,10 @@ on:
     - cron: '50 21 * * *'  # 21h50 UTC = 23h50 heure française (été)
   workflow_dispatch:
 
+concurrency:
+  group: stats-update
+  cancel-in-progress: false
+
 jobs:
   fetch-and-deploy:
     runs-on: ubuntu-latest
@@ -30,7 +34,9 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          git stash
+          git pull --rebase origin main
+          git stash pop
           git add data.json photos.json
           git diff --staged --quiet || git commit -m "Stats du $(date '+%d/%m/%Y a %Hh%M')"
-          git pull --rebase origin main
           git push
