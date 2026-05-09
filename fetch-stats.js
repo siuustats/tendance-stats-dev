@@ -82,19 +82,36 @@ async function fetchSummaryData(leagueCode, eventId) {
       }
     }
 
-    // Passes décisives depuis keyEvents (participants[1] = passeur)
+    // Passes décisives — source 1 : keyEvents (participants[1] = passeur)
     const assists = {}; // { scorerId: { name, id } }
 
     for (const event of (data.keyEvents || [])) {
-      if (event.type?.type !== 'goal') continue;
       if (!event.scoringPlay) continue;
+      const typeStr = (event.type?.type || event.type?.text || '').toLowerCase();
+      if (!typeStr.includes('goal') && typeStr !== 'goal') continue;
       const participants = event.participants || [];
       if (participants.length >= 2) {
         const scorer   = participants[0]?.athlete;
         const assister = participants[1]?.athlete;
         if (scorer?.id && assister?.id) {
-          assists[scorer.id] = { id: String(assister.id), name: assister.displayName };
+          assists[String(scorer.id)] = { id: String(assister.id), name: assister.displayName };
           console.log(`  🎯 ${scorer.displayName} ← ${assister.displayName}`);
+        }
+      }
+    }
+
+    // Passes décisives — source 2 : comp.details (athletesInvolved[1] = passeur)
+    const comp = data.header?.competitions?.[0] || data.competitions?.[0];
+    for (const detail of (comp?.details || data.drives?.previous || [])) {
+      if (!detail.scoringPlay) continue;
+      if (detail.ownGoal) continue;
+      const involved = detail.athletesInvolved || [];
+      if (involved.length >= 2) {
+        const scorer   = involved[0];
+        const assister = involved[1];
+        if (scorer?.id && assister?.id && !assists[String(scorer.id)]) {
+          assists[String(scorer.id)] = { id: String(assister.id), name: assister.displayName || assister.shortName };
+          console.log(`  🎯 [details] ${scorer.displayName} ← ${assister.displayName}`);
         }
       }
     }
