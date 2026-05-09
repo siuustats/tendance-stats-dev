@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 — Page introuvable | Tendance Stats</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-WCCFQHTP');</script>
+  <!-- End Google Tag Manager -->
+  <style>
+    :root {
+      --bg:    #080a0f;
+      --s1:    #111318;
+      --s2:    #161820;
+      --s3:    #1e2130;
+      --g:     #00e5a0;
+      --m:     #6b7280;
+      --m2:    #9ca3af;
+      --text:  #f0f2f8;
+      --border:#1e2130;
+    }
+
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body {
+      background:var(--bg); color:var(--text);
+      font-family:'DM Sans', sans-serif;
+      min-height:100vh;
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      overflow:hidden;
+    }
+
+    /* Grille de fond animée */
+    .grid-bg {
+      position:fixed; inset:0; z-index:0;
+      background-image:
+        linear-gradient(rgba(0,229,160,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,160,0.03) 1px, transparent 1px);
+      background-size:40px 40px;
+      animation:gridMove 20s linear infinite;
+    }
+    @keyframes gridMove {
+      0%   { transform:translateY(0); }
+      100% { transform:translateY(40px); }
+    }
+
+    /* Halo vert */
+    .glow {
+      position:fixed; top:50%; left:50%;
+      transform:translate(-50%, -50%);
+      width:600px; height:600px; border-radius:50%;
+      background:radial-gradient(circle, rgba(0,229,160,0.06) 0%, transparent 70%);
+      pointer-events:none; z-index:0;
+    }
+
+    .container {
+      position:relative; z-index:1;
+      text-align:center; padding:40px 24px;
+      max-width:520px;
+    }
+
+    /* Grand 404 */
+    .big-404 {
+      font-family:'Bebas Neue', sans-serif;
+      font-size:clamp(120px, 25vw, 200px);
+      line-height:1; letter-spacing:4px;
+      color:transparent;
+      -webkit-text-stroke:2px rgba(0,229,160,0.25);
+      position:relative;
+      animation:fadeIn .8s ease both;
+    }
+    .big-404::after {
+      content:'404';
+      position:absolute; inset:0;
+      color:transparent;
+      -webkit-text-stroke:1px rgba(0,229,160,0.08);
+      transform:translate(4px, 4px);
+    }
+
+    /* Icône ballon */
+    .ball {
+      font-size:48px;
+      display:block;
+      margin:0 auto 16px;
+      animation:bounce 2s ease-in-out infinite;
+    }
+    @keyframes bounce {
+      0%, 100% { transform:translateY(0); }
+      50%       { transform:translateY(-12px); }
+    }
+
+    .title {
+      font-family:'Bebas Neue', sans-serif;
+      font-size:28px; letter-spacing:3px;
+      color:var(--text); margin-bottom:12px;
+      animation:fadeIn .8s .2s ease both; opacity:0;
+    }
+
+    .subtitle {
+      font-size:14px; color:var(--m2); line-height:1.6;
+      margin-bottom:32px;
+      animation:fadeIn .8s .4s ease both; opacity:0;
+    }
+
+    .subtitle span {
+      font-family:'DM Mono', monospace;
+      color:var(--g); font-size:12px;
+    }
+
+    /* Boutons */
+    .btns {
+      display:flex; gap:12px; justify-content:center; flex-wrap:wrap;
+      animation:fadeIn .8s .6s ease both; opacity:0;
+    }
+
+    .btn-primary {
+      background:var(--g); color:#080a0f;
+      font-family:'Bebas Neue', sans-serif;
+      font-size:16px; letter-spacing:2px;
+      padding:12px 28px; border-radius:8px;
+      text-decoration:none; border:none; cursor:pointer;
+      transition:all .2s; display:inline-flex; align-items:center; gap:8px;
+    }
+    .btn-primary:hover { background:#00ffb3; transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,229,160,0.25); }
+
+    .btn-secondary {
+      background:transparent; color:var(--m2);
+      font-family:'Bebas Neue', sans-serif;
+      font-size:16px; letter-spacing:2px;
+      padding:12px 28px; border-radius:8px;
+      text-decoration:none; border:1px solid var(--border);
+      cursor:pointer; transition:all .2s;
+      display:inline-flex; align-items:center; gap:8px;
+    }
+    .btn-secondary:hover { border-color:rgba(212,168,67,0.4); color:#d4a843; transform:translateY(-2px); }
+
+    /* Logo en haut */
+    .logo {
+      position:fixed; top:20px; left:50%; transform:translateX(-50%);
+      font-family:'Bebas Neue', sans-serif;
+      font-size:20px; letter-spacing:3px;
+      color:var(--g); z-index:10;
+      text-decoration:none;
+    }
+    .logo span { color:var(--text); }
+
+    /* Score fictif */
+    .fake-score {
+      display:inline-flex; align-items:center; gap:12px;
+      background:var(--s1); border:1px solid var(--border);
+      border-radius:10px; padding:10px 20px; margin-bottom:28px;
+      font-family:'DM Mono', monospace; font-size:13px;
+      color:var(--m); animation:fadeIn .8s .3s ease both; opacity:0;
+    }
+    .fake-score .score { color:var(--text); font-size:18px; font-weight:700; }
+
+    @keyframes fadeIn {
+      from { opacity:0; transform:translateY(16px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    @media(max-width:480px) {
+      .btns { flex-direction:column; align-items:center; }
+      .btn-primary, .btn-secondary { width:100%; max-width:260px; justify-content:center; }
+    }
+  </style>
+</head>
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WCCFQHTP"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<div class="grid-bg"></div>
+<div class="glow"></div>
+
+<a href="index.html" class="logo">Tendance<span> Stats</span></a>
+
+<div class="container">
+  <div class="big-404">404</div>
+
+  <span class="ball">⚽</span>
+
+  <div class="title">Page introuvable</div>
+
+  <div class="fake-score">
+    <span>Tendance Stats</span>
+    <span class="score">1 – 0</span>
+    <span>Cette URL</span>
+  </div>
+
+  <p class="subtitle">
+    Cette page n'existe pas ou a été déplacée.<br>
+    Erreur <span>404 · NOT_FOUND</span>
+  </p>
+
+  <div class="btns">
+    <a href="index.html" class="btn-primary">← Retour à l'accueil</a>
+    <a href="worldcup.html" class="btn-secondary">🏆 CDM 2026</a>
+  </div>
+</div>
+
+</body>
+</html>
