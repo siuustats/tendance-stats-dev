@@ -153,7 +153,9 @@ function extractContributions(event, league, photos = {}, assists = {}) {
     const name     = athlete.displayName || athlete.shortName;
     const teamId   = detail.team?.id;
     const isHome   = teamId === homeId;
-    const teamName = isHome ? homeComp?.team?.displayName : awayComp?.team?.displayName;
+    const rawTeamName = isHome ? homeComp?.team?.displayName : awayComp?.team?.displayName;
+    const TEAM_FIX = { 'Brighton & Hove Albion': 'Brighton' };
+    const teamName = TEAM_FIX[rawTeamName] || rawTeamName;
     const teamWon  = isHome ? (homeScore > awayScore ? true : homeScore === awayScore ? null : false) : (awayScore > homeScore ? true : awayScore === homeScore ? null : false);
 
     goalsMap[pid] = (goalsMap[pid] || 0) + 1;
