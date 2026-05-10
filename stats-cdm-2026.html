@@ -11,7 +11,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Stats Joueurs Coupe du Monde 2026 — Qui est en forme ? | Tendance Stats</title>
-<meta name="description" content="Découvrez les statistiques détaillées des joueurs de la Coupe du Monde 2026 : buteurs, passeurs, joueurs en série et TendScore. Données mises à jour en temps réel pour vous aider à mieux parier sur la CDM 2026.">
+<meta name="description" content="Découvrez les statistiques détaillées des joueurs de la Coupe du Monde 2026 : buteurs, passeurs, joueurs en série et TendScore. Données mises à jour après chaque journée de matchs pour vous aider à mieux parier sur la CDM 2026.">
 <meta name="keywords" content="stats joueurs coupe du monde 2026, statistiques CDM 2026, joueurs en forme CDM 2026, buteurs coupe du monde 2026, pronostic CDM 2026, TendScore CDM, joueurs en série CDM 2026">
 <meta name="author" content="Tendance Stats">
 <meta name="robots" content="index, follow">
@@ -418,7 +418,7 @@ tbody td:not(:first-child) { text-align:center; }
 <div class="legal">
   Les jeux d'argent et de hasard sont interdits aux mineurs. Jouer comporte des risques : endettement, dépendance.<br>
   Appelez le <strong>09 74 75 13 13</strong> (appel non surtaxé) | <a href="https://www.joueurs-info-service.fr" target="_blank">joueurs-info-service.fr</a> | 18+ | Winamax est agréé par l'ANJ<br><br>
-  <strong>Tendance Stats</strong> · Données ESPN · Saison 2025/2026 · <a href="/">Retour à l'accueil</a>
+  <strong>Tendance Stats</strong> · Données ESPN · CDM 2026 · <a href="/">Retour à l'accueil</a>
 </div>
 
 <script>
@@ -461,12 +461,8 @@ async function loadData() {
     ]);
     const data = await dataRes.json();
     photos = await photosRes.json();
-    // Filtrer CDM uniquement (leagueId === 6)
+    // Filtrer CDM uniquement (leagueId === 6) — pas de fallback avant le 11 juin
     allPlayers = (data.players || data).filter(p => p.leagueId === 6 || p.league === 'CDM');
-    if (!allPlayers.length) {
-      // Fallback: si CDM vide (avant le 11 juin), prendre tous les joueurs triés par TendScore
-      allPlayers = (data.players || data);
-    }
     allPlayers.sort((a,b) => (b.tendScore||b.trendScore||0) - (a.tendScore||a.trendScore||0));
     renderKPIs();
     renderHotPlayers();
@@ -495,9 +491,15 @@ function renderKPIs() {
 }
 
 function renderHotPlayers() {
-  const hot = allPlayers.slice(0, 8);
+  // Trier : joueurs avec stats d'abord, puis ceux à 0
+  const sorted = [...allPlayers].sort((a,b) => {
+    const sa = (a.goals||a.buts||0) + (a.assists||a.passes||0);
+    const sb = (b.goals||b.buts||0) + (b.assists||b.passes||0);
+    return sb - sa;
+  });
+  const hot = sorted.slice(0, 8);
   if (!hot.length) {
-    document.getElementById('hot-players').innerHTML = '<div class="empty-state">Aucun joueur CDM disponible pour l\'instant.<br>Données disponibles dès le 11 juin 2026.</div>';
+    document.getElementById('hot-players').innerHTML = '<div class="empty-state">Les joueurs apparaîtront ici dès le coup d\'envoi le 11 juin 2026.</div>';
     return;
   }
   document.getElementById('hot-players').innerHTML = hot.map(p => {
@@ -508,7 +510,7 @@ function renderHotPlayers() {
     const badge = ts >= 5 ? '<span class="pc-badge badge-hot">🔥 En série</span>' : '<span class="pc-badge badge-form">En forme</span>';
     const slug = encodeURIComponent((p.name||p.nom||'').toLowerCase().replace(/\s+/g,'-'));
     const pid = p.espnId || p.id || '';
-    return `<a class="player-card" href="/player-cdm.html?id=${pid}&name=${encodeURIComponent(p.name||p.nom||'')}&team=${encodeURIComponent(nation)}">
+    return `<a class="player-card" href="/player-cdm.html?id=${pid}&name=${encodeURIComponent(p.name||p.nom||'')}&teamName=${encodeURIComponent(nation)}&ref=stats-cdm-2026">
       <div class="pc-top">
         <img class="pc-avatar" src="${getPhoto(p)}" onerror="this.style.background='var(--s3)';this.src=''" alt="${p.name||p.nom||''}">
         <div><div class="pc-name">${p.name||p.nom||'—'}</div><div class="pc-team">${nation}</div></div>
@@ -538,7 +540,7 @@ function renderTable() {
     const ts = p.tendScore || p.trendScore || 0;
     const nation = p.team || p.nationality || p.country || '';
     const pid = p.espnId || p.id || '';
-    return `<tr onclick="window.location='/player-cdm.html?id=${pid}&name=${encodeURIComponent(p.name||p.nom||'')}&team=${encodeURIComponent(nation)}'" style="cursor:pointer">
+    return `<tr onclick="window.location='/player-cdm.html?id=${pid}&name=${encodeURIComponent(p.name||p.nom||'')}&teamName=${encodeURIComponent(nation)}&ref=stats-cdm-2026'" style="cursor:pointer">
       <td><span class="rank-num">${rank}</span></td>
       <td>
         <div class="td-player">
