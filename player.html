@@ -185,7 +185,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 
 <div class="header">
-  <a href="index.html" class="back">← Retour</a>
+  <a href="index.html" class="back" id="backLink">← Retour</a>
+  <script>
+    (function() {
+      const ref = new URLSearchParams(window.location.search).get('ref');
+      if (ref === 'stats-saison-2026') {
+        const el = document.getElementById('backLink');
+        el.href = 'stats-saison-2026.html';
+        el.textContent = '← Stats Saison 2026';
+      }
+    })();
+  </script>
   <div class="site-name">TENDANCE STATS</div>
 </div>
 
