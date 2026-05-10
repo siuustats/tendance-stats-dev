@@ -275,6 +275,12 @@ function renderTeams() {
 }
 
 async function loadSquad(teamId, team, group) {
+  // Charger photos.json pour enrichir les photos manquantes
+  let photosMap = {};
+  try {
+    const pr = await fetch('photos.json?v=' + Date.now());
+    if (pr.ok) photosMap = await pr.json();
+  } catch(e) {}
   window.currentTeamName = team.name;
   // Afficher la vue effectif
   document.getElementById('teamsView').style.display = 'none';
@@ -334,10 +340,11 @@ async function loadSquad(teamId, team, group) {
     for (const [pos, players] of sorted) {
       html += `<div class="pos-section"><div class="pos-title">${pos.toUpperCase()}</div><div class="players-grid">`;
       for (const p of players) {
-        const photo    = p.headshot?.href || '';
+        const pid      = p.athlete?.id || p.id || '';
+        const espnPhoto = p.headshot?.href || '';
+        const photo     = photosMap[pid] || photosMap[String(pid)] || espnPhoto || '';
         const jersey   = p.jersey || '';
         const name     = p.athlete?.displayName || p.displayName || p.fullName || '—';
-        const pid      = p.athlete?.id || p.id || '';
         const photoEnc = encodeURIComponent(photo);
         const nameEnc  = encodeURIComponent(name);
         const teamEnc  = encodeURIComponent(currentTeamName || '');
