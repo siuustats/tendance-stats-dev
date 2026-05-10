@@ -185,7 +185,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 
 <div class="header">
-  <a href="worldcup.html" class="back">← CDM 2026</a>
+  <a href="worldcup.html" class="back" id="backLink">← CDM 2026</a>
+  <script>
+    (function() {
+      const ref = new URLSearchParams(window.location.search).get('ref');
+      if (ref === 'stats-cdm-2026') {
+        const el = document.getElementById('backLink');
+        el.href = 'stats-cdm-2026.html';
+        el.textContent = '← Stats CDM 2026';
+      }
+    })();
+  </script>
   <div class="site-name" style="color:var(--g)">🏆 CDM 2026</div>
 </div>
 
@@ -250,7 +260,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </div>
 
 <div class="footer">
-  <a href="worldcup.html">← Retour à la CDM 2026</a> · Données ESPN API · CDM 2026
+  <a href="worldcup.html" id="footerBackLink">← Retour à la CDM 2026</a> · Données ESPN · CDM 2026
+  <script>
+    (function() {
+      const ref = new URLSearchParams(window.location.search).get('ref');
+      if (ref === 'stats-cdm-2026') {
+        const el = document.getElementById('footerBackLink');
+        el.href = 'stats-cdm-2026.html';
+        el.textContent = '← Retour aux Stats CDM';
+      }
+    })();
+  </script>
 </div>
 
 <script>
