@@ -72,37 +72,33 @@ async function fetchSummaryData(leagueCode, eventId) {
     if (!res.ok) return { photos: {}, assists: {} };
     const data = await res.json();
 
-    // Photos depuis le roster + IDs joueurs par équipe
+    // Photos + joueurs ayant joué (titulaires + remplaçants entrés) par équipe
     const photos = {};
-    const rosterIds = {}; // { teamName: [ids] }
-    let firstPlayerLogged = false;
+    const playedByTeam = {}; // { teamName: [{ id, name, photo }] }
+    const TEAM_FIX = { 'Brighton & Hove Albion': 'Brighton' };
+
     for (const team of (data.rosters || [])) {
-      const teamName = team.team?.displayName || team.team?.name || '';
-      const TEAM_FIX = { 'Brighton & Hove Albion': 'Brighton' };
-      const fixedName = TEAM_FIX[teamName] || teamName;
-      rosterIds[fixedName] = [];
-      console.log(`  👥 Roster ${fixedName} : ${(team.roster||[]).length} joueurs`);
+      const rawTeam = team.team?.displayName || team.team?.name || '';
+      const fixedTeam = TEAM_FIX[rawTeam] || rawTeam;
+      playedByTeam[fixedTeam] = [];
+
       for (const player of (team.roster || [])) {
-        const id = player.athlete?.id;
+        const id       = player.athlete?.id;
+        const name     = player.athlete?.displayName || player.athlete?.shortName || '';
         const headshot = player.athlete?.headshot?.href;
         if (id && headshot) photos[id] = headshot;
-        if (id) rosterIds[fixedName].push(String(id));
-        // Logger le premier joueur pour voir les champs disponibles
-        if (!firstPlayerLogged && id) {
-          console.log(`  🔍 Exemple joueur ESPN roster:`, JSON.stringify({
-            id,
-            name: player.athlete?.displayName,
-            starter: player.starter,
-            subbedIn: player.subbedIn,
-            subbedOut: player.subbedOut,
-            played: player.played,
-            active: player.active,
-            status: player.status,
-            position: player.position?.abbreviation,
-          }));
-          firstPlayerLogged = true;
+
+        // Compter uniquement ceux qui ont joué
+        const hasPlayed = player.starter === true || player.subbedIn === true;
+        if (id && hasPlayed) {
+          playedByTeam[fixedTeam].push({
+            id: String(id),
+            name,
+            photo: headshot || '',
+          });
         }
       }
+      console.log(`  👥 ${fixedTeam} : ${playedByTeam[fixedTeam].length} joueurs ayant joué`);
     }
 
     // Passes décisives — source 1 : keyEvents (participants[1] = passeur)
@@ -140,9 +136,9 @@ async function fetchSummaryData(leagueCode, eventId) {
     }
 
     console.log(`  📸 ${Object.keys(photos).length} photo(s) | 🎯 ${Object.keys(assists).length} passe(s)`);
-    return { photos, assists, rosterIds };
+    return { photos, assists, playedByTeam };
   } catch(e) {
-    return { photos: {}, assists: {}, rosterIds: {} };
+    return { photos: {}, assists: {}, playedByTeam: {} };
   }
 }
 
@@ -232,16 +228,17 @@ function rebuildPlayers(matches) {
       // ── CDM → bucket séparé ───────────────────────────────────────
       if (p.leagueId === 6) {
         if (!cdm[p.id]) cdm[p.id] = { info: p, matches: [] };
-        if (p.goals > 0) cdm[p.id].info = p;
+        if (p.goals > 0 || p.assists > 0) cdm[p.id].info = p;
+        else if (p.name && (!cdm[p.id].info?.name || cdm[p.id].info.goals === 0)) cdm[p.id].info = p;
         cdm[p.id].matches.push({ goals: p.goals, assists: p.assists, played: p.played, teamWon: p.teamWon, date: p.date || match.date, leagueId: 6 });
         continue;
       }
       // ── Club → bucket normal ──────────────────────────────────────
       if (!pm[p.id]) pm[p.id] = { info: p, champInfo: null, matches: [] };
       if (CHAMP_IDS.has(p.leagueId)) pm[p.id].champInfo = p;
-      // Ne pas écraser les infos existantes avec une entrée sans stats
+      // Priorité aux entrées avec stats pour les infos joueur
       if (p.goals > 0 || p.assists > 0) pm[p.id].info = p;
-      else if (!pm[p.id].info?.name && p.name) pm[p.id].info = p;
+      else if (p.name && (!pm[p.id].info?.name || pm[p.id].info.goals === 0)) pm[p.id].info = p;
       pm[p.id].matches.push({ goals: p.goals, assists: p.assists, played: p.played, teamWon: p.teamWon, date: p.date || match.date, leagueId: p.leagueId });
     }
   }
@@ -425,37 +422,32 @@ async function main() {
 
       console.log(`  🎮 ${homeName} ${homeScore}-${awayScore} ${awayName}`);
 
-      // Récupérer photos, passes et rosters depuis le summary
-      const { photos, assists, rosterIds } = await fetchSummaryData(league.code, fId);
-      // Fusionner photos du summary avec le cache API-Football
+      // Récupérer photos, passes et joueurs ayant joué depuis le summary
+      const { photos, assists, playedByTeam } = await fetchSummaryData(league.code, fId);
       const mergedPhotos = { ...photosCache, ...photos };
       const players  = extractContributions(event, league, mergedPhotos, assists);
       const contribs = players.filter(p => p.goals > 0);
       contribs.forEach(p => console.log(`     ⚽ ${p.name}: ${p.goals}B (${p.teamName})`));
 
-      // Ajouter +1 match joué aux joueurs déjà connus qui étaient dans le roster
+      // Ajouter tous les joueurs ayant joué (starter/subbedIn), même sans stats
       const TEAM_FIX = { 'Brighton & Hove Albion': 'Brighton' };
       const matchDate = event.date;
       const homeWon = homeScore > awayScore ? true : homeScore === awayScore ? null : false;
       const awayWon = awayScore > homeScore ? true : awayScore === homeScore ? null : false;
-      const playersWithGoals = new Set(players.map(p => String(p.id)));
+      const alreadyCounted = new Set(players.map(p => String(p.id)));
 
-      for (const [teamName, ids] of Object.entries(rosterIds)) {
+      for (const [teamName, teamPlayers] of Object.entries(playedByTeam)) {
         const fixedTeam = TEAM_FIX[teamName] || teamName;
         const isHome = (TEAM_FIX[homeName] || homeName) === fixedTeam;
         const teamWon = isHome ? homeWon : awayWon;
 
-        for (const pid of ids) {
-          if (playersWithGoals.has(pid)) continue; // déjà compté
-          // Vérifier si ce joueur est déjà connu dans data.json
-          const knownPlayer = (stored.players || []).find(p => String(p.id) === pid)
-            || (stored.matches || []).flatMap(m => m.players || []).find(p => String(p.id) === pid);
-          if (!knownPlayer) continue; // joueur inconnu, on l'ignore
-          // Ajouter une entrée match joué sans but/passe
+        for (const tp of teamPlayers) {
+          if (alreadyCounted.has(tp.id)) continue; // déjà compté via buts/passes
+          // Ajouter le joueur avec 0 stats mais 1 match joué
           players.push({
-            id: pid,
-            name: knownPlayer.name || '',
-            photo: mergedPhotos[pid] || knownPlayer.photo || '',
+            id: tp.id,
+            name: tp.name,
+            photo: mergedPhotos[tp.id] || tp.photo || '',
             teamName: fixedTeam,
             teamWon,
             leagueId: league.id, leagueName: league.name,
@@ -463,10 +455,11 @@ async function main() {
             leagueCls: league.cls, leagueLabel: league.label,
             goals: 0, assists: 0, played: true, date: matchDate,
           });
+          alreadyCounted.add(tp.id);
         }
       }
-      const matchPlayed = players.filter(p => p.goals === 0 && p.assists === 0).length;
-      if (matchPlayed > 0) console.log(`     👟 +1 match joué pour ${matchPlayed} joueur(s) connu(s)`);
+      const noStats = players.filter(p => p.goals === 0 && p.assists === 0).length;
+      if (noStats > 0) console.log(`     👟 ${noStats} joueur(s) ajouté(s) sans stats`);
 
       newMatches.push({
         fixtureId: fId, date: event.date,
