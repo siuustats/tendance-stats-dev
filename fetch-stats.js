@@ -72,13 +72,36 @@ async function fetchSummaryData(leagueCode, eventId) {
     if (!res.ok) return { photos: {}, assists: {} };
     const data = await res.json();
 
-    // Photos depuis le roster
+    // Photos depuis le roster + IDs joueurs par équipe
     const photos = {};
+    const rosterIds = {}; // { teamName: [ids] }
+    let firstPlayerLogged = false;
     for (const team of (data.rosters || [])) {
+      const teamName = team.team?.displayName || team.team?.name || '';
+      const TEAM_FIX = { 'Brighton & Hove Albion': 'Brighton' };
+      const fixedName = TEAM_FIX[teamName] || teamName;
+      rosterIds[fixedName] = [];
+      console.log(`  👥 Roster ${fixedName} : ${(team.roster||[]).length} joueurs`);
       for (const player of (team.roster || [])) {
         const id = player.athlete?.id;
         const headshot = player.athlete?.headshot?.href;
         if (id && headshot) photos[id] = headshot;
+        if (id) rosterIds[fixedName].push(String(id));
+        // Logger le premier joueur pour voir les champs disponibles
+        if (!firstPlayerLogged && id) {
+          console.log(`  🔍 Exemple joueur ESPN roster:`, JSON.stringify({
+            id,
+            name: player.athlete?.displayName,
+            starter: player.starter,
+            subbedIn: player.subbedIn,
+            subbedOut: player.subbedOut,
+            played: player.played,
+            active: player.active,
+            status: player.status,
+            position: player.position?.abbreviation,
+          }));
+          firstPlayerLogged = true;
+        }
       }
     }
 
@@ -117,9 +140,9 @@ async function fetchSummaryData(leagueCode, eventId) {
     }
 
     console.log(`  📸 ${Object.keys(photos).length} photo(s) | 🎯 ${Object.keys(assists).length} passe(s)`);
-    return { photos, assists };
+    return { photos, assists, rosterIds };
   } catch(e) {
-    return { photos: {}, assists: {} };
+    return { photos: {}, assists: {}, rosterIds: {} };
   }
 }
 
@@ -216,7 +239,9 @@ function rebuildPlayers(matches) {
       // ── Club → bucket normal ──────────────────────────────────────
       if (!pm[p.id]) pm[p.id] = { info: p, champInfo: null, matches: [] };
       if (CHAMP_IDS.has(p.leagueId)) pm[p.id].champInfo = p;
-      if (p.goals > 0) pm[p.id].info = p;
+      // Ne pas écraser les infos existantes avec une entrée sans stats
+      if (p.goals > 0 || p.assists > 0) pm[p.id].info = p;
+      else if (!pm[p.id].info?.name && p.name) pm[p.id].info = p;
       pm[p.id].matches.push({ goals: p.goals, assists: p.assists, played: p.played, teamWon: p.teamWon, date: p.date || match.date, leagueId: p.leagueId });
     }
   }
@@ -400,13 +425,48 @@ async function main() {
 
       console.log(`  🎮 ${homeName} ${homeScore}-${awayScore} ${awayName}`);
 
-      // Récupérer photos et passes depuis le summary
-      const { photos, assists } = await fetchSummaryData(league.code, fId);
+      // Récupérer photos, passes et rosters depuis le summary
+      const { photos, assists, rosterIds } = await fetchSummaryData(league.code, fId);
       // Fusionner photos du summary avec le cache API-Football
       const mergedPhotos = { ...photosCache, ...photos };
       const players  = extractContributions(event, league, mergedPhotos, assists);
       const contribs = players.filter(p => p.goals > 0);
       contribs.forEach(p => console.log(`     ⚽ ${p.name}: ${p.goals}B (${p.teamName})`));
+
+      // Ajouter +1 match joué aux joueurs déjà connus qui étaient dans le roster
+      const TEAM_FIX = { 'Brighton & Hove Albion': 'Brighton' };
+      const matchDate = event.date;
+      const homeWon = homeScore > awayScore ? true : homeScore === awayScore ? null : false;
+      const awayWon = awayScore > homeScore ? true : awayScore === homeScore ? null : false;
+      const playersWithGoals = new Set(players.map(p => String(p.id)));
+
+      for (const [teamName, ids] of Object.entries(rosterIds)) {
+        const fixedTeam = TEAM_FIX[teamName] || teamName;
+        const isHome = (TEAM_FIX[homeName] || homeName) === fixedTeam;
+        const teamWon = isHome ? homeWon : awayWon;
+
+        for (const pid of ids) {
+          if (playersWithGoals.has(pid)) continue; // déjà compté
+          // Vérifier si ce joueur est déjà connu dans data.json
+          const knownPlayer = (stored.players || []).find(p => String(p.id) === pid)
+            || (stored.matches || []).flatMap(m => m.players || []).find(p => String(p.id) === pid);
+          if (!knownPlayer) continue; // joueur inconnu, on l'ignore
+          // Ajouter une entrée match joué sans but/passe
+          players.push({
+            id: pid,
+            name: knownPlayer.name || '',
+            photo: mergedPhotos[pid] || knownPlayer.photo || '',
+            teamName: fixedTeam,
+            teamWon,
+            leagueId: league.id, leagueName: league.name,
+            leagueFlag: league.flag, leagueFlagAlt: league.flagAlt,
+            leagueCls: league.cls, leagueLabel: league.label,
+            goals: 0, assists: 0, played: true, date: matchDate,
+          });
+        }
+      }
+      const matchPlayed = players.filter(p => p.goals === 0 && p.assists === 0).length;
+      if (matchPlayed > 0) console.log(`     👟 +1 match joué pour ${matchPlayed} joueur(s) connu(s)`);
 
       newMatches.push({
         fixtureId: fId, date: event.date,
