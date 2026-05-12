@@ -301,23 +301,11 @@ function render() {
     matchMap[key].players.push({ player: p, score, predLabel });
   }
 
-  // Pour chaque match : 1 buteur probable + 1 passeur probable + 3 décisifs
+  // Pour chaque match : top 5 par score, rôle calculé selon les stats
   const matches = Object.values(matchMap)
     .map(m => {
-      const all = m.players.sort((a,b) => b.score - a.score);
-      // Buteur probable = meilleur recent_goals
-      const striker = [...all].sort((a,b) => (b.player.recent_goals||0) - (a.player.recent_goals||0))[0];
-      // Passeur probable = meilleur recent_assists parmi les autres
-      const passer = [...all].filter(x => x.player.id !== striker?.player.id)
-        .sort((a,b) => (b.player.recent_assists||0) - (a.player.recent_assists||0))[0];
-      // 3 décisifs = top 3 restants par score
-      const usedIds = new Set([striker?.player.id, passer?.player.id].filter(Boolean));
-      const decisive = all.filter(x => !usedIds.has(x.player.id)).slice(0, 3);
-      return {
-        ...m,
-        striker, passer, decisive,
-        selected: [striker, passer, ...decisive].filter(Boolean)
-      };
+      const all = m.players.sort((a,b) => b.score - a.score).slice(0, 5);
+      return { ...m, selected: all };
     })
     .filter(m => m.selected.length > 0)
     .sort((a,b) => new Date(a.date) - new Date(b.date));
@@ -384,26 +372,31 @@ function render() {
       ? new Date(match.date).toLocaleDateString('fr-FR', {weekday:'short', day:'2-digit', month:'2-digit'})
       : '—';
 
-    const rowHtml = (entry, role) => {
+    const getRole = (g5, a5) => {
+      const diff = g5 - a5;
+      if (diff > 2)  return { tag:'⚽ BUTEUR',  bg:'rgba(0,229,160,0.12)',  color:'var(--g)' };
+      if (diff < -2) return { tag:'🎯 PASSEUR', bg:'rgba(94,129,244,0.12)', color:'var(--b)' };
+      return { tag:'⚡ DÉCISIF', bg:'rgba(255,159,67,0.12)', color:'var(--o)' };
+    };
+
+    const rowHtml = (entry) => {
       if (!entry) return '';
       const { player: p, score, predLabel } = entry;
-      const g5  = p.recent_goals || 0;
-      const a5  = p.recent_assists || 0;
+      const g5    = p.recent_goals || 0;
+      const a5    = p.recent_assists || 0;
       const photo = p.photo || '';
-      const roleTag = role === 'striker' ? `<span style="font-size:9px;background:rgba(0,229,160,0.12);color:var(--g);border-radius:4px;padding:1px 6px;font-weight:700">⚽ BUTEUR</span>`
-        : role === 'passer' ? `<span style="font-size:9px;background:rgba(94,129,244,0.12);color:var(--b);border-radius:4px;padding:1px 6px;font-weight:700">🎯 PASSEUR</span>`
-        : `<span style="font-size:9px;background:rgba(255,159,67,0.12);color:var(--o);border-radius:4px;padding:1px 6px;font-weight:700">⚡ DÉCISIF</span>`;
+      const role  = getRole(g5, a5);
       return `<div class="pred-row" onclick="window.location.href='player.html?id=${p.id}'">
         <div class="pred-avatar">
           ${photo ? `<img src="${photo}" onerror="this.outerHTML='⚽'" alt="${p.name}">` : '⚽'}
         </div>
         <div class="pred-info">
-          <div class="pred-name" style="display:flex;align-items:center;gap:6px">${p.name} ${roleTag}</div>
+          <div class="pred-name" style="display:flex;align-items:center;gap:6px">${p.name} <span style="font-size:9px;background:${role.bg};color:${role.color};border-radius:4px;padding:1px 6px;font-weight:700">${role.tag}</span></div>
           <div class="pred-team">${p.teamName}</div>
         </div>
         <div class="pred-bar-wrap">
           <div class="pred-bar-bg">
-            <div class="pred-bar-fill" data-fill="${score}" style="width:0%;background:linear-gradient(90deg,${predLabel.color},${predLabel.color}88)"></div>
+            <div class="pred-bar-fill" data-fill="${score}" style="width:0%;background:linear-gradient(90deg,${predLabel.color},${predLabel.color}88);border-radius:3px;transition:width .8s ease"></div>
           </div>
           <div class="pred-label" style="color:${predLabel.color}">${predLabel.label}</div>
         </div>
@@ -414,11 +407,7 @@ function render() {
       </div>`;
     };
 
-    const playersHtml = [
-      rowHtml(match.striker, 'striker'),
-      rowHtml(match.passer, 'passer'),
-      ...match.decisive.map(d => rowHtml(d, 'decisive'))
-    ].join('');
+    const playersHtml = match.selected.map(e => rowHtml(e)).join('');
 
     return `<div class="match-section">
       <div class="match-header">
