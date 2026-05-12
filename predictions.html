@@ -121,7 +121,7 @@ body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif
 </header>
 
 <div class="hero">
-  <h1><span style="-webkit-text-fill-color:initial;font-size:0.8em">🔮</span> Prédictions</h1>
+  <h1><span style="-webkit-text-fill-color:initial;font-size:0.8em;vertical-align:middle;line-height:1">🔮</span> Prédictions</h1>
   <p>Joueurs susceptibles de marquer ou passer sur les prochains matchs, calculés à partir de leur forme récente et de celle de leurs équipes.</p>
 </div>
 
@@ -215,7 +215,7 @@ function renderDayFilters() {
   if (!days.length) { container.innerHTML = ''; return; }
 
   const today = new Date().toISOString().slice(0,10);
-  let html = '<div class="day-filter-label">Jour</div>';
+  let html = '';
   html += `<div class="day-filters"><button class="day-btn on" onclick="setDay('all',this)">Tous</button>`;
   days.forEach(d => {
     const date = new Date(d + 'T12:00:00');
