@@ -794,7 +794,7 @@ function renderCdmPredictions(players, fixtures) {
       </div>
       <div style="display:flex;align-items:center;gap:8px">
         <div style="flex:1;height:6px;background:var(--s3);border-radius:3px;overflow:hidden">
-          <div class="pred-fill-bar" data-fill="${score}" style="width:0%;height:100%;background:linear-gradient(90deg,${predLabel.color},${predLabel.color}88);border-radius:3px;transition:width .8s ease"></div>
+          <div class="pred-fill-bar" data-fill="${score}" style="width:0%;height:100%;background:linear-gradient(90deg,${predLabel.color},${predLabel.color}88);border-radius:3px"></div>
         </div>
         <span style="font-size:11px;font-weight:700;color:${predLabel.color};white-space:nowrap;min-width:80px">${predLabel.label}</span>
       </div>
@@ -810,9 +810,10 @@ function renderCdmPredictions(players, fixtures) {
   // Animer les barres après insertion
   setTimeout(() => {
     document.querySelectorAll('.pred-fill-bar').forEach(bar => {
+      bar.style.transition = 'width .8s ease';
       bar.style.width = (bar.dataset.fill || 0) + '%';
     });
-  }, 200);
+  }, 100);
 
   if (!c.children.length) {
     c.innerHTML = '<div style="color:var(--muted);font-size:13px;padding:16px">Données insuffisantes pour générer des prédictions.</div>';
