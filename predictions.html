@@ -322,7 +322,58 @@ function render() {
     .sort((a,b) => new Date(a.date) - new Date(b.date));
 
   if (!matches.length) {
-    container.innerHTML = '<div class="empty">Aucune prédiction disponible.<br>Les prédictions apparaissent quand les prochains matchs sont connus.</div>';
+    // Pas de fixtures — afficher les joueurs les plus en forme sans match associé
+    const top = [...players]
+      .map(p => ({ p, score: calcPredScore(p, [], allPlayers).score }))
+      .filter(x => getPredLabel(x.score))
+      .sort((a,b) => b.score - a.score)
+      .slice(0, 10);
+
+    if (!top.length) {
+      container.innerHTML = '<div class="empty">Aucune prédiction disponible pour le moment.</div>';
+      return;
+    }
+
+    const rowsHtml = top.map(({ p, score }) => {
+      const predLabel = getPredLabel(score);
+      const g5 = p.recent_goals || 0;
+      const a5 = p.recent_assists || 0;
+      const photo = p.photo || '';
+      const lg = LEAGUE_MAP[p.leagueId] || { label:'', cls:'' };
+      return `<div class="pred-row" onclick="window.location.href='player.html?id=${p.id}'">
+        <div class="pred-avatar">${photo ? `<img src="${photo}" onerror="this.outerHTML='⚽'" alt="${p.name}">` : '⚽'}</div>
+        <div class="pred-info">
+          <div class="pred-name" style="display:flex;align-items:center;gap:6px">${p.name} <span class="match-league ${lg.cls}" style="font-size:9px">${lg.label}</span></div>
+          <div class="pred-team">${p.teamName}</div>
+        </div>
+        <div class="pred-bar-wrap">
+          <div class="pred-bar-bg">
+            <div class="pred-bar-fill" data-fill="${score}" style="width:0%;background:linear-gradient(90deg,${predLabel.color},${predLabel.color}88);border-radius:3px;transition:width .8s ease"></div>
+          </div>
+          <div class="pred-label" style="color:${predLabel.color}">${predLabel.label}</div>
+        </div>
+        <div class="pred-stats">
+          <div style="font-size:13px;font-weight:600;color:${predLabel.color}">⚽${g5} 🎯${a5}</div>
+          <div class="pred-sub">/5J</div>
+        </div>
+      </div>`;
+    }).join('');
+
+    container.innerHTML = `
+      <div style="background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:14px 18px;margin-bottom:20px;font-size:13px;color:var(--m2)">
+        ⏳ Les prochains matchs ne sont pas encore disponibles — affichage des joueurs les plus en forme.
+      </div>
+      <div class="match-section">
+        <div class="players-list">${rowsHtml}</div>
+      </div>`;
+
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        document.querySelectorAll('.pred-bar-fill').forEach(bar => {
+          bar.style.width = bar.dataset.fill + '%';
+        });
+      }, 50);
+    });
     return;
   }
 
