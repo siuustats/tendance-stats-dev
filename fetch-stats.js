@@ -343,47 +343,58 @@ async function fetchMissingPhotos(players, photosCache) {
   console.log(`\n📸 Recherche de ${missing.length} photo(s) via Transfermarkt...`);
   const updated = { ...photosCache };
 
-  for (const p of missing) {
+  // Traiter toutes les photos avec timeout par requête
+  const batch = missing;
+
+  for (const p of batch) {
     console.log(`  🔍 ${p.name}`);
     try {
-      // Chercher l'ID Transfermarkt
-      // Essayer nom complet puis prénom seul
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 12000); // 12s max par requête
+
       let playerId = null;
       for (const searchName of [p.name, p.name.split(' ')[0]]) {
-        const searchRes = await fetch(
-          `https://transfermarkt-api.fly.dev/players/search/${encodeURIComponent(searchName)}`,
-          { headers: { 'User-Agent': 'TendanceStats/1.0' } }
-        );
-        if (!searchRes.ok) continue;
-        const searchData = await searchRes.json();
-        playerId = searchData.results?.[0]?.id;
-        if (playerId) break;
-        await new Promise(r => setTimeout(r, 500));
+        try {
+          const searchRes = await fetch(
+            `https://transfermarkt-api.fly.dev/players/search/${encodeURIComponent(searchName)}`,
+            { headers: { 'User-Agent': 'TendanceStats/1.0' }, signal: controller.signal }
+          );
+          if (!searchRes.ok) continue;
+          const searchData = await searchRes.json();
+          playerId = searchData.results?.[0]?.id;
+          if (playerId) break;
+          await new Promise(r => setTimeout(r, 300));
+        } catch(e) { break; }
       }
+
+      clearTimeout(timeout);
       if (!playerId) { updated[p.id] = ''; console.log(`  ❌ Pas trouvé`); continue; }
 
-      await new Promise(r => setTimeout(r, 500));
+      await new Promise(r => setTimeout(r, 300));
 
-      // Récupérer la photo
-      const profileRes = await fetch(
-        `https://transfermarkt-api.fly.dev/players/${playerId}/profile`,
-        { headers: { 'User-Agent': 'TendanceStats/1.0' } }
-      );
-      if (!profileRes.ok) { updated[p.id] = ''; continue; }
-      const profile = await profileRes.json();
-      const photo = profile.imageUrl;
-
-      if (photo) {
-        updated[p.id] = photo;
-        console.log(`  ✅ Photo trouvée`);
-      } else {
+      // Récupérer la photo avec timeout
+      const controller2 = new AbortController();
+      const timeout2 = setTimeout(() => controller2.abort(), 12000);
+      try {
+        const profileRes = await fetch(
+          `https://transfermarkt-api.fly.dev/players/${playerId}/profile`,
+          { headers: { 'User-Agent': 'TendanceStats/1.0' }, signal: controller2.signal }
+        );
+        clearTimeout(timeout2);
+        if (!profileRes.ok) { updated[p.id] = ''; continue; }
+        const profile = await profileRes.json();
+        const photo = profile.imageUrl;
+        updated[p.id] = photo || '';
+        console.log(photo ? `  ✅ Photo trouvée` : `  ❌ Pas de photo`);
+      } catch(e) {
+        clearTimeout(timeout2);
         updated[p.id] = '';
-        console.log(`  ❌ Pas de photo`);
+        console.log(`  ⏱️ Timeout`);
       }
     } catch(e) {
       updated[p.id] = '';
     }
-    await new Promise(r => setTimeout(r, 1000));
+    await new Promise(r => setTimeout(r, 500));
   }
 
   return updated;
