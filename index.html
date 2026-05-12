@@ -362,7 +362,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <!-- LIEN PRÉDICTIONS -->
     <div style="text-align:right;margin:-20px 0 16px">
-      <a href="predictions.html" style="font-size:11px;color:var(--m);text-decoration:none;opacity:0.7;transition:opacity .2s" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">Voir toutes les prédictions →</a>
+      <a href="predictions.html" style="font-size:12px;font-weight:600;color:var(--m2);text-decoration:none;padding:6px 14px;border:1px solid var(--border);border-radius:8px;transition:all .2s;display:inline-block" onmouseover="this.style.color='var(--g)';this.style.borderColor='var(--g)';this.style.background='rgba(0,229,160,0.06)'" onmouseout="this.style.color='var(--m2)';this.style.borderColor='var(--border)';this.style.background='transparent'">Voir toutes les prédictions →</a>
     </div>
 
     <!-- JOUEURS EN FORME -->
@@ -551,7 +551,7 @@ function calcPredScore(player, fixtures, allPlayers) {
   const ga5    = (player.recent_goals||0) + (player.recent_assists||0);
   const ts     = player.trendScore || 0;
 
-  // Forme joueur (70%)
+  // Forme joueur — poids fort (70% avec fixture, 100% sans)
   const playerScore = Math.min(100, (ga5 * 15) + (ts * 0.7));
 
   // Trouver prochain match de l'équipe
@@ -559,33 +559,31 @@ function calcPredScore(player, fixtures, allPlayers) {
     f.homeTeam === player.teamName || f.awayTeam === player.teamName
   );
 
-  let teamScore = 50; // défaut si pas de fixture
-  let oppScore  = 50;
-  let opponent  = '—';
+  let opponent  = null;
   let matchDate = null;
+  let finalScore;
 
   if (nextMatch) {
-    const isHome   = nextMatch.homeTeam === player.teamName;
-    opponent       = isHome ? nextMatch.awayTeam : nextMatch.homeTeam;
-    matchDate      = nextMatch.date;
+    const isHome = nextMatch.homeTeam === player.teamName;
+    opponent     = isHome ? nextMatch.awayTeam : nextMatch.homeTeam;
+    matchDate    = nextMatch.date;
 
-    // Forme équipe (15%) — ratio V sur last5
-    const teamMatches = (player.last5 || []);
-    const wins = teamMatches.filter(m => m.teamWon === true).length;
-    const total = teamMatches.length || 1;
-    teamScore = Math.round((wins / total) * 100);
+    const wins  = (player.last5||[]).filter(m => m.teamWon === true).length;
+    const total = (player.last5||[]).length || 1;
+    const teamScore = Math.round((wins / total) * 100);
 
-    // Faiblesse adverse (15%) — chercher joueurs adverses et leur forme
     const oppPlayers = allPlayers.filter(p => p.teamName === opponent);
+    let oppScore = 50;
     if (oppPlayers.length > 0) {
-      const oppWins = oppPlayers[0]?.last5?.filter(m => m.teamWon === true).length || 0;
+      const oppWins  = oppPlayers[0]?.last5?.filter(m => m.teamWon === true).length || 0;
       const oppTotal = oppPlayers[0]?.last5?.length || 1;
-      // Faiblesse adverse = inverse de leur taux de victoire
       oppScore = Math.round((1 - oppWins / oppTotal) * 100);
     }
+    finalScore = Math.round(playerScore * 0.70 + teamScore * 0.15 + oppScore * 0.15);
+  } else {
+    // Pas de fixture — score basé uniquement sur la forme joueur
+    finalScore = Math.round(playerScore);
   }
-
-  const finalScore = Math.round(playerScore * 0.70 + teamScore * 0.15 + oppScore * 0.15);
 
   return { score: Math.min(98, finalScore), opponent, matchDate };
 }
@@ -644,7 +642,7 @@ function renderAlerts(list, fixtures) {
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
           <strong style="color:var(--text);font-size:14px">${p.name}</strong>
           <span style="font-size:11px;color:var(--m2)">${p.teamName||''}</span>
-          ${opponent !== '—' ? `<span style="font-size:10px;color:var(--m);margin-left:auto">vs ${opponent} · ${dateStr}</span>` : ''}
+          ${opponent ? `<span style="font-size:10px;color:var(--m2);margin-left:auto;background:var(--s3);padding:2px 8px;border-radius:4px">vs ${opponent} · ${dateStr}</span>` : '<span style="font-size:10px;color:var(--m);margin-left:auto">Prochain match à venir</span>'}
         </div>
         <div style="display:flex;align-items:center;gap:8px">
           <div style="flex:1;height:6px;background:var(--s3);border-radius:3px;overflow:hidden">
