@@ -658,7 +658,7 @@ function renderAlerts(list, fixtures) {
         </div>
         <div style="display:flex;align-items:center;gap:8px">
           <div style="flex:1;height:6px;background:var(--s3);border-radius:3px;overflow:hidden">
-            <div style="width:${fill}%;height:100%;background:linear-gradient(90deg,${predLabel.color},${predLabel.color}aa);border-radius:3px;transition:width .8s ease"></div>
+            <div class="pred-fill-bar" data-fill="${fill}" style="width:0%;height:100%;background:linear-gradient(90deg,${predLabel.color},${predLabel.color}aa);border-radius:3px;transition:width .8s ease"></div>
           </div>
           <span style="font-size:11px;font-weight:700;color:${predLabel.color};white-space:nowrap;min-width:80px">${predLabel.label}</span>
         </div>
