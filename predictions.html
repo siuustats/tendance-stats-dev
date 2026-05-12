@@ -260,7 +260,7 @@ function buildDayFilters(fixtures) {
   const allBtn = `<button class="day-btn${currentDay==='all'?' on':''}" onclick="setDay('all',this)">Tous</button>`;
   const dayBtns = sorted.map(d => {
     const date = new Date(d + 'T12:00:00');
-    const label = d === today ? 'Aujourd'hui'
+    const label = d === today ? "Aujourd'hui"
       : date.toLocaleDateString('fr-FR', {weekday:'short', day:'2-digit', month:'2-digit'});
     return `<button class="day-btn${currentDay===d?' on':''}" onclick="setDay('${d}',this)">${label}</button>`;
   }).join('');
