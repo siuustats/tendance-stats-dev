@@ -173,7 +173,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       border:1px solid rgba(212,168,67,0.2); border-radius:4px;
       padding:4px 10px;
     }
-    .divider { height:1px; background:linear-gradient(90deg, var(--gold), transparent); opacity:0.3; margin-bottom:60px; }
+    .divider { height:0; margin-bottom:0; }
 
     /* ── JOUEURS EN FORME ─────────────────────────────────────────── */
     .players-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px; }
@@ -473,6 +473,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <div class="scroll-hint">↓ DÉCOUVRIR</div>
 </section>
 
+<!-- JOUEURS EN FORME (de nos ligues, sélectionnés en CDM) -->
+<div class="divider"></div>
+<section class="section">
+  <div class="section-header">
+    <div class="section-title">🔥 Joueurs à surveiller</div>
+    <span class="section-badge">CDM 2026</span>
+  </div>
+  <div class="pgrid" id="hotPlayers"></div>
+</section>
+
 <!-- PRÉDICTIONS CDM -->
 <div class="divider"></div>
 <section class="section">
@@ -483,19 +493,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <div id="cdm-alerts" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px"></div>
   <div style="text-align:right;margin-bottom:8px">
     <a href="predictions-cdm.html" style="font-size:12px;font-weight:600;color:var(--muted2);text-decoration:none;padding:6px 14px;border:1px solid var(--border);border-radius:8px;transition:all .2s;display:inline-block" onmouseover="this.style.color='var(--gold)';this.style.borderColor='var(--gold)';this.style.background='rgba(212,168,67,0.06)'" onmouseout="this.style.color='var(--muted2)';this.style.borderColor='var(--border)';this.style.background='transparent'">Voir toutes les prédictions CDM →</a>
-  </div>
-</section>
-
-<!-- JOUEURS EN FORME (de nos ligues, sélectionnés en CDM) -->
-<div class="divider"></div>
-<section class="section">
-  <div class="section-header">
-    <div class="section-title">🔥 Joueurs à surveiller</div>
-    <span class="section-badge">CDM 2026</span>
-  </div>
-  <div class="pgrid" id="hotPlayers"></div>
-  <div style="text-align:right;margin-top:-8px;padding:0 4px 16px">
-    <a href="predictions-cdm.html" style="font-size:11px;color:var(--muted);text-decoration:none;opacity:0.7;transition:opacity .2s" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">Voir toutes les prédictions CDM →</a>
   </div>
 </section>
 
