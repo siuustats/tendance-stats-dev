@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-WCCFQHTP');</script>
+<!-- End Google Tag Manager -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prédictions CDM 2026 — Joueurs à Surveiller | Tendance Stats</title>
+<meta name="description" content="Prédictions Coupe du Monde 2026 basées sur la forme des joueurs et des équipes. Découvrez les joueurs les plus susceptibles de marquer sur les prochains matchs CDM.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tendancestats.com/predictions-cdm.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#080608; --s1:#0e0c10; --s2:#13101a; --s3:#1a1620;
+  --g:#d4a843; --g2:#f0c060; --g-dim:rgba(212,168,67,0.08);
+  --g-border:rgba(212,168,67,0.2);
+  --b:#5e81f4; --o:#ff9f43; --r:#ff5050; --y:#ffd32a;
+  --m:#6b7280; --m2:#9ca3af; --text:#f0f2f8; --border:#1e2130;
+}
+* { box-sizing:border-box; margin:0; padding:0; }
+body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; min-height:100vh; }
+
+.header { position:sticky; top:0; z-index:100; background:rgba(8,6,8,0.92); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); padding:0 24px; height:56px; display:flex; align-items:center; justify-content:space-between; }
+.logo { font-family:'Bebas Neue',sans-serif; font-size:22px; color:var(--g); text-decoration:none; letter-spacing:2px; }
+.logo span { color:var(--text); }
+.nav { display:flex; align-items:center; gap:12px; }
+.nav a { font-size:13px; color:var(--m2); text-decoration:none; padding:6px 12px; border-radius:6px; transition:all .2s; }
+.nav a:hover { color:var(--text); background:var(--s3); }
+
+.hero { background:linear-gradient(180deg,rgba(212,168,67,0.06) 0%,transparent 100%); border-bottom:1px solid var(--border); padding:48px 24px 36px; text-align:center; }
+.hero h1 { font-family:'Bebas Neue',sans-serif; font-size:clamp(36px,7vw,64px); letter-spacing:2px; background:linear-gradient(135deg,#f0c060,#d4a843); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:12px; }
+.hero p { font-size:14px; color:var(--m2); max-width:560px; margin:0 auto; line-height:1.7; }
+.hero-badge { display:inline-flex; align-items:center; gap:6px; font-size:11px; color:var(--g); background:var(--g-dim); border:1px solid var(--g-border); border-radius:20px; padding:4px 12px; margin-top:16px; }
+
+.wina-banner { background:linear-gradient(135deg,#c0392b,#96281b); padding:12px 24px; display:flex; align-items:center; justify-content:center; gap:16px; flex-wrap:wrap; text-decoration:none; transition:filter .2s; }
+.wina-banner:hover { filter:brightness(1.1); }
+.wina-banner span { font-size:14px; font-weight:600; color:#fff; }
+.wina-banner span strong { color:#ffd60a; }
+.wina-cta { background:#ffd60a; color:#1a0a00; font-weight:700; padding:7px 18px; border-radius:6px; font-size:12px; white-space:nowrap; }
+
+.content { max-width:1100px; margin:0 auto; padding:40px 24px; }
+
+/* Filtres par groupe */
+.filter-section { margin-bottom:28px; }
+.filter-label { font-size:11px; color:var(--m); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; }
+.filters { display:flex; gap:8px; flex-wrap:wrap; }
+.filter-btn { background:var(--s2); border:1px solid var(--border); color:var(--m2); font-size:12px; padding:6px 14px; border-radius:20px; cursor:pointer; transition:all .2s; font-family:'DM Sans',sans-serif; }
+.filter-btn:hover, .filter-btn.on { border-color:var(--g); color:var(--g); background:var(--g-dim); }
+
+.match-section { margin-bottom:40px; }
+.match-header { display:flex; align-items:center; gap:12px; padding:14px 18px; background:var(--s2); border:1px solid var(--border); border-radius:12px 12px 0 0; border-bottom:none; }
+.match-teams { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:1px; }
+.match-date { font-size:11px; color:var(--m); font-family:'DM Mono',monospace; margin-left:auto; }
+.match-badge { font-size:10px; font-weight:700; padding:2px 8px; border-radius:4px; background:var(--g-dim); color:var(--g); border:1px solid var(--g-border); }
+
+.players-list { background:var(--s1); border:1px solid var(--border); border-radius:0 0 12px 12px; overflow:hidden; }
+.pred-row { display:flex; align-items:center; gap:14px; padding:14px 18px; border-bottom:1px solid var(--border); cursor:pointer; transition:background .15s; }
+.pred-row:last-child { border-bottom:none; }
+.pred-row:hover { background:var(--s2); }
+.pred-avatar { width:42px; height:42px; border-radius:50%; object-fit:cover; background:var(--s3); flex-shrink:0; font-size:18px; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+.pred-avatar img { width:100%; height:100%; object-fit:cover; }
+.pred-info { flex:1; min-width:0; }
+.pred-name { font-size:14px; font-weight:600; }
+.pred-team { font-size:11px; color:var(--m2); margin-top:1px; }
+.pred-bar-wrap { flex:1; max-width:200px; }
+.pred-bar-bg { height:6px; background:var(--s3); border-radius:3px; overflow:hidden; margin-bottom:4px; }
+.pred-bar-fill { height:100%; border-radius:3px; transition:width .8s ease; }
+.pred-label { font-size:11px; font-weight:700; white-space:nowrap; }
+.pred-stats { text-align:right; flex-shrink:0; }
+.pred-ga { font-family:'DM Mono',monospace; font-size:15px; font-weight:600; }
+.pred-sub { font-size:9px; color:var(--m); text-transform:uppercase; letter-spacing:.5px; margin-top:1px; }
+
+/* Attente CDM */
+.waiting-card { background:var(--s2); border:1px solid var(--g-border); border-radius:12px; padding:32px; text-align:center; margin-bottom:32px; }
+.waiting-card h2 { font-family:'Bebas Neue',sans-serif; font-size:28px; color:var(--g); letter-spacing:2px; margin-bottom:12px; }
+.waiting-card p { font-size:14px; color:var(--m2); line-height:1.7; }
+.countdown-mini { display:flex; justify-content:center; gap:16px; margin-top:20px; }
+.cd-item { text-align:center; }
+.cd-val { font-family:'Bebas Neue',sans-serif; font-size:36px; color:var(--g); line-height:1; }
+.cd-lbl { font-size:10px; color:var(--m); text-transform:uppercase; letter-spacing:1px; }
+
+.empty { text-align:center; padding:48px; color:var(--m); font-size:14px; }
+.loading { display:flex; gap:6px; justify-content:center; padding:40px; }
+.loading span { width:8px; height:8px; border-radius:50%; background:var(--g); animation:blink 1.2s infinite; }
+.loading span:nth-child(2){animation-delay:.2s} .loading span:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,80%,100%{opacity:.2}40%{opacity:1}}
+
+.legal { text-align:center; padding:24px; font-size:11px; color:var(--m); border-top:1px solid var(--border); line-height:1.8; }
+.legal a { color:var(--m2); }
+
+@media(max-width:768px){
+  .content { padding:24px 12px; }
+  .filters { flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; padding-bottom:4px; }
+  .filters::-webkit-scrollbar { display:none; }
+  .filter-btn { flex-shrink:0; white-space:nowrap; }
+  .pred-bar-wrap { max-width:120px; }
+  .pred-row { gap:10px; padding:12px 14px; }
+  .countdown-mini { gap:10px; }
+  .cd-val { font-size:28px; }
+}
+</style>
+</head>
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WCCFQHTP" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+<header class="header">
+  <a href="worldcup.html" class="logo">🏆 <span>CDM 2026</span></a>
+  <nav class="nav">
+    <a href="worldcup.html">← CDM 2026</a>
+    <a href="index.html" style="color:var(--m2)">Saison</a>
+  </nav>
+</header>
+
+<a href="https://www.winamax.fr/paris-sportifs/sports/1?code=CMONBN" target="_blank" rel="nofollow noopener" class="wina-banner">
+  <span>⚽ Pariez sur la CDM 2026 avec Winamax — <strong>200€ offerts</strong> à l'inscription</span>
+  <span class="wina-cta">Voir les cotes →</span>
+</a>
+
+<div class="hero">
+  <h1>🔮 Prédictions CDM 2026</h1>
+  <p>Joueurs susceptibles de marquer ou passer lors des prochains matchs de la Coupe du Monde 2026, calculés à partir de leur forme et de celle de leurs équipes.</p>
+  <div class="hero-badge">🏆 Coupe du Monde · USA / Canada / Mexique · 11 juin 2026</div>
+</div>
+
+<div class="content">
+
+  <div class="filter-section">
+    <div class="filter-label">Filtrer par groupe</div>
+    <div class="filters" id="filters">
+      <button class="filter-btn on" onclick="setFilter('all',this)">Tous</button>
+      <button class="filter-btn" onclick="setFilter('A',this)">Groupe A</button>
+      <button class="filter-btn" onclick="setFilter('B',this)">Groupe B</button>
+      <button class="filter-btn" onclick="setFilter('C',this)">Groupe C</button>
+      <button class="filter-btn" onclick="setFilter('D',this)">Groupe D</button>
+      <button class="filter-btn" onclick="setFilter('E',this)">Groupe E</button>
+      <button class="filter-btn" onclick="setFilter('F',this)">Groupe F</button>
+      <button class="filter-btn" onclick="setFilter('G',this)">Groupe G</button>
+      <button class="filter-btn" onclick="setFilter('H',this)">Groupe H</button>
+      <button class="filter-btn" onclick="setFilter('I',this)">Groupe I</button>
+      <button class="filter-btn" onclick="setFilter('J',this)">Groupe J</button>
+      <button class="filter-btn" onclick="setFilter('K',this)">Groupe K</button>
+      <button class="filter-btn" onclick="setFilter('L',this)">Groupe L</button>
+    </div>
+  </div>
+
+  <div id="predictions-container">
+    <div class="loading"><span></span><span></span><span></span></div>
+  </div>
+
+</div>
+
+<div class="legal">
+  Les jeux d'argent et de hasard sont interdits aux mineurs. Jouer comporte des risques.<br>
+  Appelez le <strong>09 74 75 13 13</strong> | <a href="https://www.joueurs-info-service.fr" target="_blank">joueurs-info-service.fr</a> | 18+ | Winamax agréé ANJ<br><br>
+  <strong>Tendance Stats</strong> · Prédictions CDM 2026 · <a href="worldcup.html">Retour CDM</a>
+</div>
+
+<script>
+// Groupes CDM 2026
+const CDM_GROUPS = {
+  A:['Mexique','Afrique du Sud','Corée du Sud','Tchéquie'],
+  B:['Canada','Bosnie','Qatar','Suisse'],
+  C:['Brésil','Maroc','Haïti','Écosse'],
+  D:['États-Unis','Paraguay','Australie','Turquie'],
+  E:['Allemagne','Curaçao',"Côte d'Ivoire",'Équateur'],
+  F:['Pays-Bas','Japon','Suède','Tunisie'],
+  G:['Belgique','Égypte','Iran','Nouvelle-Zélande'],
+  H:['Espagne','Cap-Vert','Arabie Saoudite','Uruguay'],
+  I:['France','Sénégal','Irak','Norvège'],
+  J:['Argentine','Algérie','Autriche','Jordanie'],
+  K:['Portugal','RD Congo','Ouzbékistan','Colombie'],
+  L:['Angleterre','Croatie','Ghana','Panama'],
+};
+
+// Inverser pour chercher groupe par pays
+const TEAM_TO_GROUP = {};
+for (const [group, teams] of Object.entries(CDM_GROUPS)) {
+  for (const team of teams) TEAM_TO_GROUP[team] = group;
+}
+
+let allPlayers = [], allFixtures = [], currentFilter = 'all';
+
+// Compte à rebours
+function updateCountdown() {
+  const target = new Date('2026-06-11T19:00:00Z');
+  const now    = new Date();
+  const diff   = target - now;
+  if (diff <= 0) return;
+  const days  = Math.floor(diff / 86400000);
+  const hours = Math.floor((diff % 86400000) / 3600000);
+  const mins  = Math.floor((diff % 3600000) / 60000);
+  const secs  = Math.floor((diff % 60000) / 1000);
+  const el = document.getElementById('cdm-countdown');
+  if (el) el.innerHTML = `
+    <div class="cd-item"><div class="cd-val">${days}</div><div class="cd-lbl">Jours</div></div>
+    <div class="cd-item"><div class="cd-val">${String(hours).padStart(2,'0')}</div><div class="cd-lbl">Heures</div></div>
+    <div class="cd-item"><div class="cd-val">${String(mins).padStart(2,'0')}</div><div class="cd-lbl">Min</div></div>
+    <div class="cd-item"><div class="cd-val">${String(secs).padStart(2,'0')}</div><div class="cd-lbl">Sec</div></div>
+  `;
+}
+
+function calcPredScore(player, fixtures, players) {
+  const ga5 = (player.recent_goals||0) + (player.recent_assists||0);
+  const ts  = player.trendScore || 0;
+  const playerScore = Math.min(100, (ga5 * 15) + (ts * 0.7));
+
+  const nextMatch = fixtures.find(f =>
+    f.homeTeam === player.teamName || f.awayTeam === player.teamName
+  );
+
+  let teamScore = 50, oppScore = 50, opponent = null, matchDate = null;
+
+  if (nextMatch) {
+    const isHome = nextMatch.homeTeam === player.teamName;
+    opponent     = isHome ? nextMatch.awayTeam : nextMatch.homeTeam;
+    matchDate    = nextMatch.date;
+
+    const wins = (player.last5||[]).filter(m => m.teamWon === true).length;
+    const total = (player.last5||[]).length || 1;
+    teamScore = Math.round((wins / total) * 100);
+
+    const oppPlayers = players.filter(p => p.teamName === opponent);
+    if (oppPlayers.length > 0) {
+      const oppWins  = oppPlayers[0]?.last5?.filter(m => m.teamWon === true).length || 0;
+      const oppTotal = oppPlayers[0]?.last5?.length || 1;
+      oppScore = Math.round((1 - oppWins / oppTotal) * 100);
+    }
+  }
+
+  const score = Math.min(98, Math.round(playerScore * 0.70 + teamScore * 0.15 + oppScore * 0.15));
+  return { score, opponent, matchDate };
+}
+
+function getPredLabel(score) {
+  if (score >= 75) return { label:'🔥 EN FEU',  color:'var(--g)' };
+  if (score >= 55) return { label:'⚡ CHAUD',    color:'var(--y)' };
+  if (score >= 35) return { label:'📈 EN FORME', color:'#5e81f4' };
+  return null;
+}
+
+function setFilter(group, btn) {
+  currentFilter = group;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  render();
+}
+
+function render() {
+  const container = document.getElementById('predictions-container');
+  const cdmStarted = new Date() >= new Date('2026-06-11T19:00:00Z');
+
+  if (!cdmStarted) {
+    // Avant le 11 juin — afficher compte à rebours + joueurs à surveiller par forme club
+    const target = new Date('2026-06-11T19:00:00Z');
+    const days = Math.floor((target - new Date()) / 86400000);
+
+    // Joueurs CDM (basés sur la forme club) filtrés par groupe
+    let players = allPlayers.filter(p => p.leagueId !== 6);
+    if (currentFilter !== 'all') {
+      players = players.filter(p => TEAM_TO_GROUP[p.teamName] === currentFilter);
+    }
+
+    const sorted = [...players]
+      .sort((a,b) => (b.trendScore||0) - (a.trendScore||0))
+      .slice(0, 12);
+
+    const playersHtml = sorted.length ? sorted.map(p => {
+      const { score } = calcPredScore(p, allFixtures, allPlayers);
+      const predLabel = getPredLabel(score);
+      if (!predLabel) return '';
+      const ga5 = (p.recent_goals||0) + (p.recent_assists||0);
+      const group = TEAM_TO_GROUP[p.teamName] || '?';
+      return `<div class="pred-row" onclick="window.location.href='player-cdm.html?id=${p.id}&name=${encodeURIComponent(p.name)}&teamName=${encodeURIComponent(p.teamName||'')}'"">
+        <div class="pred-avatar">
+          ${p.photo ? `<img src="${p.photo}" onerror="this.outerHTML='⚽'" alt="${p.name}">` : '⚽'}
+        </div>
+        <div class="pred-info">
+          <div class="pred-name">${p.name}</div>
+          <div class="pred-team">${p.teamName} · <span style="color:var(--g)">Groupe ${group}</span></div>
+        </div>
+        <div class="pred-bar-wrap">
+          <div class="pred-bar-bg">
+            <div class="pred-bar-fill" style="width:${score}%;background:linear-gradient(90deg,${predLabel.color},${predLabel.color}88)"></div>
+          </div>
+          <div class="pred-label" style="color:${predLabel.color}">${predLabel.label}</div>
+        </div>
+        <div class="pred-stats">
+          <div class="pred-ga" style="color:${predLabel.color}">${ga5} GA</div>
+          <div class="pred-sub">sur 5J</div>
+        </div>
+      </div>`;
+    }).filter(Boolean).join('') : '<div class="empty">Aucun joueur trouvé pour ce groupe.</div>';
+
+    container.innerHTML = `
+      <div class="waiting-card">
+        <h2>🏆 CDM 2026 — Dans ${days} jours</h2>
+        <p>Les prédictions CDM seront basées sur les vraies stats de la compétition dès le coup d'envoi le 11 juin 2026.<br>En attendant, voici les joueurs à surveiller basés sur leur forme actuelle en club.</p>
+        <div class="countdown-mini" id="cdm-countdown"></div>
+      </div>
+      <div style="margin-bottom:20px">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--g);margin-bottom:4px">⭐ Joueurs à surveiller</div>
+        <div style="font-size:13px;color:var(--m2)">Basé sur la forme actuelle en club</div>
+      </div>
+      <div class="match-section">
+        <div class="players-list">${playersHtml}</div>
+      </div>`;
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+    return;
+  }
+
+  // Après le 11 juin — vraies prédictions CDM
+  let players = allPlayers.filter(p => p.leagueId === 6);
+  if (currentFilter !== 'all') {
+    players = players.filter(p => TEAM_TO_GROUP[p.teamName] === currentFilter);
+  }
+
+  const matchMap = {};
+  for (const p of players) {
+    const { score, opponent, matchDate } = calcPredScore(p, allFixtures, allPlayers);
+    if (!opponent) continue;
+    const predLabel = getPredLabel(score);
+    if (!predLabel) continue;
+
+    const key = `${p.teamName}__${opponent}__${matchDate}`;
+    if (!matchMap[key]) {
+      matchMap[key] = { homeTeam: p.teamName, awayTeam: opponent, date: matchDate, players: [] };
+    }
+    matchMap[key].players.push({ player: p, score, predLabel });
+  }
+
+  const matches = Object.values(matchMap)
+    .map(m => ({ ...m, players: m.players.sort((a,b) => b.score - a.score).slice(0,3) }))
+    .filter(m => m.players.length > 0)
+    .sort((a,b) => new Date(a.date) - new Date(b.date));
+
+  if (!matches.length) {
+    container.innerHTML = '<div class="empty">Aucune prédiction disponible pour ce filtre.</div>';
+    return;
+  }
+
+  container.innerHTML = matches.map(match => {
+    const dateStr = match.date
+      ? new Date(match.date).toLocaleDateString('fr-FR', {weekday:'short',day:'2-digit',month:'2-digit'})
+      : '—';
+    const groupA = TEAM_TO_GROUP[match.homeTeam] || '';
+
+    const playersHtml = match.players.map(({ player: p, score, predLabel }) => {
+      const ga5 = (p.recent_goals||0) + (p.recent_assists||0);
+      return `<div class="pred-row" onclick="window.location.href='player-cdm.html?id=${p.id}&name=${encodeURIComponent(p.name)}&teamName=${encodeURIComponent(p.teamName||'')}'"">
+        <div class="pred-avatar">
+          ${p.photo ? `<img src="${p.photo}" onerror="this.outerHTML='⚽'" alt="${p.name}">` : '⚽'}
+        </div>
+        <div class="pred-info">
+          <div class="pred-name">${p.name}</div>
+          <div class="pred-team">${p.teamName}</div>
+        </div>
+        <div class="pred-bar-wrap">
+          <div class="pred-bar-bg">
+            <div class="pred-bar-fill" style="width:${score}%;background:linear-gradient(90deg,${predLabel.color},${predLabel.color}88)"></div>
+          </div>
+          <div class="pred-label" style="color:${predLabel.color}">${predLabel.label}</div>
+        </div>
+        <div class="pred-stats">
+          <div class="pred-ga" style="color:${predLabel.color}">${ga5} GA</div>
+          <div class="pred-sub">sur 5J</div>
+        </div>
+      </div>`;
+    }).join('');
+
+    return `<div class="match-section">
+      <div class="match-header">
+        ${groupA ? `<span class="match-badge">Groupe ${groupA}</span>` : ''}
+        <span class="match-teams">${match.homeTeam} <span style="color:var(--m);font-size:14px">vs</span> ${match.awayTeam}</span>
+        <span class="match-date">${dateStr}</span>
+      </div>
+      <div class="players-list">${playersHtml}</div>
+    </div>`;
+  }).join('');
+}
+
+async function init() {
+  try {
+    const [dataRes, photosRes] = await Promise.all([
+      fetch('data.json?v=' + Date.now()),
+      fetch('photos.json?v=' + Date.now()).catch(() => null)
+    ]);
+    const data   = await dataRes.json();
+    const photos = photosRes?.ok ? await photosRes.json() : {};
+
+    allPlayers  = (data.players || []).map(p => ({
+      ...p, photo: photos[p.id] || photos[String(p.id)] || p.photo || ''
+    }));
+    allFixtures = data.fixtures || [];
+
+    render();
+  } catch(e) {
+    document.getElementById('predictions-container').innerHTML =
+      '<div class="empty">Données temporairement indisponibles.<br><a href="worldcup.html" style="color:var(--g)">← Retour CDM</a></div>';
+  }
+}
+
+init();
+</script>
+</body>
+</html>
