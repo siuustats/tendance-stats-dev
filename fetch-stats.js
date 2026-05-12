@@ -82,7 +82,7 @@ async function fetchFixtures() {
   const fixtures = [];
   const today = new Date();
   const dates = [];
-  for (let i = 1; i <= 7; i++) {
+  for (let i = 1; i <= 10; i++) {
     const d = new Date(today);
     d.setDate(d.getDate() + i);
     dates.push(d.toISOString().slice(0,10).replace(/-/g,''));
@@ -468,7 +468,7 @@ async function main() {
 
   // IDs des matchs des 3 derniers jours → forcer re-traitement pour récupérer passes manquantes
   const recentDates = new Set();
-  for (let i = 0; i <= 3; i++) { // couvre vendredi-lundi (tout le weekend)
+  for (let i = 0; i <= 4; i++) { // couvre jeudi-lundi (tout le weekend + veille)
     const d = new Date();
     d.setDate(d.getDate() - i);
     recentDates.add(d.toISOString().slice(0, 10));
@@ -501,7 +501,7 @@ async function main() {
 
   // Chercher sur les 3 derniers jours
   const dates = [];
-  for (let i = 0; i <= 3; i++) { // couvre vendredi-lundi (tout le weekend)
+  for (let i = 0; i <= 4; i++) { // couvre jeudi-lundi (tout le weekend + veille)
     const d = new Date();
     d.setDate(d.getDate() - i);
     dates.push(d.toISOString().slice(0, 10).replace(/-/g, ''));
