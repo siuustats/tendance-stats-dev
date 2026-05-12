@@ -356,13 +356,11 @@ function render() {
         <div class="players-list">${rowsHtml}</div>
       </div>`;
 
-    requestAnimationFrame(() => {
-      setTimeout(() => {
-        document.querySelectorAll('.pred-bar-fill').forEach(bar => {
-          bar.style.width = bar.dataset.fill + '%';
-        });
-      }, 50);
-    });
+    setTimeout(() => {
+      document.querySelectorAll('.pred-bar-fill').forEach(bar => {
+        bar.style.width = (bar.dataset.fill || 0) + '%';
+      });
+    }, 200);
     return;
   }
 
@@ -420,12 +418,11 @@ function render() {
   }).join('');
 
   // Animer les barres
-  requestAnimationFrame(() => {
+  setTimeout(() => {
     document.querySelectorAll('.pred-bar-fill').forEach(bar => {
-      bar.style.transition = 'width .8s ease';
-      bar.style.width = bar.dataset.fill + '%';
+      bar.style.width = (bar.dataset.fill || 0) + '%';
     });
-  });
+  }, 200);
 }
 
 async function init() {
