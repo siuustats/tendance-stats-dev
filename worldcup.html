@@ -808,13 +808,11 @@ function renderCdmPredictions(players, fixtures) {
   });
 
   // Animer les barres après insertion
-  requestAnimationFrame(() => {
-    setTimeout(() => {
-      document.querySelectorAll('.pred-fill-bar').forEach(bar => {
-        bar.style.width = bar.dataset.fill + '%';
-      });
-    }, 50);
-  });
+  setTimeout(() => {
+    document.querySelectorAll('.pred-fill-bar').forEach(bar => {
+      bar.style.width = (bar.dataset.fill || 0) + '%';
+    });
+  }, 200);
 
   if (!c.children.length) {
     c.innerHTML = '<div style="color:var(--muted);font-size:13px;padding:16px">Données insuffisantes pour générer des prédictions.</div>';
