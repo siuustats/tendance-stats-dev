@@ -672,6 +672,15 @@ function renderAlerts(list, fixtures) {
     c.appendChild(d);
   });
 
+  // Animer les barres après insertion
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      document.querySelectorAll('.pred-fill-bar').forEach(bar => {
+        bar.style.width = bar.dataset.fill + '%';
+      });
+    }, 50);
+  });
+
   if (c.children.length === 0) {
     c.innerHTML = '<div style="color:var(--m);font-size:13px;padding:16px">Données insuffisantes pour générer des prédictions.</div>';
   }
