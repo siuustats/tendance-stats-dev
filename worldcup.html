@@ -473,6 +473,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <div class="scroll-hint">↓ DÉCOUVRIR</div>
 </section>
 
+<!-- PRÉDICTIONS CDM -->
+<div class="divider"></div>
+<section class="section">
+  <div class="section-header">
+    <div class="section-title">🔮 Prédictions</div>
+    <span class="section-badge">CDM 2026</span>
+  </div>
+  <div id="cdm-alerts" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px"></div>
+  <div style="text-align:right;margin-bottom:8px">
+    <a href="predictions-cdm.html" style="font-size:12px;font-weight:600;color:var(--muted2);text-decoration:none;padding:6px 14px;border:1px solid var(--border);border-radius:8px;transition:all .2s;display:inline-block" onmouseover="this.style.color='var(--gold)';this.style.borderColor='var(--gold)';this.style.background='rgba(212,168,67,0.06)'" onmouseout="this.style.color='var(--muted2)';this.style.borderColor='var(--border)';this.style.background='transparent'">Voir toutes les prédictions CDM →</a>
+  </div>
+</section>
+
 <!-- JOUEURS EN FORME (de nos ligues, sélectionnés en CDM) -->
 <div class="divider"></div>
 <section class="section">
@@ -680,11 +693,117 @@ async function loadData() {
     allPlayers = cdmReal.length ? cdmReal : testWithPhotos;
     cdmMatches = (data.matches || []).filter(m => m.leagueId === 6);
     cdmPlayers = cdmReal.length ? cdmReal : rankingWithPhotos;
+    renderCdmPredictions(allPlayers, data.fixtures || []);
     renderHotPlayers();
     renderRanking();
   } catch(e) {
     allPlayers = TEST_PLAYERS;
+    renderCdmPredictions(TEST_PLAYERS, []);
     renderHotPlayers();
+  }
+}
+
+// ── PRÉDICTIONS CDM ──────────────────────────────────────────────────────────
+function calcPredScore(player, fixtures, allP) {
+  const ga5 = (player.recent_goals||0) + (player.recent_assists||0);
+  const ts  = player.trendScore || player.signal || 0;
+  const playerScore = Math.min(100, (ga5 * 15) + (ts * 0.7));
+
+  const nextMatch = (fixtures||[]).find(f =>
+    f.homeTeam === player.teamName || f.awayTeam === player.teamName
+  );
+
+  let opponent = null, matchDate = null, finalScore;
+
+  if (nextMatch) {
+    const isHome = nextMatch.homeTeam === player.teamName;
+    opponent     = isHome ? nextMatch.awayTeam : nextMatch.homeTeam;
+    matchDate    = nextMatch.date;
+    const wins   = (player.last5||[]).filter(m => m.teamWon === true).length;
+    const total  = (player.last5||[]).length || 1;
+    const teamScore = Math.round((wins / total) * 100);
+    const oppPlayers = allP.filter(p => p.teamName === opponent);
+    let oppScore = 50;
+    if (oppPlayers.length > 0) {
+      const oppWins  = oppPlayers[0]?.last5?.filter(m => m.teamWon === true).length || 0;
+      const oppTotal = oppPlayers[0]?.last5?.length || 1;
+      oppScore = Math.round((1 - oppWins / oppTotal) * 100);
+    }
+    finalScore = Math.round(playerScore * 0.70 + teamScore * 0.15 + oppScore * 0.15);
+  } else {
+    finalScore = Math.round(playerScore);
+  }
+  return { score: Math.min(98, finalScore), opponent, matchDate };
+}
+
+function getPredLabel(score) {
+  if (score >= 75) return { label:'🔥 EN FEU',  color:'var(--o)' };
+  if (score >= 55) return { label:'⚡ CHAUD',    color:'var(--y)' };
+  if (score >= 35) return { label:'📈 EN FORME', color:'var(--gold)' };
+  return null;
+}
+
+function renderCdmPredictions(players, fixtures) {
+  const leaguesSeen = new Set();
+  const picked = [];
+  const sorted = [...players].sort((a,b) => (b.trendScore||b.signal||0) - (a.trendScore||a.signal||0));
+
+  for (const p of sorted) {
+    if (picked.length >= 4) break;
+    if (!leaguesSeen.has(p.teamName)) {
+      leaguesSeen.add(p.teamName);
+      picked.push(p);
+    }
+  }
+  for (const p of sorted) {
+    if (picked.length >= 4) break;
+    if (!picked.find(x => x.id === p.id)) picked.push(p);
+  }
+
+  const c = document.getElementById('cdm-alerts');
+  if (!c) return;
+  c.innerHTML = '';
+
+  picked.forEach((p, i) => {
+    const { score, opponent, matchDate } = calcPredScore(p, fixtures, players);
+    const predLabel = getPredLabel(score);
+    if (!predLabel) return;
+
+    const ga5 = (p.recent_goals||0) + (p.recent_assists||0);
+    const dateStr = matchDate
+      ? new Date(matchDate).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'})
+      : null;
+
+    const d = document.createElement('div');
+    d.style.cssText = `background:var(--s2);border:1px solid var(--border);border-left:3px solid ${predLabel.color};border-radius:10px;padding:14px 16px;cursor:pointer;transition:background .15s`;
+    d.onmouseover = () => d.style.background = 'var(--s3)';
+    d.onmouseout  = () => d.style.background = 'var(--s2)';
+    const pid = p.id?.startsWith?.('t') ? (p.espnId || p.id) : p.id;
+    d.onclick = () => window.location.href = `player-cdm.html?id=${pid}&name=${encodeURIComponent(p.name)}&teamName=${encodeURIComponent(p.teamName||'')}&photo=${encodeURIComponent(p.photo||'')}`;
+    d.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <span style="font-size:18px">${predLabel.label.split(' ')[0]}</span>
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:8px">
+            <strong style="color:var(--text);font-size:14px">${p.name}</strong>
+            <span style="font-size:11px;color:var(--muted2)">${p.teamName||''}</span>
+            ${opponent ? `<span style="font-size:10px;color:var(--muted2);margin-left:auto;background:var(--s3);padding:2px 8px;border-radius:4px">vs ${opponent}${dateStr ? ' · '+dateStr : ''}</span>` : '<span style="font-size:10px;color:var(--muted);margin-left:auto">Prochain match à venir</span>'}
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="flex:1;height:6px;background:var(--s3);border-radius:3px;overflow:hidden">
+          <div style="width:${score}%;height:100%;background:linear-gradient(90deg,${predLabel.color},${predLabel.color}88);border-radius:3px;transition:width .8s ease"></div>
+        </div>
+        <span style="font-size:11px;font-weight:700;color:${predLabel.color};white-space:nowrap;min-width:80px">${predLabel.label}</span>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:6px">GA/5J : ${ga5} · TendScore : ${p.trendScore||p.signal||0}</div>
+    `;
+    c.appendChild(d);
+  });
+
+  if (!c.children.length) {
+    c.innerHTML = '<div style="color:var(--muted);font-size:13px;padding:16px">Données insuffisantes pour générer des prédictions.</div>';
   }
 }
 
