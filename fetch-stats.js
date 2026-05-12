@@ -398,7 +398,7 @@ async function main() {
 
   // IDs des matchs des 3 derniers jours → forcer re-traitement pour récupérer passes manquantes
   const recentDates = new Set();
-  for (let i = 0; i <= 1; i++) {
+  for (let i = 0; i <= 3; i++) { // couvre vendredi-lundi (tout le weekend)
     const d = new Date();
     d.setDate(d.getDate() - i);
     recentDates.add(d.toISOString().slice(0, 10));
@@ -431,7 +431,7 @@ async function main() {
 
   // Chercher sur les 3 derniers jours
   const dates = [];
-  for (let i = 0; i <= 1; i++) {
+  for (let i = 0; i <= 3; i++) { // couvre vendredi-lundi (tout le weekend)
     const d = new Date();
     d.setDate(d.getDate() - i);
     dates.push(d.toISOString().slice(0, 10).replace(/-/g, ''));
