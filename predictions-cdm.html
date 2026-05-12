@@ -317,13 +317,11 @@ function render() {
       </div>`;
 
     // Animer les barres
-    requestAnimationFrame(() => {
-      setTimeout(() => {
-        document.querySelectorAll('.pred-bar-fill').forEach(bar => {
-          bar.style.width = bar.dataset.fill + '%';
-        });
-      }, 50);
-    });
+    setTimeout(() => {
+      document.querySelectorAll('.pred-bar-fill').forEach(bar => {
+        bar.style.width = (bar.dataset.fill || 0) + '%';
+      });
+    }, 200);
 
     updateCountdown();
     setInterval(updateCountdown, 1000);
@@ -379,7 +377,7 @@ function render() {
         </div>
         <div class="pred-bar-wrap">
           <div class="pred-bar-bg">
-            <div class="pred-bar-fill" style="width:${score}%;background:linear-gradient(90deg,${predLabel.color},${predLabel.color}88)"></div>
+            <div class="pred-bar-fill" data-fill="${score}" style="width:0%;background:linear-gradient(90deg,${predLabel.color},${predLabel.color}88);transition:width .8s ease"></div>
           </div>
           <div class="pred-label" style="color:${predLabel.color}">${predLabel.label}</div>
         </div>
