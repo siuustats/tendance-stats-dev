@@ -10,10 +10,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!-- End Google Tag Manager -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🔮 Prédictions Football — Joueurs à Surveiller | Tendance Stats</title>
+<title>Prédictions Football — Joueurs à Surveiller | Tendance Stats</title>
 <meta name="description" content="Prédictions basées sur la forme des joueurs et des équipes. Découvrez les joueurs les plus susceptibles de marquer ou passer sur les prochains matchs.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://tendancestats.com/predictions.html">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔮</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -447,15 +448,16 @@ async function init() {
     const data   = await dataRes.json();
     const photos = photosRes?.ok ? await photosRes.json() : {};
 
-    renderDayFilters();
     allPlayers  = (data.players || []).filter(p => p.leagueId !== 6).map(p => ({
       ...p,
       photo: photos[p.id] || photos[String(p.id)] || p.photo || ''
     }));
     allFixtures = data.fixtures || [];
 
+    renderDayFilters();
     render();
   } catch(e) {
+    console.error('Erreur predictions:', e);
     document.getElementById('predictions-container').innerHTML =
       '<div class="empty">Données temporairement indisponibles.<br><a href="index.html" style="color:var(--g)">← Retour à l\'accueil</a></div>';
   }
