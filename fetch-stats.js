@@ -343,14 +343,40 @@ async function fetchMissingPhotos(players, photosCache) {
   console.log(`\n📸 Recherche de ${missing.length} photo(s) via Transfermarkt...`);
   const updated = { ...photosCache };
 
-  // Traiter toutes les photos avec timeout par requête
+  // ── Test de santé Transfermarkt ──────────────────────────────────────────
+  let apiOk = false;
+  let consecutiveFails = 0;
+  let dynamicTimeout = 5000;
+
+  console.log('  🏥 Test de santé Transfermarkt...');
+  for (const testName of ['Mbappe', 'Ronaldo', 'Messi']) {
+    try {
+      const tc = new AbortController();
+      const tt = setTimeout(() => tc.abort(), 4000);
+      const tr = await fetch(
+        `https://transfermarkt-api.fly.dev/players/search/${testName}`,
+        { headers: { 'User-Agent': 'TendanceStats/1.0' }, signal: tc.signal }
+      );
+      clearTimeout(tt);
+      if (tr.ok) { apiOk = true; break; }
+    } catch(e) {}
+    await new Promise(r => setTimeout(r, 500));
+  }
+
+  if (!apiOk) {
+    console.log('  ❌ API Transfermarkt indisponible — photos ignorées pour cette exécution');
+    return photosCache;
+  }
+  console.log('  ✅ API Transfermarkt disponible');
+
+  // ── Recherche des photos ──────────────────────────────────────────────────
   const batch = missing;
 
   for (const p of batch) {
     console.log(`  🔍 ${p.name}`);
     try {
       const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 12000); // 12s max par requête
+      const timeout = setTimeout(() => controller.abort(), dynamicTimeout);
 
       let playerId = null;
       for (const searchName of [p.name, p.name.split(' ')[0]]) {
@@ -368,13 +394,23 @@ async function fetchMissingPhotos(players, photosCache) {
       }
 
       clearTimeout(timeout);
-      if (!playerId) { updated[p.id] = ''; console.log(`  ❌ Pas trouvé`); continue; }
+      if (!playerId) {
+        updated[p.id] = '';
+        consecutiveFails++;
+        // Si 5 échecs consécutifs → réduire timeout à 2s
+        if (consecutiveFails >= 5) dynamicTimeout = 2000;
+        console.log(`  ❌ Pas trouvé`);
+        continue;
+      }
+      // Photo trouvée → réinitialiser les échecs et timeout
+      consecutiveFails = 0;
+      dynamicTimeout = 5000;
 
       await new Promise(r => setTimeout(r, 300));
 
       // Récupérer la photo avec timeout
       const controller2 = new AbortController();
-      const timeout2 = setTimeout(() => controller2.abort(), 12000);
+      const timeout2 = setTimeout(() => controller2.abort(), 5000);
       try {
         const profileRes = await fetch(
           `https://transfermarkt-api.fly.dev/players/${playerId}/profile`,
@@ -385,7 +421,15 @@ async function fetchMissingPhotos(players, photosCache) {
         const profile = await profileRes.json();
         const photo = profile.imageUrl;
         updated[p.id] = photo || '';
-        console.log(photo ? `  ✅ Photo trouvée` : `  ❌ Pas de photo`);
+        if (photo) {
+          consecutiveFails = 0;
+          dynamicTimeout = 5000; // rétablir timeout normal si photo trouvée
+          console.log(`  ✅ Photo trouvée`);
+        } else {
+          consecutiveFails++;
+          if (consecutiveFails >= 5) dynamicTimeout = 2000;
+          console.log(`  ❌ Pas de photo`);
+        }
       } catch(e) {
         clearTimeout(timeout2);
         updated[p.id] = '';
@@ -394,7 +438,7 @@ async function fetchMissingPhotos(players, photosCache) {
     } catch(e) {
       updated[p.id] = '';
     }
-    await new Promise(r => setTimeout(r, 500));
+    await new Promise(r => setTimeout(r, 200));
   }
 
   return updated;
