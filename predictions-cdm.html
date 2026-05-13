@@ -69,11 +69,12 @@ body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif
 .pred-info { flex:1; min-width:0; max-width:280px; }
 .pred-name { font-size:14px; font-weight:600; }
 .pred-team { font-size:11px; color:var(--m2); margin-top:1px; }
-.pred-bar-wrap { width:180px; min-width:180px; flex-shrink:0; margin-left:auto; }
+.pred-right { display:flex; align-items:center; gap:12px; margin-left:auto; flex-shrink:0; }
+.pred-bar-wrap { width:180px; min-width:180px; flex-shrink:0; }
 .pred-bar-bg { height:6px; background:var(--s3); border-radius:3px; overflow:hidden; margin-bottom:4px; }
 .pred-bar-fill { height:6px; border-radius:3px; }
 .pred-label { font-size:11px; font-weight:700; white-space:nowrap; }
-.pred-stats { text-align:right; flex-shrink:0; }
+.pred-stats { text-align:right; flex-shrink:0; width:52px; }
 .pred-ga { font-family:'DM Mono',monospace; font-size:15px; font-weight:600; }
 .pred-sub { font-size:9px; color:var(--m); text-transform:uppercase; letter-spacing:.5px; margin-top:1px; }
 
@@ -100,8 +101,9 @@ body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif
   .filters { flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; padding-bottom:4px; }
   .filters::-webkit-scrollbar { display:none; }
   .filter-btn { flex-shrink:0; white-space:nowrap; }
-  .pred-bar-wrap { max-width:120px; }
-  .pred-row { gap:10px; padding:12px 14px; }
+  .pred-bar-wrap { width:120px; min-width:80px; }
+  .pred-stats { width:44px; }
+  .pred-row { gap:8px; padding:12px 14px; }
   .countdown-mini { gap:10px; }
   .cd-val { font-size:28px; }
 }
@@ -289,13 +291,15 @@ function render() {
           <div class="pred-name" style="display:flex;align-items:center;gap:6px">${p.name} <span style="font-size:9px;background:${getRole(goals,assists).bg};color:${getRole(goals,assists).color};border-radius:4px;padding:1px 6px;font-weight:700">${getRole(goals,assists).tag}</span></div>
           <div class="pred-team">${p.teamName} · <span style="color:var(--g)">Groupe ${group}</span></div>
         </div>
-        <div class="pred-bar-wrap">
-          <div style="height:6px;background:#1e2130;border-radius:3px;overflow:hidden;margin-bottom:4px"><div style="width:${score}%;height:6px;background:linear-gradient(90deg,${predLabel.color},${predLabel.colorDim});border-radius:3px"></div></div>
-          <div class="pred-label" style="color:${predLabel.color}">${predLabel.label}</div>
-        </div>
-        <div class="pred-stats">
-          <div style="font-size:13px;font-weight:600;color:${predLabel.color}">⚽${goals} 🎯${assists}</div>
-          <div class="pred-sub">CDM</div>
+        <div class="pred-right">
+          <div class="pred-bar-wrap">
+            <div style="height:6px;background:#1e2130;border-radius:3px;overflow:hidden;margin-bottom:4px"><div style="width:${score}%;height:6px;background:linear-gradient(90deg,${predLabel.color},${predLabel.colorDim});border-radius:3px"></div></div>
+            <div class="pred-label" style="color:${predLabel.color}">${predLabel.label}</div>
+          </div>
+          <div class="pred-stats">
+            <div style="font-size:13px;font-weight:600;color:${predLabel.color}">⚽${goals} 🎯${assists}</div>
+            <div class="pred-sub">CDM</div>
+          </div>
         </div>
       </div>`;
     }).filter(Boolean).join('') : '<div class="empty">Aucun joueur trouvé pour ce groupe.</div>';
@@ -369,15 +373,17 @@ function render() {
           <div class="pred-name" style="display:flex;align-items:center;gap:6px">${p.name} <span style="font-size:9px;background:${getRole(g5,a5).bg};color:${getRole(g5,a5).color};border-radius:4px;padding:1px 6px;font-weight:700">${getRole(g5,a5).tag}</span></div>
           <div class="pred-team">${p.teamName}</div>
         </div>
-        <div class="pred-bar-wrap">
-          <div class="pred-bar-bg">
-            <div style="width:${score}%;height:100%;background:inherit;border-radius:3px"></div>
+        <div class="pred-right">
+          <div class="pred-bar-wrap">
+            <div class="pred-bar-bg">
+              <div style="width:${score}%;height:6px;background:linear-gradient(90deg,${predLabel.color},${predLabel.colorDim});border-radius:3px"></div>
+            </div>
+            <div class="pred-label" style="color:${predLabel.color}">${predLabel.label}</div>
           </div>
-          <div class="pred-label" style="color:${predLabel.color}">${predLabel.label}</div>
-        </div>
-        <div class="pred-stats">
-          <div class="pred-ga" style="color:${predLabel.color}">${ga5} GA</div>
-          <div class="pred-sub">sur 5J</div>
+          <div class="pred-stats">
+            <div style="font-size:13px;font-weight:600;color:${predLabel.color}">⚽${g5} 🎯${a5}</div>
+            <div class="pred-sub">/5J</div>
+          </div>
         </div>
       </div>`;
     }).join('');
