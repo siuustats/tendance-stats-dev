@@ -165,11 +165,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .pred-next-name { font-size:14px; font-weight:600; display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
     .pred-next-team { font-size:11px; color:var(--m2); margin-top:2px; }
     .pred-next-right { display:flex; align-items:center; gap:12px; flex-shrink:0; }
-    .pred-next-bar-wrap { width:150px; min-width:100px; }
-    .pred-next-track { height:6px; background:var(--s3); border-radius:3px; overflow:hidden; margin-bottom:4px; }
+    .pred-next-bar-wrap { width:150px; min-width:100px; display:flex; flex-direction:column; justify-content:center; }
+    .pred-next-track { height:6px; background:var(--s3); border-radius:3px; overflow:hidden; margin-bottom:3px; }
     .pred-next-fill { height:100%; border-radius:3px; transition:width .8s ease; }
-    .pred-next-label { font-size:11px; font-weight:700; white-space:nowrap; }
-    .pred-next-stats { text-align:right; flex-shrink:0; width:64px; }
+    .pred-next-label { font-size:11px; font-weight:700; white-space:nowrap; line-height:1.2; }
+    .pred-next-stats { text-align:right; flex-shrink:0; width:64px; display:flex; flex-direction:column; justify-content:center; align-items:flex-end; gap:2px; }
     .pred-next-no-match { padding:16px; font-size:13px; color:var(--m); text-align:center; }
 
   @media(max-width:768px){
@@ -457,8 +457,8 @@ async function init() {
               <div class="pred-next-label" style="color:${predColor.color}">${predColor.label}</div>
             </div>
             <div class="pred-next-stats">
-              <div style="font-size:13px;font-weight:600;color:${predColor.color};white-space:nowrap">⚽${g5} 🎯${a5}</div>
-              <div style="font-size:9px;color:var(--m);text-transform:uppercase;letter-spacing:.5px;margin-top:1px">/5J</div>
+              <div style="font-size:13px;font-weight:600;color:${predColor.color};white-space:nowrap;line-height:1">⚽${g5} 🎯${a5}</div>
+              <div style="font-size:9px;color:var(--m);text-transform:uppercase;letter-spacing:.5px;line-height:1;margin-top:3px">/5J</div>
             </div>
           </div>
         </div>
