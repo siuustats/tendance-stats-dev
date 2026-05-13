@@ -106,7 +106,6 @@ body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif
   .pred-bar-wrap { max-width:120px; }
   .pred-row { gap:10px; padding:12px 14px; }
 }
-@keyframes growBar { from { width:0% } to { width:inherit } }
 </style>
 </head>
 <body>
@@ -338,7 +337,7 @@ function render() {
         </div>
         <div class="pred-bar-wrap">
           <div class="pred-bar-bg">
-            <div class="pred-bar-fill" style="width:${score}%;height:100%;background:linear-gradient(90deg,${predLabel.color},${predLabel.color}88);border-radius:3px"></div>
+            <div class="pred-bar-fill" class="pred-anim-bar" data-w="${score}" style="width:0%;height:100%;background:linear-gradient(90deg,${predLabel.color},${predLabel.color}88);border-radius:3px"></div>
           </div>
           <div class="pred-label" style="color:${predLabel.color}">${predLabel.label}</div>
         </div>
@@ -358,9 +357,9 @@ function render() {
       </div>`;
 
     setTimeout(() => {
-      document.querySelectorAll('.pred-bar-fill').forEach(bar => {
+      document.querySelectorAll('.pred-anim-bar').forEach(bar => {
         bar.style.transition = 'width .8s ease';
-        bar.style.width = (bar.dataset.fill || 0) + '%';
+        bar.style.width = (bar.dataset.w || 0) + '%';
       });
     }, 100);
     return;
@@ -374,8 +373,10 @@ function render() {
 
     const getRole = (g5, a5) => {
       const diff = g5 - a5;
-      if (diff > 2)  return { tag:'⚽ BUTEUR',  bg:'rgba(0,229,160,0.12)',  color:'var(--g)' };
-      if (diff < -2) return { tag:'🎯 PASSEUR', bg:'rgba(94,129,244,0.12)', color:'var(--b)' };
+      if (a === 0 && g > 0) return { tag:'⚽ BUTEUR',  bg:'rgba(0,229,160,0.12)',  color:'var(--g)' };
+      if (g === 0 && a > 0) return { tag:'🎯 PASSEUR', bg:'rgba(94,129,244,0.12)', color:'var(--b)' };
+      if (diff >= 2)  return { tag:'⚽ BUTEUR',  bg:'rgba(0,229,160,0.12)',  color:'var(--g)' };
+      if (diff <= -2) return { tag:'🎯 PASSEUR', bg:'rgba(94,129,244,0.12)', color:'var(--b)' };
       return { tag:'⚡ DÉCISIF', bg:'rgba(255,159,67,0.12)', color:'var(--o)' };
     };
 
@@ -396,7 +397,7 @@ function render() {
         </div>
         <div class="pred-bar-wrap">
           <div class="pred-bar-bg">
-            <div class="pred-bar-fill" style="width:${score}%;height:100%;background:linear-gradient(90deg,${predLabel.color},${predLabel.color}88);border-radius:3px"></div>
+            <div class="pred-bar-fill" class="pred-anim-bar" data-w="${score}" style="width:0%;height:100%;background:linear-gradient(90deg,${predLabel.color},${predLabel.color}88);border-radius:3px"></div>
           </div>
           <div class="pred-label" style="color:${predLabel.color}">${predLabel.label}</div>
         </div>
