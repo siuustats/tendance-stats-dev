@@ -596,9 +596,9 @@ function calcPredScore(player, fixtures, allPlayers) {
 }
 
 function getPredLabel(score) {
-  if (score >= 75) return { label: '🔥 EN FEU',   color: 'var(--o)', fill: score };
-  if (score >= 55) return { label: '⚡ CHAUD',     color: 'var(--y)', fill: score };
-  if (score >= 35) return { label: '📈 EN FORME',  color: 'var(--g)', fill: score };
+  if (score >= 75) return { label: '🔥 EN FEU',   color: '#ff9f43', colorDim: '#ff9f4388' };
+  if (score >= 55) return { label: '⚡ CHAUD',     color: '#ffd32a', colorDim: '#ffd32a88' };
+  if (score >= 35) return { label: '📈 EN FORME',  color: '#00e5a0', colorDim: '#00e5a088' };
   return null;
 }
 
@@ -639,7 +639,7 @@ function renderAlerts(list, fixtures) {
     const g5   = p.recent_goals || 0;
     const a5   = p.recent_assists || 0;
     const ga5  = g5 + a5;
-    const fill = score; // % de probabilité directement
+    const fill = score;
     const dateStr = matchDate
       ? new Date(matchDate).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'})
       : '—';
