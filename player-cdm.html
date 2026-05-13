@@ -152,6 +152,26 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .footer { text-align:center; padding:32px 24px; color:var(--m); font-size:12px; }
     .footer a { color:var(--g); text-decoration:none; }
 
+    /* Prédiction prochain match */
+    .pred-next { background:var(--s1); border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+    .pred-next-header { display:flex; align-items:center; gap:10px; padding:10px 16px; background:var(--s2); border-bottom:1px solid var(--border); font-size:12px; color:var(--m2); }
+    .pred-next-header .match-league-badge { font-size:10px; font-weight:700; padding:2px 7px; border-radius:4px; }
+    .pred-next-header .match-vs { font-weight:600; color:var(--text); font-size:13px; }
+    .pred-next-header .match-date-str { margin-left:auto; font-family:'DM Mono',monospace; font-size:11px; color:var(--m); }
+    .pred-next-row { display:flex; align-items:center; gap:14px; padding:14px 16px; }
+    .pred-next-avatar { width:42px; height:42px; border-radius:50%; background:var(--s3); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:18px; overflow:hidden; }
+    .pred-next-avatar img { width:100%; height:100%; object-fit:cover; }
+    .pred-next-info { flex:1; min-width:0; }
+    .pred-next-name { font-size:14px; font-weight:600; display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+    .pred-next-team { font-size:11px; color:var(--m2); margin-top:2px; }
+    .pred-next-right { display:flex; align-items:center; gap:12px; flex-shrink:0; }
+    .pred-next-bar-wrap { width:150px; min-width:100px; }
+    .pred-next-track { height:6px; background:var(--s3); border-radius:3px; overflow:hidden; margin-bottom:4px; }
+    .pred-next-fill { height:100%; border-radius:3px; transition:width .8s ease; }
+    .pred-next-label { font-size:11px; font-weight:700; white-space:nowrap; }
+    .pred-next-stats { text-align:right; flex-shrink:0; width:64px; }
+    .pred-next-no-match { padding:16px; font-size:13px; color:var(--m); text-align:center; }
+
   @media(max-width:768px){
     /* ── HERO ── */
     .hero { padding:24px 16px 20px; }
@@ -237,6 +257,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div class="kpi-n" style="color:var(--y)" id="kAvg">—</div>
       <div class="kpi-l">Moy./match</div>
     </div>
+  </div>
+
+  <!-- Prédiction prochain match -->
+  <div class="section">
+    <div class="section-title">🔮 Prochain match</div>
+    <div id="predNext"></div>
   </div>
 
   <!-- Forme récente -->
@@ -346,6 +372,108 @@ async function init() {
   // Historique — vide avant le début de la CDM
   document.getElementById('matchHistory').innerHTML =
     '<p style="color:var(--m);font-size:13px">Les matchs CDM apparaîtront ici dès le 11 juin 2026</p>';
+
+  // ── PRÉDICTION PROCHAIN MATCH CDM ──────────────────────────────────────
+  const predEl = document.getElementById('predNext');
+  try {
+    const dataRes = await fetch('data.json?v=' + Date.now());
+    const data = await dataRes.json();
+    const cdmPlayers = data.players?.filter(p => p.leagueId === 6) || [];
+    const fixtures   = data.fixtures || [];
+
+    const cdmPlayer = cdmPlayers.find(p =>
+      (playerId && (String(p.id) === String(playerId) || String(p.espnId) === String(playerId))) ||
+      (name && p.name === name && p.teamName === teamName)
+    );
+
+    if (!cdmPlayer) {
+      predEl.innerHTML = '<div class="pred-next-no-match">Prédictions disponibles dès le début de la CDM (11 juin 2026)</div>';
+    } else {
+      function calcPredScore(player, fixtureList, players) {
+        const ga5 = (player.recent_goals||0) + (player.recent_assists||0);
+        const ts  = player.trendScore || 0;
+        const playerScore = Math.min(100, (ga5 * 15) + (ts * 0.7));
+        const nextMatch = fixtureList.find(f => f.homeTeam === player.teamName || f.awayTeam === player.teamName);
+        let teamScore = 50, oppScore = 50, opponent = null, matchDate = null;
+        if (nextMatch) {
+          const isHome = nextMatch.homeTeam === player.teamName;
+          opponent  = isHome ? nextMatch.awayTeam : nextMatch.homeTeam;
+          matchDate = nextMatch.date;
+          const wins  = (player.last5||[]).filter(m => m.teamWon === true).length;
+          const total = (player.last5||[]).length || 1;
+          teamScore   = Math.round((wins / total) * 100);
+          const oppP  = players.filter(p => p.teamName === opponent);
+          if (oppP.length > 0) {
+            const oppWins  = oppP[0]?.last5?.filter(m => m.teamWon).length || 0;
+            const oppTotal = oppP[0]?.last5?.length || 1;
+            oppScore = Math.round((1 - oppWins / oppTotal) * 100);
+          }
+        }
+        return { score: Math.min(98, Math.round(playerScore*0.70 + teamScore*0.15 + oppScore*0.15)), opponent, matchDate };
+      }
+      function getPredColor(score) {
+        if (score >= 75) return { color:'#ff9f43', colorDim:'#ff9f4388', label:'🔥 EN FEU' };
+        if (score >= 55) return { color:'#ffd32a', colorDim:'#ffd32a88', label:'⚡ CHAUD' };
+        if (score >= 35) return { color:'#00e5a0', colorDim:'#00e5a088', label:'📈 EN FORME' };
+        if (score >= 15) return { color:'#5e81f4', colorDim:'#5e81f488', label:'💤 DISCRET' };
+        return { color:'#6b7280', colorDim:'#6b728088', label:'📉 FAIBLE' };
+      }
+      function getRoleCDM(g, a) {
+        const diff = g - a;
+        if (a === 0 && g > 0) return { tag:'⚽ BUTEUR',  bg:'rgba(0,229,160,0.12)',  color:'#00e5a0' };
+        if (g === 0 && a > 0) return { tag:'🎯 PASSEUR', bg:'rgba(94,129,244,0.12)', color:'#5e81f4' };
+        if (diff >= 2)        return { tag:'⚽ BUTEUR',  bg:'rgba(0,229,160,0.12)',  color:'#00e5a0' };
+        if (diff <= -2)       return { tag:'🎯 PASSEUR', bg:'rgba(94,129,244,0.12)', color:'#5e81f4' };
+        return { tag:'⚡ DÉCISIF', bg:'rgba(255,159,67,0.12)', color:'#ff9f43' };
+      }
+      const { score: predScore, opponent, matchDate } = calcPredScore(cdmPlayer, fixtures, cdmPlayers);
+      const predColor = getPredColor(predScore);
+      const g5 = cdmPlayer.recent_goals || 0;
+      const a5 = cdmPlayer.recent_assists || 0;
+      const role = getRoleCDM(g5, a5);
+      if (!opponent) {
+        predEl.innerHTML = '<div class="pred-next-no-match">Aucun prochain match CDM programmé</div>';
+      } else {
+        const dateStr = matchDate
+          ? new Date(matchDate).toLocaleDateString('fr-FR', {weekday:'short', day:'2-digit', month:'2-digit'})
+          : '—';
+        predEl.innerHTML = `
+          <div class="pred-next">
+            <div class="pred-next-header">
+              <span class="match-league-badge" style="background:#001489;color:#fff">CDM</span>
+              <span class="match-vs">${cdmPlayer.teamName} <span style="color:var(--m);font-size:11px">vs</span> ${opponent}</span>
+              <span class="match-date-str">${dateStr}</span>
+            </div>
+            <div class="pred-next-row">
+              <div class="pred-next-avatar">
+                ${playerPhoto ? '<img src="' + playerPhoto + '" referrerpolicy="no-referrer" onerror="this.outerHTML=\'⚽\'" alt="' + displayName + '">' : '⚽'}
+              </div>
+              <div class="pred-next-info">
+                <div class="pred-next-name">
+                  <span>${displayName}</span>
+                  <span style="font-size:9px;background:${role.bg};color:${role.color};border-radius:4px;padding:1px 6px;font-weight:700">${role.tag}</span>
+                </div>
+                <div class="pred-next-team">${cdmPlayer.teamName}</div>
+              </div>
+              <div class="pred-next-right">
+                <div class="pred-next-bar-wrap">
+                  <div class="pred-next-track">
+                    <div class="pred-next-fill" style="width:${predScore}%;background:linear-gradient(90deg,${predColor.color},${predColor.colorDim})"></div>
+                  </div>
+                  <div class="pred-next-label" style="color:${predColor.color}">${predColor.label}</div>
+                </div>
+                <div class="pred-next-stats">
+                  <div style="font-size:13px;font-weight:600;color:${predColor.color};white-space:nowrap">⚽${g5} 🎯${a5}</div>
+                  <div style="font-size:9px;color:var(--m);text-transform:uppercase;letter-spacing:.5px;margin-top:1px">/5J</div>
+                </div>
+              </div>
+            </div>
+          </div>`;
+      }
+    }
+  } catch(e) {
+    predEl.innerHTML = '<div class="pred-next-no-match">Prédictions temporairement indisponibles</div>';
+  }
 
   // Analyse
   document.getElementById('analysis').innerHTML = `
