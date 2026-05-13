@@ -658,7 +658,7 @@ function renderAlerts(list, fixtures) {
         </div>
         <div style="display:flex;align-items:center;gap:8px">
           <div style="flex:1;height:6px;background:var(--s3);border-radius:3px;overflow:hidden">
-            <div class="pred-anim-bar" data-w="${fill}" style="width:0%;height:100%;background:linear-gradient(90deg,${predLabel.color},${predLabel.color}aa);border-radius:3px"></div>
+            <div style="width:${fill}%;height:100%;background:linear-gradient(90deg,${predLabel.color},${predLabel.color}aa);border-radius:3px"></div>
           </div>
           <span style="font-size:11px;font-weight:700;color:${predLabel.color};white-space:nowrap;min-width:80px">${predLabel.label}</span>
         </div>
@@ -673,12 +673,7 @@ function renderAlerts(list, fixtures) {
   });
 
   // Animer les barres après insertion dans le DOM
-  setTimeout(() => {
-    document.querySelectorAll('.pred-anim-bar').forEach(bar => {
-      bar.style.transition = 'width .8s ease';
-      bar.style.width = (bar.dataset.w || 0) + '%';
-    });
-  }, 100);
+
 
   if (c.children.length === 0) {
     c.innerHTML = '<div style="color:var(--m);font-size:13px;padding:16px">Données insuffisantes pour générer des prédictions.</div>';
