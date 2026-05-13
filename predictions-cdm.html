@@ -66,10 +66,10 @@ body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif
 .pred-row:hover { background:var(--s2); }
 .pred-avatar { width:42px; height:42px; border-radius:50%; object-fit:cover; background:var(--s3); flex-shrink:0; font-size:18px; display:flex; align-items:center; justify-content:center; overflow:hidden; }
 .pred-avatar img { width:100%; height:100%; object-fit:cover; }
-.pred-info { flex:1; min-width:0; }
+.pred-info { flex:1; min-width:0; max-width:280px; }
 .pred-name { font-size:14px; font-weight:600; }
 .pred-team { font-size:11px; color:var(--m2); margin-top:1px; }
-.pred-bar-wrap { width:200px; min-width:200px; flex-shrink:0; }
+.pred-bar-wrap { width:180px; min-width:180px; flex-shrink:0; margin-left:auto; }
 .pred-bar-bg { height:6px; background:var(--s3); border-radius:3px; overflow:hidden; margin-bottom:4px; }
 .pred-bar-fill { height:6px; border-radius:3px; }
 .pred-label { font-size:11px; font-weight:700; white-space:nowrap; }
@@ -235,9 +235,9 @@ function calcPredScore(player, fixtures, players) {
 }
 
 function getPredLabel(score) {
-  if (score >= 75) return { label:'🔥 EN FEU',  color:'var(--g)' };
-  if (score >= 55) return { label:'⚡ CHAUD',    color:'var(--y)' };
-  if (score >= 35) return { label:'📈 EN FORME', color:'#5e81f4' };
+  if (score >= 75) return { label:'🔥 EN FEU',  color:'#ff9f43', colorDim:'#ff9f4388' };
+  if (score >= 55) return { label:'⚡ CHAUD',    color:'#ffd32a', colorDim:'#ffd32a88' };
+  if (score >= 35) return { label:'📈 EN FORME', color:'#00e5a0', colorDim:'#00e5a088' };
   return null;
 }
 
@@ -290,7 +290,7 @@ function render() {
           <div class="pred-team">${p.teamName} · <span style="color:var(--g)">Groupe ${group}</span></div>
         </div>
         <div class="pred-bar-wrap">
-          <div class="pred-bar-bg"><div class="pred-bar-fill" style="width:${score}%;background:linear-gradient(90deg,${predLabel.color},${predLabel.colorDim})"></div></div>
+          <div style="height:6px;background:#1e2130;border-radius:3px;overflow:hidden;margin-bottom:4px"><div style="width:${score}%;height:6px;background:linear-gradient(90deg,${predLabel.color},${predLabel.colorDim});border-radius:3px"></div></div>
           <div class="pred-label" style="color:${predLabel.color}">${predLabel.label}</div>
         </div>
         <div class="pred-stats">
