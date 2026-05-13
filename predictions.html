@@ -82,8 +82,8 @@ body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif
 .pred-name { font-size:14px; font-weight:600; }
 .pred-team { font-size:11px; color:var(--m2); margin-top:1px; }
 .pred-bar-wrap { flex:1; max-width:200px; }
-.pred-bar-bg { height:6px; background:var(--s3); border-radius:3px; overflow:hidden; margin-bottom:4px; }
-.pred-bar-fill { height:100%; border-radius:3px; transition:width .8s ease; }
+.pred-track { height:6px; background:var(--s3); border-radius:3px; overflow:hidden; margin-bottom:4px; }
+.pred-fill { height:100%; border-radius:3px; transition:width .8s ease; }
 .pred-label { font-size:11px; font-weight:700; white-space:nowrap; }
 .pred-stats { text-align:right; flex-shrink:0; }
 .pred-ga { font-family:'DM Mono',monospace; font-size:15px; font-weight:600; }
@@ -200,9 +200,9 @@ function calcPredScore(player, fixtures, players) {
 }
 
 function getPredLabel(score) {
-  if (score >= 75) return { label:'🔥 EN FEU',  color:'var(--o)' };
-  if (score >= 55) return { label:'⚡ CHAUD',    color:'var(--y)' };
-  if (score >= 35) return { label:'📈 EN FORME', color:'var(--g)' };
+  if (score >= 75) return { label:'🔥 EN FEU',  color:'#ff9f43', colorDim:'#ff9f4388' };
+  if (score >= 55) return { label:'⚡ CHAUD',    color:'#ffd32a', colorDim:'#ffd32a88' };
+  if (score >= 35) return { label:'📈 EN FORME', color:'#00e5a0', colorDim:'#00e5a088' };
   return null;
 }
 
@@ -333,7 +333,6 @@ function render() {
     const rowHtml = (entry) => {
       if (!entry) return '';
       const { player: p, score, predLabel } = entry;
-      console.log('BAR:', p.name, 'score:', score, 'fill:', score + '%');
       const g5    = p.recent_goals || 0;
       const a5    = p.recent_assists || 0;
       const photo = p.photo || '';
@@ -347,8 +346,8 @@ function render() {
           <div class="pred-team">${p.teamName}</div>
         </div>
         <div class="pred-bar-wrap">
-          <div style="height:6px;background:var(--s3);border-radius:3px;overflow:hidden;margin-bottom:4px">
-            <div style="width:${score}%;height:6px;background:linear-gradient(90deg,${predLabel.color},${predLabel.color}88);border-radius:3px"></div>
+          <div class="pred-track">
+            <div class="pred-fill" style="width:${score}%;background:linear-gradient(90deg,${predLabel.color},${predLabel.colorDim})"></div>
           </div>
           <div class="pred-label" style="color:${predLabel.color}">${predLabel.label}</div>
         </div>
