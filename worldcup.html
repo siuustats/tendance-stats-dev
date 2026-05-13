@@ -735,9 +735,9 @@ function calcPredScore(player, fixtures, allP) {
 }
 
 function getPredLabel(score) {
-  if (score >= 75) return { label:'🔥 EN FEU',  color:'var(--o)' };
-  if (score >= 55) return { label:'⚡ CHAUD',    color:'var(--y)' };
-  if (score >= 35) return { label:'📈 EN FORME', color:'var(--gold)' };
+  if (score >= 75) return { label:'🔥 EN FEU',  color:'#ff9f43', colorDim:'#ff9f4388' };
+  if (score >= 55) return { label:'⚡ CHAUD',    color:'#ffd32a', colorDim:'#ffd32a88' };
+  if (score >= 35) return { label:'📈 EN FORME', color:'#00e5a0', colorDim:'#00e5a088' };
   return null;
 }
 
@@ -793,8 +793,8 @@ function renderCdmPredictions(players, fixtures) {
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:8px">
-        <div style="flex:1;height:6px;background:#1e2130;border-radius:3px;overflow:hidden">
-          <div style="width:${score}%;height:6px;background:linear-gradient(90deg,${predLabel.color},${predLabel.colorDim});border-radius:3px"></div>
+        <div style="width:180px;min-width:180px;flex-shrink:0;margin-left:auto">
+          <div style="height:6px;background:#1e2130;border-radius:3px;overflow:hidden;margin-bottom:4px"><div style="width:${score}%;height:6px;background:linear-gradient(90deg,${predLabel.color},${predLabel.colorDim});border-radius:3px"></div></div>
         </div>
         <span style="font-size:11px;font-weight:700;color:${predLabel.color};white-space:nowrap;min-width:80px">${predLabel.label}</span>
       </div>
