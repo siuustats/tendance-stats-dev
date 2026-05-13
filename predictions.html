@@ -73,7 +73,7 @@ body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif
 .ecl  { background:rgba(0,150,100,.2);  color:#6ee7b7; }
 
 .players-list { background:var(--s1); border:1px solid var(--border); border-radius:0 0 12px 12px; overflow:hidden; }
-.pred-row { display:flex; align-items:center; gap:14px; padding:14px 18px; border-bottom:1px solid var(--border); cursor:pointer; transition:background .15s; }
+.pred-row { display:flex; align-items:center; gap:14px; padding:14px 18px; border-bottom:1px solid var(--border); cursor:pointer; transition:background .15s; min-height:56px; }
 .pred-row:last-child { border-bottom:none; }
 .pred-row:hover { background:var(--s2); }
 .pred-avatar { width:42px; height:42px; border-radius:50%; object-fit:cover; background:var(--s3); flex-shrink:0; font-size:18px; display:flex; align-items:center; justify-content:center; overflow:hidden; }
@@ -81,7 +81,7 @@ body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif
 .pred-info { flex:1; min-width:0; }
 .pred-name { font-size:14px; font-weight:600; }
 .pred-team { font-size:11px; color:var(--m2); margin-top:1px; }
-.pred-bar-wrap { flex:1; max-width:200px; }
+.pred-bar-wrap { width:200px; min-width:200px; flex-shrink:0; }
 .pred-track { height:6px; background:var(--s3); border-radius:3px; overflow:hidden; margin-bottom:4px; }
 .pred-fill { height:100%; border-radius:3px; transition:width .8s ease; }
 .pred-label { font-size:11px; font-weight:700; white-space:nowrap; }
