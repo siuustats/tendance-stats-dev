@@ -657,8 +657,8 @@ function renderAlerts(list, fixtures) {
           ${opponent ? `<span style="font-size:10px;color:var(--m2);margin-left:auto;background:var(--s3);padding:2px 8px;border-radius:4px">vs ${opponent} · ${dateStr}</span>` : '<span style="font-size:10px;color:var(--m);margin-left:auto">Prochain match à venir</span>'}
         </div>
         <div style="display:flex;align-items:center;gap:8px">
-          <div style="flex:1;height:6px;background:var(--s3);border-radius:3px;overflow:hidden">
-            <div style="width:${fill}%;height:100%;background:linear-gradient(90deg,${predLabel.color},${predLabel.color}aa);border-radius:3px"></div>
+          <div class="track" style="margin-bottom:0">
+            <div class="fill" style="width:${fill}%;background:linear-gradient(90deg,${predLabel.color},${predLabel.colorDim})"></div>
           </div>
           <span style="font-size:11px;font-weight:700;color:${predLabel.color};white-space:nowrap;min-width:80px">${predLabel.label}</span>
         </div>
