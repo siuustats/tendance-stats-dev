@@ -644,31 +644,36 @@ function renderAlerts(list, fixtures) {
       ? new Date(matchDate).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'})
       : '—';
 
+    const matchBadge = opponent
+      ? '<span style="font-size:10px;color:var(--m2);margin-left:auto;background:var(--s3);padding:2px 8px;border-radius:4px">vs ' + opponent + ' · ' + dateStr + '</span>'
+      : '<span style="font-size:10px;color:var(--m);margin-left:auto">Prochain match à venir</span>';
+
+    const barW = fill + '%';
+    const barBg = 'linear-gradient(90deg,' + predLabel.color + ',' + predLabel.colorDim + ')';
+
     const d = document.createElement('div');
     d.className = 'alert';
-    d.style.cssText = `border-left-color:${predLabel.color}; animation-delay:${i*0.08}s; cursor:pointer`;
-    d.onclick = () => window.location.href = `player.html?id=${p.id}`;
-    d.innerHTML = `
-      <div class="alert-ic" style="font-size:20px">${predLabel.label.split(' ')[0]}</div>
-      <div class="alert-txt" style="flex:1">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-          <strong style="color:var(--text);font-size:14px">${p.name}</strong>
-          <span style="font-size:11px;color:var(--m2)">${p.teamName||''}</span>
-          ${opponent ? `<span style="font-size:10px;color:var(--m2);margin-left:auto;background:var(--s3);padding:2px 8px;border-radius:4px">vs ${opponent} · ${dateStr}</span>` : '<span style="font-size:10px;color:var(--m);margin-left:auto">Prochain match à venir</span>'}
-        </div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <div style="flex:1;height:6px;background:#1e2130;border-radius:3px;overflow:hidden">
-            <div style="width:${fill}%;height:6px;background:linear-gradient(90deg,${predLabel.color},${predLabel.colorDim});border-radius:3px"></div>
-          </div>
-          <span style="font-size:11px;font-weight:700;color:${predLabel.color};white-space:nowrap;min-width:80px">${predLabel.label}</span>
-        </div>
-        <div style="font-size:11px;color:var(--m);margin-top:6px;display:flex;gap:12px">
-          <span>⚽ <strong style="color:var(--g)">${g5}B</strong></span>
-          <span>🎯 <strong style="color:var(--b)">${a5}P</strong>/5J</span>
-          <span style="margin-left:auto">TendScore : ${p.trendScore||0}</span>
-        </div>
-      </div>
-    `;
+    d.style.cssText = 'border-left-color:' + predLabel.color + '; animation-delay:' + (i*0.08) + 's; cursor:pointer';
+    d.onclick = () => window.location.href = 'player.html?id=' + p.id;
+    d.innerHTML = '<div class="alert-ic" style="font-size:20px">' + predLabel.label.split(' ')[0] + '</div>'
+      + '<div class="alert-txt" style="flex:1">'
+      + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">'
+      + '<strong style="color:var(--text);font-size:14px">' + p.name + '</strong>'
+      + '<span style="font-size:11px;color:var(--m2)">' + (p.teamName||'') + '</span>'
+      + matchBadge
+      + '</div>'
+      + '<div style="display:flex;align-items:center;gap:8px">'
+      + '<div style="flex:1;height:6px;background:#1e2130;border-radius:3px;overflow:hidden">'
+      + '<div style="width:' + barW + ';height:6px;background:' + barBg + ';border-radius:3px"></div>'
+      + '</div>'
+      + '<span style="font-size:11px;font-weight:700;color:' + predLabel.color + ';white-space:nowrap;min-width:80px">' + predLabel.label + '</span>'
+      + '</div>'
+      + '<div style="font-size:11px;color:var(--m);margin-top:6px;display:flex;gap:12px">'
+      + '<span>⚽ <strong style="color:#00e5a0">' + g5 + 'B</strong></span>'
+      + '<span>🎯 <strong style="color:#5e81f4">' + a5 + 'P</strong>/5J</span>'
+      + '<span style="margin-left:auto">TendScore : ' + (p.trendScore||0) + '</span>'
+      + '</div>'
+      + '</div>';
     c.appendChild(d);
   });
 
