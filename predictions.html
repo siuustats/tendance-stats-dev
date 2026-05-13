@@ -333,6 +333,7 @@ function render() {
     const rowHtml = (entry) => {
       if (!entry) return '';
       const { player: p, score, predLabel } = entry;
+      console.log('BAR:', p.name, 'score:', score, 'fill:', score + '%');
       const g5    = p.recent_goals || 0;
       const a5    = p.recent_assists || 0;
       const photo = p.photo || '';
