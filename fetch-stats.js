@@ -82,7 +82,7 @@ async function fetchFixtures() {
   const fixtures = [];
   const today = new Date();
   const dates = [];
-  for (let i = 1; i <= 10; i++) {
+  for (let i = 0; i <= 10; i++) { // i=0 = aujourd'hui inclus
     const d = new Date(today);
     d.setDate(d.getDate() + i);
     dates.push(d.toISOString().slice(0,10).replace(/-/g,''));
