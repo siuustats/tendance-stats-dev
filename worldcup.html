@@ -793,8 +793,8 @@ function renderCdmPredictions(players, fixtures) {
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:8px">
-        <div style="flex:1;height:6px;background:var(--s3);border-radius:3px;overflow:hidden">
-          <div class="pred-fill-bar" style="width:${score}%;height:100%;background:linear-gradient(90deg,${predLabel.color},${predLabel.color}88);border-radius:3px"></div>
+        <div class="track" style="flex:1;margin-bottom:0">
+          <div class="fill" style="width:${score}%;background:linear-gradient(90deg,${predLabel.color},${predLabel.colorDim})"></div>
         </div>
         <span style="font-size:11px;font-weight:700;color:${predLabel.color};white-space:nowrap;min-width:80px">${predLabel.label}</span>
       </div>
