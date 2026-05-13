@@ -323,8 +323,8 @@ function render() {
 
     const getRole = (g5, a5) => {
       const diff = g5 - a5;
-      if (a === 0 && g > 0) return { tag:'⚽ BUTEUR',  bg:'rgba(0,229,160,0.12)',  color:'var(--g)' };
-      if (g === 0 && a > 0) return { tag:'🎯 PASSEUR', bg:'rgba(94,129,244,0.12)', color:'var(--b)' };
+      if (a5 === 0 && g5 > 0) return { tag:'⚽ BUTEUR',  bg:'rgba(0,229,160,0.12)',  color:'var(--g)' };
+      if (g5 === 0 && a5 > 0) return { tag:'🎯 PASSEUR', bg:'rgba(94,129,244,0.12)', color:'var(--b)' };
       if (diff >= 2)  return { tag:'⚽ BUTEUR',  bg:'rgba(0,229,160,0.12)',  color:'var(--g)' };
       if (diff <= -2) return { tag:'🎯 PASSEUR', bg:'rgba(94,129,244,0.12)', color:'var(--b)' };
       return { tag:'⚡ DÉCISIF', bg:'rgba(255,159,67,0.12)', color:'var(--o)' };
@@ -370,12 +370,7 @@ function render() {
     </div>`;
   }).join('');
 
-  // Animer les barres
-  setTimeout(() => {
-    document.querySelectorAll('.pred-bar-fill').forEach(bar => {
-      bar.style.width = (bar.dataset.fill || 0) + '%';
-    });
-  }, 200);
+
 }
 
 async function init() {
