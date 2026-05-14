@@ -80,7 +80,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .hero-team { font-size:14px; color:var(--m2); }
     .hero-badge {
       font-size:11px; font-weight:600; padding:3px 8px; border-radius:4px;
-      background:rgba(0,229,160,0.15); color:var(--g); border:1px solid rgba(0,229,160,0.25);
+      border:1px solid transparent;
     }
     .hero-trend { margin-top:16px; display:flex; align-items:center; gap:8px; }
     .trend-label { font-size:12px; color:var(--m); font-family:'DM Mono',monospace; }
@@ -317,7 +317,23 @@ async function init() {
   document.title = `${player.name} — Tendance Stats`;
   document.getElementById('playerName').textContent = player.name;
   document.getElementById('playerTeam').textContent = player.teamName || '—';
-  document.getElementById('playerLeague').textContent = player.leagueLabel || '—';
+  const leagueEl = document.getElementById('playerLeague');
+  leagueEl.textContent = player.leagueLabel || '—';
+  const HERO_BADGE_MAP = {
+    'PL':  {bg:'rgba(88,28,200,.25)',  color:'#a78bfa', border:'rgba(88,28,200,.4)'},
+    'L1':  {bg:'rgba(0,80,179,.25)',   color:'#60a5fa', border:'rgba(0,80,179,.4)'},
+    'Liga':{bg:'rgba(200,150,0,.25)',  color:'#fbbf24', border:'rgba(200,150,0,.4)'},
+    'LIGA':{bg:'rgba(200,150,0,.25)',  color:'#fbbf24', border:'rgba(200,150,0,.4)'},
+    'SA':  {bg:'rgba(0,100,60,.25)',   color:'#34d399', border:'rgba(0,100,60,.4)'},
+    'BL':  {bg:'rgba(180,30,30,.25)',  color:'#f87171', border:'rgba(180,30,30,.4)'},
+    'LDC': {bg:'rgba(0,20,120,.35)',   color:'#818cf8', border:'rgba(0,20,120,.5)'},
+    'EL':  {bg:'rgba(200,80,0,.25)',   color:'#fb923c', border:'rgba(200,80,0,.4)'},
+    'ECL': {bg:'rgba(0,150,80,.25)',   color:'#6ee7b7', border:'rgba(0,150,80,.4)'},
+  };
+  const hb = HERO_BADGE_MAP[player.leagueLabel] || {bg:'rgba(0,229,160,.15)', color:'var(--g)', border:'rgba(0,229,160,.25)'};
+  leagueEl.style.background = hb.bg;
+  leagueEl.style.color = hb.color;
+  leagueEl.style.borderColor = hb.border;
   document.getElementById('trendScore').textContent = player.signal || 0;
   document.getElementById('trendFill').style.width = (player.signal || 0) + '%';
 
@@ -361,6 +377,7 @@ async function init() {
       row.className = 'match-row';
       row.innerHTML = `
         <span class="match-date">${date}</span>
+        ${(()=>{ const LMAP={17:{l:'PL',c:'#a78bfa',bg:'rgba(88,28,200,.25)'},34:{l:'L1',c:'#60a5fa',bg:'rgba(0,80,179,.25)'},8:{l:'Liga',c:'#fbbf24',bg:'rgba(200,150,0,.25)'},23:{l:'SA',c:'#34d399',bg:'rgba(0,100,60,.25)'},35:{l:'BL',c:'#f87171',bg:'rgba(180,30,30,.25)'},7:{l:'LDC',c:'#818cf8',bg:'rgba(0,20,120,.35)'},5:{l:'EL',c:'#fb923c',bg:'rgba(200,80,0,.25)'},20296:{l:'ECL',c:'#6ee7b7',bg:'rgba(0,150,80,.25)'}}; const lb=LMAP[match.leagueId]||{l:'—',c:'#9ca3af',bg:'rgba(156,163,175,.15)'}; return `<span style="font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;background:${lb.bg};color:${lb.c};flex-shrink:0">${lb.l}</span>`; })()}
         <div class="match-teams">${match.homeTeam} <span style="color:var(--m)">vs</span> ${match.awayTeam}</div>
         <span class="match-score">${match.homeGoals}-${match.awayGoals}</span>
         <div class="match-stats">
@@ -432,7 +449,7 @@ async function init() {
     const dateStr = matchDate
       ? new Date(matchDate).toLocaleDateString('fr-FR', {weekday:'short', day:'2-digit', month:'2-digit'})
       : '—';
-    const LEAGUE_COLORS = { PL:'rgba(88,28,200,.6)', L1:'rgba(0,80,179,.6)', Liga:'rgba(200,150,0,.6)', SA:'rgba(0,100,60,.6)', BL:'rgba(180,30,30,.6)', LDC:'rgba(0,20,120,.8)', EL:'rgba(200,80,0,.6)', ECL:'rgba(0,150,80,.6)' };
+    const LEAGUE_COLORS = { PL:'rgba(88,28,200,.6)', L1:'rgba(0,80,179,.6)', Liga:'rgba(200,150,0,.6)', LIGA:'rgba(200,150,0,.6)', SA:'rgba(0,100,60,.6)', BL:'rgba(180,30,30,.6)', LDC:'rgba(0,20,120,.8)', EL:'rgba(200,80,0,.6)', ECL:'rgba(0,150,80,.6)' };
     const lgBg = LEAGUE_COLORS[matchLeague] || '#1e2130';
     predEl.innerHTML = `
       <div class="pred-next">
