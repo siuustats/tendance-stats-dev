@@ -392,7 +392,9 @@ async function init() {
       ...p,
       photo: photos[p.id] || photos[String(p.id)] || p.photo || ''
     }));
-    allFixtures = data.fixtures || [];
+    // Ne garder que les fixtures d'aujourd'hui et des jours suivants (jamais le passé)
+    const todayStr = new Date().toISOString().slice(0, 10);
+    allFixtures = (data.fixtures || []).filter(f => f.date && f.date.slice(0, 10) >= todayStr);
 
     renderDayFilters();
     render();
