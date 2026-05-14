@@ -480,12 +480,29 @@ async function main() {
   const storedIds = new Set((stored.matches || []).map(m => m.fixtureId));
 
   // IDs des matchs des 3 derniers jours → forcer re-traitement pour récupérer passes manquantes
-  const recentDates = new Set();
-  for (let i = 0; i <= 4; i++) { // couvre jeudi-lundi (tout le weekend + veille)
-    const d = new Date();
-    d.setDate(d.getDate() - i);
-    recentDates.add(d.toISOString().slice(0, 10));
+  // Fenêtre dynamique : depuis le dernier match stocké (ou 7j par défaut) jusqu'à aujourd'hui
+  const lastStoredDate = (stored.matches || [])
+    .map(m => m.date?.slice(0, 10))
+    .filter(Boolean)
+    .sort()
+    .pop(); // date la plus récente stockée
+
+  const windowStart = new Date();
+  if (lastStoredDate) {
+    windowStart.setTime(new Date(lastStoredDate).getTime());
+    windowStart.setDate(windowStart.getDate() - 1); // 1 jour de marge
+  } else {
+    windowStart.setDate(windowStart.getDate() - 7); // fallback 7 jours
   }
+
+  const recentDates = new Set();
+  const cursor = new Date(windowStart);
+  while (cursor <= new Date()) {
+    recentDates.add(cursor.toISOString().slice(0, 10));
+    cursor.setDate(cursor.getDate() + 1);
+  }
+  console.log(`📅 Fenêtre re-traitement : ${[...recentDates].join(', ')}`);
+
   const recentIds = new Set(
     (stored.matches || [])
       .filter(m => recentDates.has(m.date?.slice(0, 10)))
@@ -514,10 +531,11 @@ async function main() {
 
   // Chercher sur les 3 derniers jours
   const dates = [];
-  for (let i = 0; i <= 4; i++) { // couvre jeudi-lundi (tout le weekend + veille)
-    const d = new Date();
-    d.setDate(d.getDate() - i);
-    dates.push(d.toISOString().slice(0, 10).replace(/-/g, ''));
+  // Même fenêtre dynamique que recentDates pour le fetch ESPN
+  const fetchCursor = new Date(windowStart);
+  while (fetchCursor <= new Date()) {
+    dates.push(fetchCursor.toISOString().slice(0, 10).replace(/-/g, ''));
+    fetchCursor.setDate(fetchCursor.getDate() + 1);
   }
   console.log(`📅 Dates cibles : ${dates.join(', ')}`);
   const newMatches = [];
@@ -525,9 +543,15 @@ async function main() {
   for (const league of LEAGUES) {
     console.log(`\n⚽ ${league.name}`);
     const allEvents = [];
+    const seenEventIds = new Set();
     for (const date of dates) {
       const evs = await fetchESPN(league.code, date);
-      allEvents.push(...evs);
+      for (const ev of evs) {
+        if (!seenEventIds.has(ev.id)) {
+          seenEventIds.add(ev.id);
+          allEvents.push(ev);
+        }
+      }
     }
     const events = allEvents;
     console.log(`  📅 ${events.length} match(s)`);
