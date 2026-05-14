@@ -202,9 +202,10 @@ function calcPredScore(player, fixtures, players) {
 }
 
 function getPredLabel(score) {
-  if (score >= 75) return { label:'🔥 EN FEU',  color:'#ff9f43', colorDim:'#ff9f4388' };
-  if (score >= 55) return { label:'⚡ CHAUD',    color:'#ffd32a', colorDim:'#ffd32a88' };
-  if (score >= 35) return { label:'📈 EN FORME', color:'#00e5a0', colorDim:'#00e5a088' };
+  if (score >= 75) return { label:'🔥 EN FEU',   color:'#ff9f43', colorDim:'#ff9f4388' };
+  if (score >= 55) return { label:'⚡ CHAUD',     color:'#ffd32a', colorDim:'#ffd32a88' };
+  if (score >= 35) return { label:'📈 EN FORME',  color:'#00e5a0', colorDim:'#00e5a088' };
+  if (score >= 20) return { label:'💤 DISCRET',   color:'#5e81f4', colorDim:'#5e81f488' };
   return null;
 }
 
@@ -282,34 +283,39 @@ function render() {
     fixtures = allFixtures.filter(f => f.date && f.date.slice(0,10) === currentDay);
   }
 
-  // Grouper par match (fusionner les deux équipes dans un seul bloc)
-  const matchMap = {};
+  // Construire d'abord tous les matchs depuis les fixtures filtrées
+  const fixtureMap = {};
+  for (const f of fixtures) {
+    const leagueOk = currentFilter === 'all' || f.leagueId === currentFilter;
+    if (!leagueOk) continue;
+    const key = [f.homeTeam, f.awayTeam].sort().join('__') + '__' + f.date;
+    if (!fixtureMap[key]) {
+      fixtureMap[key] = {
+        homeTeam: f.homeTeam, awayTeam: f.awayTeam,
+        date: f.date, leagueId: f.leagueId,
+        players: []
+      };
+    }
+  }
+
+  // Ajouter les joueurs avec score suffisant à leur match
   for (const p of players) {
     const { score, opponent, matchDate, matchLeague } = calcPredScore(p, fixtures, allPlayers);
     if (!opponent) continue;
     const predLabel = getPredLabel(score);
     if (!predLabel) continue;
-
-    // Clé unique indépendante de quel côté on est
-    const teams = [p.teamName, opponent].sort().join('__');
-    const key = `${teams}__${matchDate}`;
-    if (!matchMap[key]) {
-      matchMap[key] = {
-        homeTeam: p.teamName, awayTeam: opponent,
-        date: matchDate, leagueId: matchLeague || p.leagueId,
-        players: []
-      };
+    const key = [p.teamName, opponent].sort().join('__') + '__' + matchDate;
+    if (fixtureMap[key]) {
+      fixtureMap[key].players.push({ player: p, score, predLabel });
     }
-    matchMap[key].players.push({ player: p, score, predLabel });
   }
 
-  // Pour chaque match : top 5 par score, rôle calculé selon les stats
-  const matches = Object.values(matchMap)
+  // Pour chaque match : top 5 par score
+  const matches = Object.values(fixtureMap)
     .map(m => {
       const all = m.players.sort((a,b) => b.score - a.score).slice(0, 5);
       return { ...m, selected: all };
     })
-    .filter(m => m.selected.length > 0)
     .sort((a,b) => new Date(a.date) - new Date(b.date));
 
   if (!matches.length) {
@@ -341,7 +347,7 @@ function render() {
       const role  = getRole(g5, a5);
       return `<div class="pred-row" onclick="window.location.href='player.html?id=${p.id}'">
         <div class="pred-avatar">
-          ${photo ? `<img src="${photo}" onerror="this.outerHTML='⚽'" alt="${p.name}">` : '⚽'}
+          ${(()=>{ const src = photo || (p.id ? `https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/${p.id}.png&w=96&h=70` : ''); return src ? `<img src="${src}" onerror="this.outerHTML='⚽'" alt="${p.name}">` : '⚽'; })()}
         </div>
         <div class="pred-info">
           <div class="pred-name" style="display:flex;align-items:center;gap:6px">${p.name} <span style="font-size:9px;background:${role.bg};color:${role.color};border-radius:4px;padding:1px 6px;font-weight:700">${role.tag}</span></div>
@@ -364,7 +370,9 @@ function render() {
       </div>`;
     };
 
-    const playersHtml = match.selected.map(e => rowHtml(e)).join('');
+    const playersHtml = match.selected.length > 0
+      ? match.selected.map(e => rowHtml(e)).join('')
+      : `<div style="padding:16px 20px;font-size:13px;color:var(--m);font-style:italic">📊 Données insuffisantes pour établir des prédictions sur ce match</div>`;
 
     return `<div class="match-section">
       <div class="match-header">
