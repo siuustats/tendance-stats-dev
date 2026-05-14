@@ -390,18 +390,27 @@ async function fetchMissingPhotos(players, photosCache) {
   console.log(`\n📸 Recherche de ${missing.length} photo(s) via Transfermarkt...`);
   const updated = { ...photosCache };
 
-  // ── Test de santé ─────────────────────────────────────────────────────────
+  // ── Wake-up ping + Test de santé ─────────────────────────────────────────
+  // Fly.io se met en veille → envoyer un ping d'abord et attendre le réveil
+  console.log('  🔔 Wake-up ping Transfermarkt...');
+  try {
+    const wakeCtrl = new AbortController();
+    setTimeout(() => wakeCtrl.abort(), 3000);
+    await fetch(`${TM_API}/`, { headers: { 'User-Agent': 'TendanceStats/1.0' }, signal: wakeCtrl.signal });
+  } catch(e) {} // on ignore l'erreur du ping, c'est juste pour réveiller l'instance
+  await new Promise(r => setTimeout(r, 5000)); // attendre 5s que l'instance démarre
+
   let apiOk = false;
   for (const testName of ['Mbappe', 'Ronaldo', 'Messi']) {
     try {
       const tc = new AbortController();
-      const tt = setTimeout(() => tc.abort(), 6000);
+      const tt = setTimeout(() => tc.abort(), 15000); // 15s pour le cold start
       const tr = await fetch(`${TM_API}/players/search/${testName}`,
         { headers: { 'User-Agent': 'TendanceStats/1.0' }, signal: tc.signal });
       clearTimeout(tt);
       if (tr.ok) { apiOk = true; break; }
     } catch(e) {}
-    await new Promise(r => setTimeout(r, 500));
+    await new Promise(r => setTimeout(r, 1000));
   }
 
   if (!apiOk) {
@@ -495,12 +504,22 @@ async function main() {
     .sort()
     .pop(); // date la plus récente stockée
 
+  // Fenêtre = depuis le dernier match stocké - 1 jour, avec un minimum de 7 jours en arrière
+  // Garantit qu'on ne rate jamais des matchs même si le script n'a pas tourné plusieurs jours
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
   const windowStart = new Date();
   if (lastStoredDate) {
     windowStart.setTime(new Date(lastStoredDate).getTime());
-    windowStart.setDate(windowStart.getDate() - 1); // 1 jour de marge
+    windowStart.setDate(windowStart.getDate() - 1); // 1 jour de marge UTC
   } else {
-    windowStart.setDate(windowStart.getDate() - 7); // fallback 7 jours
+    windowStart.setTime(sevenDaysAgo.getTime());
+  }
+
+  // Toujours couvrir au minimum 7 jours en arrière
+  if (windowStart > sevenDaysAgo) {
+    windowStart.setTime(sevenDaysAgo.getTime());
   }
 
   const recentDates = new Set();
