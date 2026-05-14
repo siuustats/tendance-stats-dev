@@ -107,12 +107,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
     /* Matchs */
     .match-row {
-      display:flex; align-items:center; gap:12px;
+      display:grid; grid-template-columns:55px 42px 1fr auto auto;
+      align-items:center; gap:10px;
       background:var(--s1); border:1px solid var(--border); border-radius:10px;
       padding:12px 16px; margin-bottom:8px;
     }
-    .match-date { font-size:11px; color:var(--m); width:70px; flex-shrink:0; font-family:'DM Mono',monospace; }
-    .match-teams { flex:1; font-size:13px; }
+    .match-date { font-size:11px; color:var(--m); font-family:'DM Mono',monospace; }
+    .match-teams { font-size:13px; }
     .match-score { font-family:'DM Mono',monospace; font-size:13px; color:var(--m2); width:40px; text-align:center; }
     .match-stats { display:flex; gap:8px; }
     .stat-pill {
@@ -191,10 +192,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .kpi-n { font-size:26px; }
 
     /* ── MATCHS ── */
-    .match-row { flex-wrap:wrap; gap:8px; padding:10px 12px; }
-    .match-date { width:auto; }
-    .match-score { width:auto; }
-    .match-teams { width:100%; order:-1; }
+    .match-row { grid-template-columns:44px 34px 1fr auto auto; gap:6px; padding:10px 12px; }
   }
   </style>
 </head>
@@ -377,7 +375,7 @@ async function init() {
       row.className = 'match-row';
       row.innerHTML = `
         <span class="match-date">${date}</span>
-        ${(()=>{ const LMAP={17:{l:'PL',c:'#a78bfa',bg:'rgba(88,28,200,.25)'},34:{l:'L1',c:'#60a5fa',bg:'rgba(0,80,179,.25)'},8:{l:'Liga',c:'#fbbf24',bg:'rgba(200,150,0,.25)'},23:{l:'SA',c:'#34d399',bg:'rgba(0,100,60,.25)'},35:{l:'BL',c:'#f87171',bg:'rgba(180,30,30,.25)'},7:{l:'LDC',c:'#818cf8',bg:'rgba(0,20,120,.35)'},5:{l:'EL',c:'#fb923c',bg:'rgba(200,80,0,.25)'},20296:{l:'ECL',c:'#6ee7b7',bg:'rgba(0,150,80,.25)'}}; const lb=LMAP[match.leagueId]||{l:'—',c:'#9ca3af',bg:'rgba(156,163,175,.15)'}; return `<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;background:${lb.bg};color:${lb.c};flex-shrink:0;display:inline-flex;align-items:center;line-height:1">${lb.l}</span>`; })()}
+        ${(()=>{ const LMAP={17:{l:'PL',c:'#a78bfa',bg:'rgba(88,28,200,.25)'},34:{l:'L1',c:'#60a5fa',bg:'rgba(0,80,179,.25)'},8:{l:'Liga',c:'#fbbf24',bg:'rgba(200,150,0,.25)'},23:{l:'SA',c:'#34d399',bg:'rgba(0,100,60,.25)'},35:{l:'BL',c:'#f87171',bg:'rgba(180,30,30,.25)'},7:{l:'LDC',c:'#818cf8',bg:'rgba(0,20,120,.35)'},5:{l:'EL',c:'#fb923c',bg:'rgba(200,80,0,.25)'},20296:{l:'ECL',c:'#6ee7b7',bg:'rgba(0,150,80,.25)'}}; const lb=LMAP[match.leagueId]||{l:'—',c:'#9ca3af',bg:'rgba(156,163,175,.15)'}; return `<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;background:${lb.bg};color:${lb.c}">${lb.l}</span>`; })()}
         <div class="match-teams">${match.homeTeam} <span style="color:var(--m)">vs</span> ${match.awayTeam}</div>
         <span class="match-score">${match.homeGoals}-${match.awayGoals}</span>
         <div class="match-stats">
