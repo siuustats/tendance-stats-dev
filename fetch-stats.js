@@ -134,7 +134,33 @@ async function fetchFixtures() {
   return fixtures;
 }
 
-async function fetchSummaryData(leagueCode, eventId) {
+async function fetchInjuries(leagueCode) {
+  // Tente de récupérer les blessés/suspendus via ESPN injuries endpoint
+  try {
+    const url = `https://site.api.espn.com/apis/site/v2/sports/soccer/${leagueCode}/injuries`;
+    const res = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+    if (!res.ok) return {};
+    const data = await res.json();
+    // Retourne un map { playerId: { name, status: 'injury'|'suspension'|'other' } }
+    const injuries = {};
+    for (const item of (data.injuries || [])) {
+      const athlete = item.athlete;
+      const id = String(athlete?.id || '');
+      if (!id) continue;
+      const type = (item.type?.name || item.status || '').toLowerCase();
+      let status = 'other';
+      if (type.includes('injur') || type.includes('ill') || type.includes('day-to-day')) status = 'injury';
+      if (type.includes('suspend') || type.includes('ban')) status = 'suspension';
+      injuries[id] = { name: athlete?.displayName || '', status };
+    }
+    if (Object.keys(injuries).length) console.log(`  🏥 ${Object.keys(injuries).length} blessé(s)/suspendu(s) trouvé(s)`);
+    return injuries;
+  } catch(e) {
+    return {};
+  }
+}
+
+async function fetchSummaryData(leagueCode, eventId, injuries = {}) {
   const url = `https://site.api.espn.com/apis/site/v2/sports/soccer/${leagueCode}/summary?event=${eventId}`;
   await new Promise(r => setTimeout(r, 500));
   try {
@@ -171,13 +197,15 @@ async function fetchSummaryData(leagueCode, eventId) {
         if (isAbsent && name) {
           console.log(`    🏥 Absent: ${name} | active=${player.active} reason=${absReason} status=${JSON.stringify(player.athlete?.status?.type)}`);
         }
+        const injuryInfo = injuries[String(id)];
+        const finalAbsReason = isAbsent ? (absReason || injuryInfo?.status || 'unknown') : (injuryInfo?.status || null);
         if (id && (hasPlayed || onBench || isAbsent)) {
           playedByTeam[fixedTeam].push({
             id: String(id),
             name,
             photo: headshot || '',
-            played: hasPlayed ? true : onBench ? false : null, // null = absent (blessé/suspendu)
-            absenceReason: isAbsent ? (absReason || 'unknown') : null,
+            played: hasPlayed ? true : onBench ? false : null,
+            absenceReason: (isAbsent || injuryInfo) ? finalAbsReason : null,
           });
         }
       }
@@ -612,6 +640,8 @@ async function main() {
     }
     const events = allEvents;
     console.log(`  📅 ${events.length} match(s)`);
+    // Récupérer les blessés/suspendus pour cette ligue
+    const leagueInjuries = await fetchInjuries(league.code);
 
     for (const event of events) {
       const comp   = event.competitions?.[0];
@@ -631,7 +661,7 @@ async function main() {
       console.log(`  🎮 ${homeName} ${homeScore}-${awayScore} ${awayName}`);
 
       // Récupérer photos, passes et joueurs ayant joué depuis le summary
-      const { photos, assists, playedByTeam } = await fetchSummaryData(league.code, fId);
+      const { photos, assists, playedByTeam } = await fetchSummaryData(league.code, fId, leagueInjuries);
       const mergedPhotos = { ...photosCache, ...photos };
       const players  = extractContributions(event, league, mergedPhotos, assists);
       const contribs = players.filter(p => p.goals > 0);
