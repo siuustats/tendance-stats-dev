@@ -435,7 +435,7 @@ const SEASON = 2024;
 const LEAGUES = [
   { id: 61,  name: 'Ligue 1',        flag: 'fr',     flagAlt:'FR', cls: 'l1',  label: 'L1' },
   { id: 39,  name: 'Premier League', flag: 'gb-eng', flagAlt:'EN', cls: 'pl',  label: 'PL' },
-  { id: 140, name: 'La Liga',        flag: 'es',     flagAlt:'ES', cls: 'lg',  label: 'LIGA' },
+  { id: 140, name: 'La Liga',        flag: 'es',     flagAlt:'ES', cls: 'liga', label: 'Liga' },
   { id: 135, name: 'Serie A',        flag: 'it',     flagAlt:'IT', cls: 'sa',  label: 'SA' },
   { id: 78,  name: 'Bundesliga',     flag: 'de',     flagAlt:'DE', cls: 'bl',  label: 'BL' },
 ];
@@ -738,7 +738,7 @@ function renderGrid(list) {
         <div class="track"><div class="fill" style="width:${p.signal}%"></div></div>
       </div>
       <div class="ltag" style="display:flex;align-items:center;justify-content:space-between;">
-        <div><span class="lpill ${p.leagueCls}">${p.leagueLabel}</span> ${p.leagueName}</div>
+        <div><span class="lpill ${p.leagueCls==='lg'?'liga':p.leagueCls}">${p.leagueLabel==='LIGA'?'Liga':p.leagueLabel}</span> ${p.leagueName}</div>
         <a href="https://www.winamax.fr/paris-sportifs/sports/1?code=CMONBN" target="_blank" rel="noopener sponsored" onclick="event.stopPropagation()"
            style="font-size:10px;font-weight:700;color:#fff;background:#e30613;padding:4px 10px;border-radius:4px;text-decoration:none;white-space:nowrap;">
           Voir la cote →
@@ -775,7 +775,7 @@ function renderTable(list, photosMap={}, page=1) {
         <div class="pn">${p.name}</div>
         <div class="pt">${p.teamName||p.team}</div>
       </td>
-      <td><span class="lpill ${p.leagueCls}">${p.leagueLabel}</span></td>
+      <td><span class="lpill ${p.leagueCls==='lg'?'liga':p.leagueCls}">${p.leagueLabel==='LIGA'?'Liga':p.leagueLabel}</span></td>
       <td><span class="num g">${p.totalGoals||p.goals||0}</span></td>
       <td><span class="num a">${p.totalAssists||p.assists||0}</span></td>
       <td><span class="num" style="color:var(--m2)">${p.totalGames||p.games||0}</span></td>
