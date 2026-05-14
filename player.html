@@ -377,7 +377,7 @@ async function init() {
       row.className = 'match-row';
       row.innerHTML = `
         <span class="match-date">${date}</span>
-        ${(()=>{ const LMAP={17:{l:'PL',c:'#a78bfa',bg:'rgba(88,28,200,.25)'},34:{l:'L1',c:'#60a5fa',bg:'rgba(0,80,179,.25)'},8:{l:'Liga',c:'#fbbf24',bg:'rgba(200,150,0,.25)'},23:{l:'SA',c:'#34d399',bg:'rgba(0,100,60,.25)'},35:{l:'BL',c:'#f87171',bg:'rgba(180,30,30,.25)'},7:{l:'LDC',c:'#818cf8',bg:'rgba(0,20,120,.35)'},5:{l:'EL',c:'#fb923c',bg:'rgba(200,80,0,.25)'},20296:{l:'ECL',c:'#6ee7b7',bg:'rgba(0,150,80,.25)'}}; const lb=LMAP[match.leagueId]||{l:'—',c:'#9ca3af',bg:'rgba(156,163,175,.15)'}; return `<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;background:${lb.bg};color:${lb.c};flex-shrink:0;align-self:center">${lb.l}</span>`; })()}
+        ${(()=>{ const LMAP={17:{l:'PL',c:'#a78bfa',bg:'rgba(88,28,200,.25)'},34:{l:'L1',c:'#60a5fa',bg:'rgba(0,80,179,.25)'},8:{l:'Liga',c:'#fbbf24',bg:'rgba(200,150,0,.25)'},23:{l:'SA',c:'#34d399',bg:'rgba(0,100,60,.25)'},35:{l:'BL',c:'#f87171',bg:'rgba(180,30,30,.25)'},7:{l:'LDC',c:'#818cf8',bg:'rgba(0,20,120,.35)'},5:{l:'EL',c:'#fb923c',bg:'rgba(200,80,0,.25)'},20296:{l:'ECL',c:'#6ee7b7',bg:'rgba(0,150,80,.25)'}}; const lb=LMAP[match.leagueId]||{l:'—',c:'#9ca3af',bg:'rgba(156,163,175,.15)'}; return `<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;background:${lb.bg};color:${lb.c};flex-shrink:0;display:inline-flex;align-items:center;line-height:1">${lb.l}</span>`; })()}
         <div class="match-teams">${match.homeTeam} <span style="color:var(--m)">vs</span> ${match.awayTeam}</div>
         <span class="match-score">${match.homeGoals}-${match.awayGoals}</span>
         <div class="match-stats">
