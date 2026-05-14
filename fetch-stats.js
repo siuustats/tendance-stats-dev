@@ -160,13 +160,16 @@ async function fetchSummaryData(leagueCode, eventId) {
         const headshot = player.athlete?.headshot?.href;
         if (id && headshot) photos[id] = headshot;
 
-        // Compter uniquement ceux qui ont joué
+        // Titulaires + remplaçants entrés → played:true
+        // Remplaçants non entrés → played:false (banc)
         const hasPlayed = player.starter === true || player.subbedIn === true;
-        if (id && hasPlayed) {
+        const onBench   = !player.starter && !player.subbedIn && player.active !== false;
+        if (id && (hasPlayed || onBench)) {
           playedByTeam[fixedTeam].push({
             id: String(id),
             name,
             photo: headshot || '',
+            played: hasPlayed,   // false = était sur le banc mais pas entré
           });
         }
       }
@@ -363,110 +366,17 @@ function rebuildPlayers(matches) {
 // ── API-Football : photos des nouveaux joueurs ───────────────────────────────
 
 async function fetchMissingPhotos(players, photosCache) {
-  // Utiliser Transfermarkt API (gratuit, sans clé, sans CORS)
-
-  const missing = players.filter(p => !photosCache[p.id] && p.name);
-  if (!missing.length) { console.log('✅ Toutes les photos sont en cache'); return photosCache; }
-
-  console.log(`\n📸 Recherche de ${missing.length} photo(s) via Transfermarkt...`);
+  // Les photos sont capturées depuis ESPN lors des matchs (fetchSummaryData).
+  // Pour les joueurs sans photo en cache, on génère une URL ESPN CDN qui sera
+  // résolue côté navigateur — pas besoin d'appel réseau depuis le script.
   const updated = { ...photosCache };
-
-  // ── Test de santé Transfermarkt ──────────────────────────────────────────
-  let apiOk = false;
-  let consecutiveFails = 0;
-  let dynamicTimeout = 5000;
-
-  console.log('  🏥 Test de santé Transfermarkt...');
-  for (const testName of ['Mbappe', 'Ronaldo', 'Messi']) {
-    try {
-      const tc = new AbortController();
-      const tt = setTimeout(() => tc.abort(), 4000);
-      const tr = await fetch(
-        `https://transfermarkt-api.fly.dev/players/search/${testName}`,
-        { headers: { 'User-Agent': 'TendanceStats/1.0' }, signal: tc.signal }
-      );
-      clearTimeout(tt);
-      if (tr.ok) { apiOk = true; break; }
-    } catch(e) {}
-    await new Promise(r => setTimeout(r, 500));
-  }
-
-  if (!apiOk) {
-    console.log('  ❌ API Transfermarkt indisponible — photos ignorées pour cette exécution');
-    return photosCache;
-  }
-  console.log('  ✅ API Transfermarkt disponible');
-
-  // ── Recherche des photos ──────────────────────────────────────────────────
-  const batch = missing;
-
-  for (const p of batch) {
-    console.log(`  🔍 ${p.name}`);
-    try {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), dynamicTimeout);
-
-      let playerId = null;
-      for (const searchName of [p.name, p.name.split(' ')[0]]) {
-        try {
-          const searchRes = await fetch(
-            `https://transfermarkt-api.fly.dev/players/search/${encodeURIComponent(searchName)}`,
-            { headers: { 'User-Agent': 'TendanceStats/1.0' }, signal: controller.signal }
-          );
-          if (!searchRes.ok) continue;
-          const searchData = await searchRes.json();
-          playerId = searchData.results?.[0]?.id;
-          if (playerId) break;
-          await new Promise(r => setTimeout(r, 300));
-        } catch(e) { break; }
-      }
-
-      clearTimeout(timeout);
-      if (!playerId) {
-        updated[p.id] = '';
-        consecutiveFails++;
-        // Si 5 échecs consécutifs → réduire timeout à 2s
-        if (consecutiveFails >= 5) dynamicTimeout = 2000;
-        console.log(`  ❌ Pas trouvé`);
-        continue;
-      }
-      // Photo trouvée → réinitialiser les échecs et timeout
-      consecutiveFails = 0;
-      dynamicTimeout = 5000;
-
-      await new Promise(r => setTimeout(r, 300));
-
-      // Récupérer la photo avec timeout
-      const controller2 = new AbortController();
-      const timeout2 = setTimeout(() => controller2.abort(), 5000);
-      try {
-        const profileRes = await fetch(
-          `https://transfermarkt-api.fly.dev/players/${playerId}/profile`,
-          { headers: { 'User-Agent': 'TendanceStats/1.0' }, signal: controller2.signal }
-        );
-        clearTimeout(timeout2);
-        if (!profileRes.ok) { updated[p.id] = ''; continue; }
-        const profile = await profileRes.json();
-        const photo = profile.imageUrl;
-        updated[p.id] = photo || '';
-        if (photo) {
-          consecutiveFails = 0;
-          dynamicTimeout = 5000; // rétablir timeout normal si photo trouvée
-          console.log(`  ✅ Photo trouvée`);
-        } else {
-          consecutiveFails++;
-          if (consecutiveFails >= 5) dynamicTimeout = 2000;
-          console.log(`  ❌ Pas de photo`);
-        }
-      } catch(e) {
-        clearTimeout(timeout2);
-        updated[p.id] = '';
-        console.log(`  ⏱️ Timeout`);
-      }
-    } catch(e) {
-      updated[p.id] = '';
-    }
-    await new Promise(r => setTimeout(r, 200));
+  const missing = players.filter(p => !photosCache[p.id] && p.id);
+  if (missing.length) {
+    console.log(`\n📸 ${missing.length} joueur(s) sans photo → URL ESPN CDN générée côté client`);
+    // On ne stocke rien dans photosCache pour ces joueurs — le HTML utilisera
+    // le fallback ESPN CDN dynamiquement via l'ID du joueur.
+  } else {
+    console.log('✅ Toutes les photos sont en cache');
   }
 
   return updated;
@@ -594,7 +504,7 @@ async function main() {
 
         for (const tp of teamPlayers) {
           if (alreadyCounted.has(tp.id)) continue; // déjà compté via buts/passes
-          // Ajouter le joueur avec 0 stats mais 1 match joué
+          // played:true = a joué, played:false = était sur le banc sans entrer
           players.push({
             id: tp.id,
             name: tp.name,
@@ -604,7 +514,7 @@ async function main() {
             leagueId: league.id, leagueName: league.name,
             leagueFlag: league.flag, leagueFlagAlt: league.flagAlt,
             leagueCls: league.cls, leagueLabel: league.label,
-            goals: 0, assists: 0, played: true, date: matchDate,
+            goals: 0, assists: 0, played: tp.played !== false, date: matchDate,
           });
           alreadyCounted.add(tp.id);
         }
