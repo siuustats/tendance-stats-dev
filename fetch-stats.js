@@ -673,8 +673,11 @@ async function main() {
     if (!p.photo && updatedPhotos[p.id]) p.photo = updatedPhotos[p.id];
   }
 
-  // Collecter les prochains matchs
-  const fixtures = await fetchFixtures();
+  // Collecter les prochains matchs — exclure ceux déjà joués (présents dans stored.matches)
+  const playedIds = new Set(trimmed.map(m => m.fixtureId));
+  const nowISO = new Date().toISOString();
+  const allFixtures = await fetchFixtures();
+  const fixtures = allFixtures.filter(f => !playedIds.has(f.id) && f.date > nowISO);
 
   fs.writeFileSync(DATA_FILE, JSON.stringify({
     updatedAt:       new Date().toISOString(),
