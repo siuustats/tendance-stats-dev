@@ -289,7 +289,7 @@ function render() {
           ${p.photo ? `<img src="${p.photo}" onerror="this.outerHTML='⚽'" alt="${p.name}">` : '⚽'}
         </div>
         <div class="pred-info">
-          <div class="pred-name" style="display:flex;align-items:center;gap:6px">${p.name} <span style="font-size:9px;background:${getRole(goals,assists).bg};color:${getRole(goals,assists).color};border-radius:4px;padding:1px 6px;font-weight:700">${getRole(goals,assists).tag}</span></div>
+          <div class="pred-name" style="display:flex;align-items:center;gap:6px">${p.name} <span style="font-size:9px;background:${getRole(goals,assists).bg};color:${getRole(goals,assists).color};border-radius:4px;padding:1px 6px;font-weight:700">${getRole(goals,assists).tag}</span>${getAbsenceBadge(p.last5?.[0]?.played, p.last5?.[0]?.absenceReason)}</div>
           <div class="pred-team">${p.teamName} · <span style="color:var(--g)">Groupe ${group}</span></div>
         </div>
         <div class="pred-right">
@@ -376,7 +376,7 @@ function render() {
           ${p.photo ? `<img src="${p.photo}" onerror="this.outerHTML='⚽'" alt="${p.name}">` : '⚽'}
         </div>
         <div class="pred-info">
-          <div class="pred-name" style="display:flex;align-items:center;gap:6px">${p.name} <span style="font-size:9px;background:${getRole(g5,a5).bg};color:${getRole(g5,a5).color};border-radius:4px;padding:1px 6px;font-weight:700">${getRole(g5,a5).tag}</span></div>
+          <div class="pred-name" style="display:flex;align-items:center;gap:6px">${p.name} <span style="font-size:9px;background:${getRole(g5,a5).bg};color:${getRole(g5,a5).color};border-radius:4px;padding:1px 6px;font-weight:700">${getRole(g5,a5).tag}</span>${getAbsenceBadge(p.last5?.[0]?.played, p.last5?.[0]?.absenceReason)}</div>
           <div class="pred-team">${p.teamName}</div>
         </div>
         <div class="pred-right">
@@ -406,6 +406,15 @@ function render() {
     </div>`;
   }).join('');
 }
+
+
+  function getAbsenceBadge(played, absenceReason) {
+    if (played !== null && played !== undefined) return '';
+    const r = (absenceReason || '').toLowerCase();
+    if (r.includes('injur') || r.includes('bless')) return `<span style="font-size:9px;background:rgba(239,68,68,0.15);color:#f87171;border-radius:4px;padding:1px 6px;font-weight:700">🏥 Blessé</span>`;
+    if (r.includes('suspend') || r.includes('red'))  return `<span style="font-size:9px;background:rgba(239,68,68,0.15);color:#f87171;border-radius:4px;padding:1px 6px;font-weight:700">🟥 Suspendu</span>`;
+    return `<span style="font-size:9px;background:rgba(239,68,68,0.15);color:#f87171;border-radius:4px;padding:1px 6px;font-weight:700">❌ Absent</span>`;
+  }
 
 async function init() {
   try {
