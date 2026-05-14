@@ -288,6 +288,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </div>
 
 <script>
+
+  function getAbsenceBadge(played, absenceReason) {
+    if (played !== null && played !== undefined) return '';
+    const r = (absenceReason || '').toLowerCase();
+    if (r.includes('injur') || r.includes('bless')) return `<span class="stat-pill" style="background:rgba(239,68,68,0.15);color:#f87171;font-size:9px;padding:1px 6px;border-radius:4px;font-weight:700">🏥 Blessé</span>`;
+    if (r.includes('suspend') || r.includes('red'))  return `<span class="stat-pill" style="background:rgba(239,68,68,0.15);color:#f87171;font-size:9px;padding:1px 6px;border-radius:4px;font-weight:700">🟥 Suspendu</span>`;
+    return `<span class="stat-pill" style="background:rgba(239,68,68,0.15);color:#f87171;font-size:9px;padding:1px 6px;border-radius:4px;font-weight:700">❌ Absent</span>`;
+  }
+
 async function init() {
   // Récupérer l'ID depuis l'URL
   const params = new URLSearchParams(window.location.search);
@@ -359,7 +368,7 @@ async function init() {
     const cls   = won === true ? 'w' : won === false ? 'l' : 'd';
     const div   = document.createElement('div');
     div.className = `fd ${cls}`;
-    div.textContent = m.played === false ? '🪑' : label;
+    div.textContent = m.played === null ? '❌' : m.played === false ? '🪑' : label;
     formEl.appendChild(div);
   });
 
@@ -379,9 +388,10 @@ async function init() {
         <div class="match-teams">${match.homeTeam} <span style="color:var(--m)">vs</span> ${match.awayTeam}</div>
         <span class="match-score">${match.homeGoals}-${match.awayGoals}</span>
         <div class="match-stats">
+          ${getAbsenceBadge(stats.played, stats.absenceReason)}
           ${stats.played === false ? `<span class="stat-pill" style="background:rgba(107,114,128,0.15);color:#6b7280">🪑 Banc</span>` : ''}
-          ${stats.played !== false && stats.goals > 0 ? `<span class="stat-pill goal">⚽ ${stats.goals}B</span>` : ''}
-          ${stats.played !== false && stats.assists > 0 ? `<span class="stat-pill assist">🎯 ${stats.assists}P</span>` : ''}
+          ${stats.played === true && stats.goals > 0 ? `<span class="stat-pill goal">⚽ ${stats.goals}B</span>` : ''}
+          ${stats.played === true && stats.assists > 0 ? `<span class="stat-pill assist">🎯 ${stats.assists}P</span>` : ''}
         </div>
         <div class="result-badge ${cls}">${label}</div>
       `;
@@ -462,6 +472,7 @@ async function init() {
             <div class="pred-next-name">
               <span id="predPlayerName">—</span>
               <span style="font-size:9px;background:${role.bg};color:${role.color};border-radius:4px;padding:1px 6px;font-weight:700">${role.tag}</span>
+              ${getAbsenceBadge(player.last5?.[0]?.played, player.last5?.[0]?.absenceReason)}
             </div>
             <div class="pred-next-team" id="predPlayerTeam">—</div>
           </div>
