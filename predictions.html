@@ -82,11 +82,11 @@ body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif
 .pred-name { font-size:14px; font-weight:600; }
 .pred-team { font-size:11px; color:var(--m2); margin-top:1px; }
 .pred-right { display:flex; align-items:center; gap:12px; margin-left:auto; flex-shrink:0; }
-.pred-bar-wrap { width:150px; min-width:150px; flex-shrink:0; display:flex; flex-direction:column; justify-content:center; }
-.pred-track { height:6px; background:var(--s3); border-radius:3px; overflow:hidden; margin-bottom:3px; }
+.pred-bar-wrap { width:150px; min-width:150px; flex-shrink:0; display:flex; flex-direction:column; justify-content:center; gap:3px; }
+.pred-track { height:6px; background:var(--s3); border-radius:3px; overflow:hidden; }
 .pred-fill { height:100%; border-radius:3px; transition:width .8s ease; }
-.pred-label { font-size:11px; font-weight:700; white-space:nowrap; line-height:1.2; }
-.pred-stats { flex-shrink:0; width:72px; display:grid; grid-template-columns:1fr 1fr; grid-template-rows:auto auto; align-items:center; justify-items:center; gap:0 4px; }
+.pred-label { font-size:11px; font-weight:700; white-space:nowrap; line-height:1; }
+.pred-stats { flex-shrink:0; width:72px; display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr auto; align-items:center; justify-items:center; row-gap:4px; column-gap:4px; }
 .pred-ga { font-family:'DM Mono',monospace; font-size:15px; font-weight:600; }
 .pred-sub { font-size:9px; color:var(--m); text-transform:uppercase; letter-spacing:.5px; margin-top:1px; }
 
@@ -358,7 +358,7 @@ function render() {
             <div style="font-size:13px;font-weight:700;color:${predLabel.color};line-height:1">⚽${g5}</div>
             <div style="font-size:13px;font-weight:700;color:${predLabel.color};line-height:1">🎯${a5}</div>
             <div style="visibility:hidden;font-size:9px;line-height:1">/5J</div>
-            <div class="pred-sub" style="line-height:1">/5J</div>
+            <div class="pred-sub" style="line-height:1;margin-top:2px">/5J</div>
           </div>
         </div>
       </div>`;
