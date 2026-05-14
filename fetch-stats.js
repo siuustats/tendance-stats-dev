@@ -525,7 +525,7 @@ async function main() {
     EUR_IDS.has(m.leagueId) && (m.players?.length || 0) < 10
   );
 
-  const minDays = hasBadEurMatches ? 21 : 7;
+  const minDays = hasBadEurMatches ? 21 : 14;
   if (hasBadEurMatches) console.log(`⚠️  Matchs européens incomplets détectés → fenêtre étendue à ${minDays} jours`);
 
   const minDaysAgo = new Date();
