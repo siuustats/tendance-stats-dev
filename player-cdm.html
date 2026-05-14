@@ -359,19 +359,89 @@ async function init() {
   document.getElementById('trendScore').textContent = '—';
   document.getElementById('trendFill').style.width = '0%';
 
-  // KPIs — tous à 0, la CDM n'a pas encore commencé
-  document.getElementById('kGoals').textContent   = 0;
-  document.getElementById('kAssists').textContent = 0;
-  document.getElementById('kGames').textContent   = 0;
-  document.getElementById('kAvg').textContent     = 0;
+  // ── KPIs + Forme + Historique CDM ────────────────────────────────────────
+  try {
+    const dataRes2 = await fetch('data.json?v=' + Date.now());
+    const dataFull = await dataRes2.json();
 
-  // Forme — vide avant le début de la CDM
-  document.getElementById('formSection').innerHTML =
-    '<span style="color:var(--m);font-size:13px">Aucun match CDM joué · Début le 11 juin 2026</span>';
+    // Chercher les matchs CDM du joueur
+    const cdmMatches = [];
+    for (const m of (dataFull.matches || [])) {
+      if (m.leagueId !== 6) continue;
+      const found = (m.players || []).find(p => String(p.id) === String(playerId));
+      if (found) cdmMatches.push({ match: m, stats: found });
+    }
+    cdmMatches.sort((a, b) => new Date(b.match.date) - new Date(a.match.date));
 
-  // Historique — vide avant le début de la CDM
-  document.getElementById('matchHistory').innerHTML =
-    '<p style="color:var(--m);font-size:13px">Les matchs CDM apparaîtront ici dès le 11 juin 2026</p>';
+    // KPIs
+    const totalGoals   = cdmMatches.reduce((s, { stats }) => s + (stats.goals || 0), 0);
+    const totalAssists = cdmMatches.reduce((s, { stats }) => s + (stats.assists || 0), 0);
+    const totalGames   = cdmMatches.filter(({ stats }) => stats.played !== false).length;
+    const avg = totalGames > 0 ? ((totalGoals + totalAssists) / totalGames).toFixed(1) : 0;
+    document.getElementById('kGoals').textContent   = totalGoals;
+    document.getElementById('kAssists').textContent = totalAssists;
+    document.getElementById('kGames').textContent   = totalGames;
+    document.getElementById('kAvg').textContent     = avg;
+
+    // TendScore CDM
+    const cdmPlayerData = (dataFull.players || []).find(p => p.leagueId === 6 && String(p.id) === String(playerId));
+    if (cdmPlayerData) {
+      document.getElementById('trendScore').textContent = cdmPlayerData.signal || 0;
+      document.getElementById('trendFill').style.width = (cdmPlayerData.signal || 0) + '%';
+    }
+
+    // Forme récente
+    const formEl = document.getElementById('formSection');
+    if (!cdmMatches.length) {
+      formEl.innerHTML = '<span style="color:var(--m);font-size:13px">Aucun match CDM joué · Début le 11 juin 2026</span>';
+    } else {
+      formEl.innerHTML = '';
+      cdmMatches.slice(0, 5).forEach(({ stats: m }) => {
+        const won   = m.teamWon;
+        const label = won === true ? 'V' : won === false ? 'D' : 'N';
+        const cls   = won === true ? 'w' : won === false ? 'l' : 'd';
+        const div   = document.createElement('div');
+        div.className = `fd ${cls}`;
+        div.textContent = m.played === false ? '🪑' : label;
+        formEl.appendChild(div);
+      });
+    }
+
+    // Historique
+    const histEl = document.getElementById('matchHistory');
+    if (!cdmMatches.length) {
+      histEl.innerHTML = '<p style="color:var(--m);font-size:13px">Les matchs CDM apparaîtront ici dès le 11 juin 2026</p>';
+    } else {
+      histEl.innerHTML = '';
+      cdmMatches.forEach(({ match, stats }) => {
+        const date  = new Date(match.date).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'});
+        const won   = stats.teamWon;
+        const label = won === true ? 'V' : won === false ? 'D' : 'N';
+        const cls   = won === true ? 'w' : won === false ? 'l' : 'd';
+        const row   = document.createElement('div');
+        row.className = 'match-row';
+        row.innerHTML = `
+          <span class="match-date">${date}</span>
+          <div class="match-teams">${match.homeTeam} <span style="color:var(--m)">vs</span> ${match.awayTeam}</div>
+          <span class="match-score">${match.homeGoals}-${match.awayGoals}</span>
+          <div class="match-stats">
+            ${stats.played === false ? `<span class="stat-pill" style="background:rgba(107,114,128,0.15);color:#6b7280">🪑 Banc</span>` : ''}
+            ${stats.played !== false && stats.goals > 0 ? `<span class="stat-pill goal">⚽ ${stats.goals}B</span>` : ''}
+            ${stats.played !== false && stats.assists > 0 ? `<span class="stat-pill assist">🎯 ${stats.assists}P</span>` : ''}
+          </div>
+          <div class="result-badge ${cls}">${label}</div>
+        `;
+        histEl.appendChild(row);
+      });
+    }
+  } catch(e) {
+    document.getElementById('kGoals').textContent   = 0;
+    document.getElementById('kAssists').textContent = 0;
+    document.getElementById('kGames').textContent   = 0;
+    document.getElementById('kAvg').textContent     = 0;
+    document.getElementById('formSection').innerHTML = '<span style="color:var(--m);font-size:13px">Données temporairement indisponibles</span>';
+    document.getElementById('matchHistory').innerHTML = '<p style="color:var(--m);font-size:13px">Données temporairement indisponibles</p>';
+  }
 
   // ── PRÉDICTION PROCHAIN MATCH CDM ──────────────────────────────────────
   const predEl = document.getElementById('predNext');
