@@ -97,13 +97,26 @@ body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif
 .legal a { color:var(--m2); }
 
 @media(max-width:768px){
-  .content { padding:24px 12px; }
+  .content { padding:16px 8px; }
   .filters { flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; padding-bottom:4px; }
   .filters::-webkit-scrollbar { display:none; }
-  .filter-btn { flex-shrink:0; white-space:nowrap; }
-  .pred-bar-wrap { width:120px; min-width:80px; }
-  .pred-stats { width:56px; }
-  .pred-row { gap:8px; padding:12px 14px; }
+  .filter-btn { flex-shrink:0; white-space:nowrap; font-size:11px; padding:4px 10px; }
+  .match-header { padding:8px 10px; }
+  .match-league { font-size:9px; padding:1px 5px; }
+  .match-vs { font-size:12px; }
+  .match-date { font-size:10px; }
+  .pred-row { gap:6px; padding:8px 10px; }
+  .pred-avatar { width:32px; height:32px; font-size:14px; }
+  .pred-info { max-width:none; }
+  .pred-name { font-size:12px; }
+  .pred-team { font-size:10px; }
+  .pred-right { gap:6px; }
+  .pred-bar-wrap { width:90px; min-width:70px; }
+  .pred-label { font-size:9px; }
+  .pred-stats { width:48px; font-size:11px; }
+  .pred-track { height:5px; }
+  .pred-bar-bg { height:5px; }
+  .pred-bar-fill { height:5px; }
   .countdown-mini { gap:10px; }
   .cd-val { font-size:28px; }
 }
