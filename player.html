@@ -302,7 +302,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   function getAbsenceBadge(played, absenceReason) {
     if (played !== null && played !== undefined) return '';
-    return `<span class="stat-pill" style="background:rgba(107,114,128,0.15);color:#6b7280;font-size:9px;padding:1px 6px;border-radius:4px;font-weight:700">Absent</span>`;
+    return `<span class="stat-pill" style="background:rgba(107,114,128,0.15);color:#6b7280">Absent</span>`;
   }
 
 async function init() {
@@ -381,7 +381,7 @@ async function init() {
     const cls   = won === true ? 'w' : won === false ? 'l' : 'd';
     const div   = document.createElement('div');
     div.className = `fd ${cls}`;
-    div.textContent = m.played === null ? '❌' : m.played === false ? '🪑' : label;
+    div.textContent = m.played === null ? 'A' : m.played === false ? 'B' : label;
     formEl.appendChild(div);
   });
 
