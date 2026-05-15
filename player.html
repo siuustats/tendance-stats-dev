@@ -138,7 +138,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     }
     .fd.w { background:rgba(0,229,160,0.15); color:var(--g); border:1px solid rgba(0,229,160,0.25); }
     .fd.l { background:rgba(255,80,80,0.15); color:var(--r); border:1px solid rgba(255,80,80,0.25); }
-    .fd.d { background:rgba(107,114,128,0.15); color:var(--m); border:1px solid var(--border); }
+    .fd.d  { background:rgba(107,114,128,0.15); color:var(--m); border:1px solid var(--border); }
+    .fd.b  { background:rgba(107,114,128,0.15); color:#6b7280; border:1px solid rgba(107,114,128,0.3); }
+    .fd.ab { background:rgba(107,114,128,0.15); color:#6b7280; border:1px solid rgba(107,114,128,0.3); }
 
     /* Analyse */
     .analysis { background:var(--s1); border:1px solid var(--border); border-radius:12px; padding:20px; }
@@ -378,7 +380,7 @@ async function init() {
   playerMatches.slice(0, 5).forEach(({ stats: m }) => {
     const won   = m.teamWon;
     const label = won === true ? 'V' : won === false ? 'D' : 'N';
-    const cls   = won === true ? 'w' : won === false ? 'l' : 'd';
+    const cls   = m.played === null ? 'ab' : m.played === false ? 'b' : (won === true ? 'w' : won === false ? 'l' : 'd');
     const div   = document.createElement('div');
     div.className = `fd ${cls}`;
     div.textContent = m.played === null ? '❌' : m.played === false ? '🪑' : label;
@@ -510,7 +512,6 @@ async function init() {
             <div class="pred-next-name">
               <span id="predPlayerName">—</span>
               <span style="font-size:9px;background:${role.bg};color:${role.color};border-radius:4px;padding:1px 6px;font-weight:700">${role.tag}</span>
-              ${getAbsenceBadge(player.last5?.[0]?.played, player.last5?.[0]?.absenceReason)}
             </div>
             <div class="pred-next-team" id="predPlayerTeam">—</div>
           </div>
