@@ -153,6 +153,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .footer { text-align:center; padding:32px 24px; color:var(--m); font-size:12px; }
     .footer a { color:var(--g); text-decoration:none; }
 
+    /* Modal historique complet */
+    .hist-modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:1000; align-items:flex-end; justify-content:center; }
+    .hist-modal-overlay.open { display:flex; }
+    .hist-modal { background:var(--s1); border-radius:16px 16px 0 0; width:100%; max-width:700px; max-height:85vh; display:flex; flex-direction:column; overflow:hidden; }
+    .hist-modal-header { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:1px solid var(--border); flex-shrink:0; }
+    .hist-modal-title { font-size:15px; font-weight:700; }
+    .hist-modal-close { width:32px; height:32px; border-radius:50%; background:var(--s3); border:none; color:var(--text); font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+    .hist-modal-body { overflow-y:auto; padding:12px 16px; flex:1; }
+    .hist-voir-plus { display:flex; align-items:center; justify-content:center; gap:6px; width:100%; margin-top:10px; padding:9px; background:var(--s2); border:1px solid var(--border); border-radius:8px; color:var(--m2); font-size:12px; cursor:pointer; transition:background .15s; }
+    .hist-voir-plus:hover { background:var(--s3); color:var(--text); }
+
     /* Prédiction prochain match */
     .pred-next { background:var(--s1); border:1px solid var(--border); border-radius:12px; overflow:hidden; }
     .pred-next-header { display:flex; align-items:center; gap:10px; padding:10px 16px; background:var(--s2); border-bottom:1px solid var(--border); font-size:12px; color:var(--m2); }
@@ -302,13 +313,18 @@ async function init() {
   const params = new URLSearchParams(window.location.search);
   const playerId = params.get('id') || '280555';
 
-  const [dataRes, photosRes] = await Promise.all([
-    fetch('data.json?v=' + Date.now()),
-    fetch('photos.json?v=' + Date.now()).catch(() => null)
-  ]);
-
-  const data    = await dataRes.json();
-  const photosMap = photosRes?.ok ? await photosRes.json() : {};
+  let data, photosMap;
+  if (playerId === 'TEST') {
+    data     = TEST_DATA;
+    photosMap = {};
+  } else {
+    const [dataRes, photosRes] = await Promise.all([
+      fetch('data.json?v=' + Date.now()),
+      fetch('photos.json?v=' + Date.now()).catch(() => null)
+    ]);
+    data     = await dataRes.json();
+    photosMap = photosRes?.ok ? await photosRes.json() : {};
+  }
 
   const player = data.players?.find(p => String(p.id) === String(playerId) && p.leagueId !== 6);
   if (!player) { document.body.innerHTML = '<p style="padding:40px;color:#fff">Joueur introuvable</p>'; return; }
@@ -372,31 +388,56 @@ async function init() {
     formEl.appendChild(div);
   });
 
+  function buildMatchRow(match, stats) {
+    const date  = new Date(match.date).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'});
+    const won   = stats.teamWon;
+    const label = won === true ? 'V' : won === false ? 'D' : 'N';
+    const cls   = won === true ? 'w' : won === false ? 'l' : 'd';
+    const LMAP  = {17:{l:'PL',c:'#a78bfa',bg:'rgba(88,28,200,.25)'},34:{l:'L1',c:'#60a5fa',bg:'rgba(0,80,179,.25)'},8:{l:'Liga',c:'#fbbf24',bg:'rgba(200,150,0,.25)'},23:{l:'SA',c:'#34d399',bg:'rgba(0,100,60,.25)'},35:{l:'BL',c:'#f87171',bg:'rgba(180,30,30,.25)'},7:{l:'LDC',c:'#818cf8',bg:'rgba(0,20,120,.35)'},5:{l:'EL',c:'#fb923c',bg:'rgba(200,80,0,.25)'},20296:{l:'ECL',c:'#6ee7b7',bg:'rgba(0,150,80,.25)'}};
+    const lb    = LMAP[match.leagueId] || {l:'—',c:'#9ca3af',bg:'rgba(156,163,175,.15)'};
+    const row   = document.createElement('div');
+    row.className = 'match-row';
+    row.innerHTML = `
+      <span class="match-date">${date}</span>
+      <span class="match-league-pill" style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;background:${lb.bg};color:${lb.c}">${lb.l}</span>
+      <div class="match-teams">${match.homeTeam} <span style="color:var(--m)">vs</span> ${match.awayTeam}</div>
+      <span class="match-score">${match.homeGoals}-${match.awayGoals}</span>
+      <div class="match-stats">
+        ${getAbsenceBadge(stats.played, stats.absenceReason)}
+        ${stats.played === false ? `<span class="stat-pill" style="background:rgba(107,114,128,0.15);color:#6b7280">🪑 Banc</span>` : ''}
+        ${stats.played === true && stats.goals > 0 ? `<span class="stat-pill goal">⚽ ${stats.goals}B</span>` : ''}
+        ${stats.played === true && stats.assists > 0 ? `<span class="stat-pill assist">🎯 ${stats.assists}P</span>` : ''}
+      </div>
+      <div class="result-badge ${cls}">${label}</div>
+    `;
+    return row;
+  }
+
+  window._allPlayerMatches = playerMatches;
+
+  function closeHistModal() {
+    document.getElementById('histModal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  function openHistModal() {
+    const body = document.getElementById('histModalBody');
+    body.innerHTML = '';
+    window._allPlayerMatches.forEach(({ match, stats }) => body.appendChild(buildMatchRow(match, stats)));
+    document.getElementById('histModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
   if (!playerMatches.length) {
     histEl.innerHTML = '<p style="color:var(--m);font-size:13px">Aucun match enregistré</p>';
   } else {
-    playerMatches.forEach(({ match, stats }) => {
-      const date   = new Date(match.date).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'});
-      const won    = stats.teamWon;
-      const label  = won === true ? 'V' : won === false ? 'D' : 'N';
-      const cls    = won === true ? 'w' : won === false ? 'l' : 'd';
-      const row    = document.createElement('div');
-      row.className = 'match-row';
-      row.innerHTML = `
-        <span class="match-date">${date}</span>
-        ${(()=>{ const LMAP={17:{l:'PL',c:'#a78bfa',bg:'rgba(88,28,200,.25)'},34:{l:'L1',c:'#60a5fa',bg:'rgba(0,80,179,.25)'},8:{l:'Liga',c:'#fbbf24',bg:'rgba(200,150,0,.25)'},23:{l:'SA',c:'#34d399',bg:'rgba(0,100,60,.25)'},35:{l:'BL',c:'#f87171',bg:'rgba(180,30,30,.25)'},7:{l:'LDC',c:'#818cf8',bg:'rgba(0,20,120,.35)'},5:{l:'EL',c:'#fb923c',bg:'rgba(200,80,0,.25)'},20296:{l:'ECL',c:'#6ee7b7',bg:'rgba(0,150,80,.25)'}}; const lb=LMAP[match.leagueId]||{l:'—',c:'#9ca3af',bg:'rgba(156,163,175,.15)'}; return `<span class="match-league-pill" style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;background:${lb.bg};color:${lb.c}">${lb.l}</span>`; })()}
-        <div class="match-teams">${match.homeTeam} <span style="color:var(--m)">vs</span> ${match.awayTeam}</div>
-        <span class="match-score">${match.homeGoals}-${match.awayGoals}</span>
-        <div class="match-stats">
-          ${getAbsenceBadge(stats.played, stats.absenceReason)}
-          ${stats.played === false ? `<span class="stat-pill" style="background:rgba(107,114,128,0.15);color:#6b7280">🪑 Banc</span>` : ''}
-          ${stats.played === true && stats.goals > 0 ? `<span class="stat-pill goal">⚽ ${stats.goals}B</span>` : ''}
-          ${stats.played === true && stats.assists > 0 ? `<span class="stat-pill assist">🎯 ${stats.assists}P</span>` : ''}
-        </div>
-        <div class="result-badge ${cls}">${label}</div>
-      `;
-      histEl.appendChild(row);
-    });
+    playerMatches.slice(0, 10).forEach(({ match, stats }) => histEl.appendChild(buildMatchRow(match, stats)));
+    if (playerMatches.length > 10) {
+      const btn = document.createElement('button');
+      btn.className = 'hist-voir-plus';
+      btn.innerHTML = `📋 Voir les ${playerMatches.length - 10} autres matchs`;
+      btn.onclick = openHistModal;
+      histEl.appendChild(btn);
+    }
   }
 
   // ── PRÉDICTION PROCHAIN MATCH ──────────────────────────────────────────
@@ -527,5 +568,16 @@ async function init() {
 
 init().catch(console.error);
 </script>
+  <!-- Modal historique complet -->
+  <div class="hist-modal-overlay" id="histModal" onclick="if(event.target===this)closeHistModal()">
+    <div class="hist-modal">
+      <div class="hist-modal-header">
+        <span class="hist-modal-title">📋 Historique complet</span>
+        <button class="hist-modal-close" onclick="closeHistModal()">✕</button>
+      </div>
+      <div class="hist-modal-body" id="histModalBody"></div>
+    </div>
+  </div>
+
 </body>
 </html>
