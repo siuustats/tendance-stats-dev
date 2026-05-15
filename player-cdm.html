@@ -403,7 +403,7 @@ async function init() {
         const label = won === true ? 'V' : won === false ? 'D' : 'N';
         const div   = document.createElement('div');
         div.className = `fd ${m.played === null ? 'ab' : m.played === false ? 'b' : won === true ? 'w' : won === false ? 'l' : 'd'}`;
-        div.textContent = m.played === null ? '❌' : m.played === false ? '🪑' : label;
+        div.textContent = m.played === null ? 'A' : m.played === false ? 'B' : label;
         formEl.appendChild(div);
       });
     }
@@ -427,7 +427,7 @@ async function init() {
           <div class="match-teams">${match.homeTeam} <span style="color:var(--m)">vs</span> ${match.awayTeam}</div>
           <span class="match-score">${match.homeGoals}-${match.awayGoals}</span>
           <div class="match-stats">
-            ${stats.played === null ? (() => { const r=(stats.absenceReason||'').toLowerCase(); if(r.includes('injur')||r.includes('bless'))return `<span class="stat-pill" style="background:rgba(107,114,128,0.15);color:#6b7280;font-size:9px;padding:1px 6px;border-radius:4px;font-weight:700">Absent</span>`; if(r.includes('suspend')||r.includes('red'))return `<span class="stat-pill" style="background:rgba(107,114,128,0.15);color:#6b7280;font-size:9px;padding:1px 6px;border-radius:4px;font-weight:700">Absent</span>`; return `<span class="stat-pill" style="background:rgba(107,114,128,0.15);color:#6b7280;font-size:9px;padding:1px 6px;border-radius:4px;font-weight:700">Absent</span>`; })() : ''}
+            ${stats.played === null ? (() => { const r=(stats.absenceReason||'').toLowerCase(); if(r.includes('injur')||r.includes('bless'))return `<span class="stat-pill" style="background:rgba(107,114,128,0.15);color:#6b7280">Absent</span>`; if(r.includes('suspend')||r.includes('red'))return `<span class="stat-pill" style="background:rgba(107,114,128,0.15);color:#6b7280">Absent</span>`; return `<span class="stat-pill" style="background:rgba(107,114,128,0.15);color:#6b7280">Absent</span>`; })() : ''}
             ${stats.played === false ? `<span class="stat-pill" style="background:rgba(107,114,128,0.15);color:#6b7280">🪑 Banc</span>` : ''}
             ${stats.played === true && stats.goals > 0 ? `<span class="stat-pill goal">⚽ ${stats.goals}B</span>` : ''}
             ${stats.played === true && stats.assists > 0 ? `<span class="stat-pill assist">🎯 ${stats.assists}P</span>` : ''}
