@@ -704,8 +704,8 @@ function renderGrid(list) {
     const recent_a = p.recent_assists ?? p.form?.slice(-5).filter(f=>f==='a').length ?? 0;
     const formHtml = (p.last5 || p.form || []).map((f, i) => {
       const match = p.last5?.[i];
-      if (match?.played === null) return `<div class="fd ab">❌</div>`;
-      if (match?.played === false) return `<div class="fd b">🪑</div>`;
+      if (match?.played === null) return `<div class="fd ab">A</div>`;
+      if (match?.played === false) return `<div class="fd b">B</div>`;
       const won = match?.teamWon;
       const label = won === true ? 'V' : won === false ? 'D' : 'N';
       const cls   = won === true ? 'g' : won === false ? 'r' : 'x';
