@@ -478,7 +478,8 @@ async function fetchMissingPhotos(players, photosCache) {
       const timeout = setTimeout(() => controller.abort(), dynamicTimeout);
 
       let playerId = null;
-      for (const searchName of [p.name, p.name.split(' ').pop()]) {
+      // Chercher uniquement par nom complet — évite les confusions (ex: "Rayan" → Rayan Cherki)
+      for (const searchName of [p.name]) {
         try {
           const res = await fetch(
             `${TM_API}/players/search/${encodeURIComponent(searchName)}`,
@@ -486,7 +487,10 @@ async function fetchMissingPhotos(players, photosCache) {
           );
           if (!res.ok) continue;
           const data = await res.json();
-          playerId = data.results?.[0]?.id;
+          // Prendre le premier résultat dont le nom correspond exactement ou partiellement
+          const results = data.results || [];
+          const exact = results.find(r => r.name?.toLowerCase() === searchName.toLowerCase());
+          playerId = exact?.id || results[0]?.id;
           if (playerId) break;
           await new Promise(r => setTimeout(r, 300));
         } catch(e) { break; }
