@@ -666,25 +666,31 @@ async function loadData() {
       ...p, photo: photosMap[p.id] || photosMap[String(p.id)] || p.photo || ''
     }));
 
-    // Injecter les photos de photos.json dans TEST_PLAYERS par nom
-    // Construire un index nom → photo depuis data.json
+    // Construire un index nom → photo ET espnId → photo depuis data.json + photos.json
     const nameToPhoto = {};
+    const espnIdToPhoto = {};
     (data.players || []).forEach(p => {
-      if (p.photo || photosMap[p.id]) {
-        nameToPhoto[p.name] = photosMap[p.id] || photosMap[String(p.id)] || p.photo;
+      const photo = photosMap[p.id] || photosMap[String(p.id)] || p.photo || '';
+      if (photo) {
+        nameToPhoto[p.name] = photo;
+        if (p.id) espnIdToPhoto[String(p.id)] = photo;
       }
+    });
+    // Ajouter aussi les photos directes de photos.json
+    Object.entries(photosMap).forEach(([id, url]) => {
+      if (url) espnIdToPhoto[String(id)] = url;
     });
 
     // Appliquer aux joueurs tests si photo trouvée par nom ou espnId
     const testWithPhotos = TEST_PLAYERS.map(p => ({
       ...p,
-      photo: photosMap[p.espnId] || photosMap[String(p.espnId)] || nameToPhoto[p.name] || p.photo || ''
+      photo: espnIdToPhoto[String(p.espnId)] || photosMap[p.espnId] || photosMap[String(p.espnId)] || nameToPhoto[p.name] || p.photo || ''
     }));
 
     // Injecter les photos dans RANKING_PLAYERS via espnId
     const rankingWithPhotos = RANKING_PLAYERS.map(p => ({
       ...p,
-      photo: photosMap[p.espnId] || photosMap[String(p.espnId)] || nameToPhoto[p.name] || p.photo || ''
+      photo: espnIdToPhoto[String(p.espnId)] || photosMap[p.espnId] || photosMap[String(p.espnId)] || nameToPhoto[p.name] || p.photo || ''
     }));
 
     allPlayers = cdmReal.length ? cdmReal : testWithPhotos;
