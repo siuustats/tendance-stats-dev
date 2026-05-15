@@ -423,10 +423,7 @@ function render() {
 
   function getAbsenceBadge(played, absenceReason) {
     if (played !== null && played !== undefined) return '';
-    const r = (absenceReason || '').toLowerCase();
-    if (r.includes('injur') || r.includes('bless')) return `<span style="font-size:9px;background:rgba(239,68,68,0.15);color:#f87171;border-radius:4px;padding:1px 6px;font-weight:700">🏥 Blessé</span>`;
-    if (r.includes('suspend') || r.includes('red'))  return `<span style="font-size:9px;background:rgba(239,68,68,0.15);color:#f87171;border-radius:4px;padding:1px 6px;font-weight:700">🟥 Suspendu</span>`;
-    return `<span style="font-size:9px;background:rgba(239,68,68,0.15);color:#f87171;border-radius:4px;padding:1px 6px;font-weight:700">❌ Absent</span>`;
+    return '<span class="stat-pill" style="background:rgba(107,114,128,0.15);color:#6b7280;font-size:9px;padding:1px 6px;border-radius:4px;font-weight:700">Absent</span>';
   }
 
 async function init() {
