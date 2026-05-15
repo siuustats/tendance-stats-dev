@@ -551,9 +551,17 @@ function render() {
   document.getElementById('k-hot').textContent = hotCount;
   document.getElementById('k-goals').textContent = totalGoals;
 
+  // Trier par total B+P décroissant (Vinicius 2B > Mbappé 1P quelque soit les matchs)
+  const sortedList = [...list].sort((a, b) => {
+    const bpA = (a.totalGoals||a.goals||0) + (a.totalAssists||a.assists||0);
+    const bpB = (b.totalGoals||b.goals||0) + (b.totalAssists||b.assists||0);
+    if (bpB !== bpA) return bpB - bpA;
+    return (b.signal||0) - (a.signal||0); // ex-aequo → trendScore
+  });
+
   renderAlerts(list, window._fixtures || []);
   renderGrid(list);
-  renderTable(list, window._photosMap || {});
+  renderTable(sortedList, window._photosMap || {});
 }
 
 function calcPredScore(player, fixtures, allPlayers) {
