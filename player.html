@@ -10,6 +10,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!-- End Google Tag Manager -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👤</text></svg>">
   <title>Fiche Joueur — Statistiques & Tendance | Tendance Stats</title>
   <meta name="description" content="Statistiques détaillées du joueur, TendScore, forme récente et historique des matchs. Suivez les performances et tendances en temps réel.">
   <meta name="keywords" content="stats joueur football, forme joueur, TendScore, historique matchs, tendance joueur football">
@@ -307,6 +308,43 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     return `<span class="stat-pill" style="background:rgba(107,114,128,0.15);color:#6b7280">❌ Absent</span>`;
   }
 
+function buildMatchRow(match, stats) {
+  const date  = new Date(match.date).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'});
+  const won   = stats.teamWon;
+  const label = won === true ? 'V' : won === false ? 'D' : 'N';
+  const cls   = won === true ? 'w' : won === false ? 'l' : 'd';
+  const LMAP  = {17:{l:'PL',c:'#a78bfa',bg:'rgba(88,28,200,.25)'},34:{l:'L1',c:'#60a5fa',bg:'rgba(0,80,179,.25)'},8:{l:'Liga',c:'#fbbf24',bg:'rgba(200,150,0,.25)'},23:{l:'SA',c:'#34d399',bg:'rgba(0,100,60,.25)'},35:{l:'BL',c:'#f87171',bg:'rgba(180,30,30,.25)'},7:{l:'LDC',c:'#818cf8',bg:'rgba(0,20,120,.35)'},5:{l:'EL',c:'#fb923c',bg:'rgba(200,80,0,.25)'},20296:{l:'ECL',c:'#6ee7b7',bg:'rgba(0,150,80,.25)'}};
+  const lb    = LMAP[match.leagueId] || {l:'—',c:'#9ca3af',bg:'rgba(156,163,175,.15)'};
+  const row   = document.createElement('div');
+  row.className = 'match-row';
+  row.innerHTML = `
+    <span class="match-date">${date}</span>
+    <span class="match-league-pill" style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;background:${lb.bg};color:${lb.c}">${lb.l}</span>
+    <div class="match-teams">${match.homeTeam} <span style="color:var(--m)">vs</span> ${match.awayTeam}</div>
+    <span class="match-score">${match.homeGoals}-${match.awayGoals}</span>
+    <div class="match-stats">
+      ${getAbsenceBadge(stats.played, stats.absenceReason)}
+      ${stats.played === false ? '<span class="stat-pill" style="background:rgba(107,114,128,0.15);color:#6b7280">🪑 Banc</span>' : ''}
+      ${stats.played === true && stats.goals > 0 ? '<span class="stat-pill goal">⚽ ' + stats.goals + 'B</span>' : ''}
+      ${stats.played === true && stats.assists > 0 ? '<span class="stat-pill assist">🎯 ' + stats.assists + 'P</span>' : ''}
+    </div>
+    <div class="result-badge ${cls}">${label}</div>
+  `;
+  return row;
+}
+
+function closeHistModal() {
+  document.getElementById('histModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function openHistModal() {
+  const body = document.getElementById('histModalBody');
+  body.innerHTML = '';
+  (window._allPlayerMatches || []).forEach(({ match, stats }) => body.appendChild(buildMatchRow(match, stats)));
+  document.getElementById('histModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
 async function init() {
   // Récupérer l'ID depuis l'URL
   const params = new URLSearchParams(window.location.search);
@@ -387,44 +425,11 @@ async function init() {
     formEl.appendChild(div);
   });
 
-  function buildMatchRow(match, stats) {
-    const date  = new Date(match.date).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'});
-    const won   = stats.teamWon;
-    const label = won === true ? 'V' : won === false ? 'D' : 'N';
-    const cls   = won === true ? 'w' : won === false ? 'l' : 'd';
-    const LMAP  = {17:{l:'PL',c:'#a78bfa',bg:'rgba(88,28,200,.25)'},34:{l:'L1',c:'#60a5fa',bg:'rgba(0,80,179,.25)'},8:{l:'Liga',c:'#fbbf24',bg:'rgba(200,150,0,.25)'},23:{l:'SA',c:'#34d399',bg:'rgba(0,100,60,.25)'},35:{l:'BL',c:'#f87171',bg:'rgba(180,30,30,.25)'},7:{l:'LDC',c:'#818cf8',bg:'rgba(0,20,120,.35)'},5:{l:'EL',c:'#fb923c',bg:'rgba(200,80,0,.25)'},20296:{l:'ECL',c:'#6ee7b7',bg:'rgba(0,150,80,.25)'}};
-    const lb    = LMAP[match.leagueId] || {l:'—',c:'#9ca3af',bg:'rgba(156,163,175,.15)'};
-    const row   = document.createElement('div');
-    row.className = 'match-row';
-    row.innerHTML = `
-      <span class="match-date">${date}</span>
-      <span class="match-league-pill" style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;background:${lb.bg};color:${lb.c}">${lb.l}</span>
-      <div class="match-teams">${match.homeTeam} <span style="color:var(--m)">vs</span> ${match.awayTeam}</div>
-      <span class="match-score">${match.homeGoals}-${match.awayGoals}</span>
-      <div class="match-stats">
-        ${getAbsenceBadge(stats.played, stats.absenceReason)}
-        ${stats.played === false ? `<span class="stat-pill" style="background:rgba(107,114,128,0.15);color:#6b7280">🪑 Banc</span>` : ''}
-        ${stats.played === true && stats.goals > 0 ? `<span class="stat-pill goal">⚽ ${stats.goals}B</span>` : ''}
-        ${stats.played === true && stats.assists > 0 ? `<span class="stat-pill assist">🎯 ${stats.assists}P</span>` : ''}
-      </div>
-      <div class="result-badge ${cls}">${label}</div>
-    `;
-    return row;
-  }
+
 
   window._allPlayerMatches = playerMatches;
 
-  function closeHistModal() {
-    document.getElementById('histModal').classList.remove('open');
-    document.body.style.overflow = '';
-  }
-  function openHistModal() {
-    const body = document.getElementById('histModalBody');
-    body.innerHTML = '';
-    window._allPlayerMatches.forEach(({ match, stats }) => body.appendChild(buildMatchRow(match, stats)));
-    document.getElementById('histModal').classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
+
 
   if (!playerMatches.length) {
     histEl.innerHTML = '<p style="color:var(--m);font-size:13px">Aucun match enregistré</p>';
