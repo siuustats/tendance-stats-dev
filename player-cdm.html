@@ -10,6 +10,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!-- End Google Tag Manager -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👤</text></svg>">
   <title>Fiche Joueur CDM 2026 — Stats Coupe du Monde | Tendance Stats</title>
   <meta name="description" content="Statistiques du joueur pour la Coupe du Monde 2026. Buts, passes, forme et analyse tendance CDM 2026.">
   <meta name="keywords" content="stats joueur CDM 2026, coupe du monde joueur, fiche joueur CDM, pronostic joueur CDM 2026">
@@ -302,6 +303,62 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </div>
 
 <script>
+function buildMatchRowCdm(match, stats) {
+  const date  = new Date(match.date).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'});
+  const won   = stats.teamWon;
+  const label = won === true ? 'V' : won === false ? 'D' : 'N';
+  const cls   = won === true ? 'w' : won === false ? 'l' : 'd';
+  const row   = document.createElement('div');
+  row.className = 'match-row';
+  row.innerHTML = `
+    <span class="match-date">${date}</span>
+    <span style="font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;background:#001489;color:#fff;flex-shrink:0">CDM</span>
+    <div class="match-teams">${match.homeTeam} <span style="color:var(--m)">vs</span> ${match.awayTeam}</div>
+    <span class="match-score">${match.homeGoals}-${match.awayGoals}</span>
+    <div class="match-stats">
+      ${stats.played === null ? '<span class="stat-pill" style="background:rgba(107,114,128,0.15);color:#6b7280">❌ Absent</span>' : ''}
+      ${stats.played === false ? '<span class="stat-pill" style="background:rgba(107,114,128,0.15);color:#6b7280">🪑 Banc</span>' : ''}
+      ${stats.played === true && stats.goals > 0 ? '<span class="stat-pill goal">⚽ ' + stats.goals + 'B</span>' : ''}
+      ${stats.played === true && stats.assists > 0 ? '<span class="stat-pill assist">🎯 ' + stats.assists + 'P</span>' : ''}
+    </div>
+    <div class="result-badge ${cls}">${label}</div>
+  `;
+  return row;
+}
+
+function closeHistModalCdm() {
+  document.getElementById('histModalCdm').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function openHistModalCdm() {
+  const body = document.getElementById('histModalCdmBody');
+  body.innerHTML = '';
+  (window._allCdmMatches || []).forEach(({ match, stats }) => {
+    const date  = new Date(match.date).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'});
+    const won   = stats.teamWon;
+    const label = won === true ? 'V' : won === false ? 'D' : 'N';
+    const cls   = won === true ? 'w' : won === false ? 'l' : 'd';
+    const row   = document.createElement('div');
+    row.className = 'match-row';
+    row.innerHTML = `
+      <span class="match-date">${date}</span>
+      <span style="font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;background:#001489;color:#fff;flex-shrink:0">CDM</span>
+      <div class="match-teams">${match.homeTeam} <span style="color:var(--m)">vs</span> ${match.awayTeam}</div>
+      <span class="match-score">${match.homeGoals}-${match.awayGoals}</span>
+      <div class="match-stats">
+        ${stats.played === null ? '<span class="stat-pill" style="background:rgba(107,114,128,0.15);color:#6b7280">❌ Absent</span>' : ''}
+        ${stats.played === false ? '<span class="stat-pill" style="background:rgba(107,114,128,0.15);color:#6b7280">🪑 Banc</span>' : ''}
+        ${stats.played === true && stats.goals > 0 ? '<span class="stat-pill goal">⚽ ' + stats.goals + 'B</span>' : ''}
+        ${stats.played === true && stats.assists > 0 ? '<span class="stat-pill assist">🎯 ' + stats.assists + 'P</span>' : ''}
+      </div>
+      <div class="result-badge ${cls}">${label}</div>
+    `;
+    body.appendChild(row);
+  });
+  document.getElementById('histModalCdm').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
 async function init() {
   const params   = new URLSearchParams(window.location.search);
   const playerId = params.get('id');
@@ -403,39 +460,29 @@ async function init() {
         const label = won === true ? 'V' : won === false ? 'D' : 'N';
         const div   = document.createElement('div');
         div.className = `fd ${m.played === null ? 'ab' : m.played === false ? 'b' : won === true ? 'w' : won === false ? 'l' : 'd'}`;
-        div.textContent = m.played === null ? 'A' : m.played === false ? 'B' : label;
+        div.textContent = m.played === null ? '❌' : m.played === false ? '🪑' : label;
         formEl.appendChild(div);
       });
     }
 
     // Historique
     const histEl = document.getElementById('matchHistory');
+
+
+    window._allCdmMatches = cdmMatches;
+
     if (!cdmMatches.length) {
       histEl.innerHTML = '<p style="color:var(--m);font-size:13px">Les matchs CDM apparaîtront ici dès le 11 juin 2026</p>';
     } else {
       histEl.innerHTML = '';
-      cdmMatches.forEach(({ match, stats }) => {
-        const date  = new Date(match.date).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'});
-        const won   = stats.teamWon;
-        const label = won === true ? 'V' : won === false ? 'D' : 'N';
-        const cls   = won === true ? 'w' : won === false ? 'l' : 'd';
-        const row   = document.createElement('div');
-        row.className = 'match-row';
-        row.innerHTML = `
-          <span class="match-date">${date}</span>
-          <span style="font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;background:#001489;color:#fff;flex-shrink:0">CDM</span>
-          <div class="match-teams">${match.homeTeam} <span style="color:var(--m)">vs</span> ${match.awayTeam}</div>
-          <span class="match-score">${match.homeGoals}-${match.awayGoals}</span>
-          <div class="match-stats">
-            ${stats.played === null ? (() => { const r=(stats.absenceReason||'').toLowerCase(); if(r.includes('injur')||r.includes('bless'))return `<span class="stat-pill" style="background:rgba(107,114,128,0.15);color:#6b7280">Absent</span>`; if(r.includes('suspend')||r.includes('red'))return `<span class="stat-pill" style="background:rgba(107,114,128,0.15);color:#6b7280">Absent</span>`; return `<span class="stat-pill" style="background:rgba(107,114,128,0.15);color:#6b7280">Absent</span>`; })() : ''}
-            ${stats.played === false ? `<span class="stat-pill" style="background:rgba(107,114,128,0.15);color:#6b7280">🪑 Banc</span>` : ''}
-            ${stats.played === true && stats.goals > 0 ? `<span class="stat-pill goal">⚽ ${stats.goals}B</span>` : ''}
-            ${stats.played === true && stats.assists > 0 ? `<span class="stat-pill assist">🎯 ${stats.assists}P</span>` : ''}
-          </div>
-          <div class="result-badge ${cls}">${label}</div>
-        `;
-        histEl.appendChild(row);
-      });
+      cdmMatches.slice(0, 10).forEach(({ match, stats }) => histEl.appendChild(buildMatchRowCdm(match, stats)));
+      if (cdmMatches.length > 10) {
+        const btn = document.createElement('button');
+        btn.className = 'hist-voir-plus';
+        btn.innerHTML = `📋 Voir les ${cdmMatches.length - 10} autres matchs`;
+        btn.onclick = openHistModalCdm;
+        histEl.appendChild(btn);
+      }
     }
   } catch(e) {
     document.getElementById('kGoals').textContent   = 0;
@@ -575,5 +622,15 @@ async function init() {
 
 init().catch(console.error);
 </script>
+  <div class="hist-modal-overlay" id="histModalCdm" onclick="if(event.target===this)closeHistModalCdm()">
+    <div class="hist-modal">
+      <div class="hist-modal-header">
+        <span class="hist-modal-title">📋 Historique complet CDM</span>
+        <button class="hist-modal-close" onclick="closeHistModalCdm()">✕</button>
+      </div>
+      <div class="hist-modal-body" id="histModalCdmBody"></div>
+    </div>
+  </div>
+
 </body>
 </html>
