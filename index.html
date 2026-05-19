@@ -484,6 +484,21 @@ async function init() {
       'Mis à jour le ' + d.toLocaleDateString('fr-FR') + ' à ' + d.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
 
     window._fixtures = data.fixtures || [];
+    window._matches  = data.matches  || [];
+    const euroIdsInit = [7, 5, 20296];
+    window._euroStats = {};
+    for (const match of window._matches) {
+      if (!euroIdsInit.includes(match.leagueId)) continue;
+      for (const mp of (match.players || [])) {
+        if (!mp.id || mp.played === false || mp.played === null) continue;
+        const pid = String(mp.id);
+        if (!window._euroStats[pid]) window._euroStats[pid] = {};
+        if (!window._euroStats[pid][match.leagueId]) window._euroStats[pid][match.leagueId] = {goals:0,assists:0,games:0};
+        window._euroStats[pid][match.leagueId].goals   += mp.goals   || 0;
+        window._euroStats[pid][match.leagueId].assists += mp.assists || 0;
+        window._euroStats[pid][match.leagueId].games   += 1;
+      }
+    }
     render();
     document.getElementById('loader').style.display = 'none';
     document.getElementById('content').style.display = 'block';
@@ -541,6 +556,29 @@ function getPlayers() {
   });
 }
 
+// Stats filtrées par ligue — last5Only=true pour cartes, false pour classement (toute saison)
+function getLeagueStats(player, leagueId, last5Only=false) {
+  if (!leagueId) return null;
+  const euroIds = [7, 5, 20296];
+  if (!euroIds.includes(leagueId)) return null;
+  const filtered = (player.last5 || []).filter(m => m.leagueId === leagueId);
+  const last5 = filtered.slice(0, 5);
+  const g5 = last5.reduce((s, m) => s + (m.goals||0), 0);
+  const a5 = last5.reduce((s, m) => s + (m.assists||0), 0);
+  if (last5Only) {
+    if (!last5.length) return null;
+    return { goals:g5, assists:a5, games:last5.length, avg:((g5+a5)/last5.length).toFixed(2), last5 };
+  }
+  const pid = String(player.id);
+  const season = window._euroStats?.[pid]?.[leagueId];
+  if (!season && !filtered.length) return null;
+  const goals   = season?.goals   ?? g5;
+  const assists = season?.assists ?? a5;
+  const games   = season?.games   ?? last5.length;
+  const avg     = games > 0 ? ((goals+assists)/games).toFixed(2) : '0.00';
+  return { goals, assists, games, avg, last5 };
+}
+
 function render() {
   const list = getPlayers();
 
@@ -551,17 +589,23 @@ function render() {
   document.getElementById('k-hot').textContent = hotCount;
   document.getElementById('k-goals').textContent = totalGoals;
 
-  // Trier par total B+P décroissant (Vinicius 2B > Mbappé 1P quelque soit les matchs)
+  // Trier par B+P — sur la compétition filtrée si européen, sinon toute saison
+  const lid2 = currentLeague !== 'all' ? parseInt(currentLeague) : null;
+  const euroIds2 = [7, 5, 20296];
+  const isEuro = lid2 && euroIds2.includes(lid2);
+
   const sortedList = [...list].sort((a, b) => {
-    const bpA = (a.totalGoals||a.goals||0) + (a.totalAssists||a.assists||0);
-    const bpB = (b.totalGoals||b.goals||0) + (b.totalAssists||b.assists||0);
+    const statsA = isEuro ? getLeagueStats(a, lid2) : null;
+    const statsB = isEuro ? getLeagueStats(b, lid2) : null;
+    const bpA = statsA ? statsA.goals + statsA.assists : (a.totalGoals||a.goals||0) + (a.totalAssists||a.assists||0);
+    const bpB = statsB ? statsB.goals + statsB.assists : (b.totalGoals||b.goals||0) + (b.totalAssists||b.assists||0);
     if (bpB !== bpA) return bpB - bpA;
-    return (b.signal||0) - (a.signal||0); // ex-aequo → trendScore
+    return (b.signal||0) - (a.signal||0);
   });
 
   renderAlerts(list, window._fixtures || []);
   renderGrid(list);
-  renderTable(sortedList, window._photosMap || {});
+  renderTable(sortedList, window._photosMap || {}, 1, isEuro ? lid2 : null);
 }
 
 function calcPredScore(player, fixtures, allPlayers) {
@@ -617,14 +661,24 @@ function renderAlerts(list, fixtures) {
   const leaguesSeen = new Set();
   const picked = [];
 
-  // Calculer le score de prédiction pour chaque joueur et trier par score décroissant
+  const lid = currentLeague !== 'all' ? parseInt(currentLeague) : null;
+  const euroIds = [7, 5, 20296];
+  // Si filtre européen : fixtures de cette compétition seulement
+  const filteredFixtures = (lid && euroIds.includes(lid))
+    ? fixtures.filter(f => f.leagueId === lid)
+    : fixtures;
+
+  // Calculer le score de prédiction pour chaque joueur et trier
   const withScores = [...list].map(p => ({
     ...p,
-    _predScore: calcPredScore(p, fixtures, list).score
+    _predScore: calcPredScore(p, filteredFixtures, list).score
   })).sort((a,b) => b._predScore - a._predScore);
 
+  // Garder uniquement les joueurs avec un prochain match dans cette compétition
+  const withMatch = withScores.filter(p => calcPredScore(p, filteredFixtures, list).opponent);
+
   // Essayer 1 par ligue d'abord (parmi les meilleurs scores)
-  for (const p of withScores) {
+  for (const p of withMatch) {
     if (picked.length >= 4) break;
     if (!leaguesSeen.has(p.leagueId)) {
       leaguesSeen.add(p.leagueId);
@@ -632,7 +686,7 @@ function renderAlerts(list, fixtures) {
     }
   }
   // Compléter si moins de 4 — toujours par score décroissant
-  for (const p of withScores) {
+  for (const p of withMatch) {
     if (picked.length >= 4) break;
     if (!picked.find(x => x.id === p.id)) picked.push(p);
   }
@@ -642,7 +696,7 @@ function renderAlerts(list, fixtures) {
   const colors = ['var(--o)','var(--g)','var(--b)','var(--y)'];
 
   picked.forEach((p, i) => {
-    const { score, opponent, matchDate } = calcPredScore(p, fixtures, list);
+    const { score, opponent, matchDate } = calcPredScore(p, filteredFixtures, list);
     const predLabel = getPredLabel(score);
     if (!predLabel) return;
 
@@ -654,9 +708,8 @@ function renderAlerts(list, fixtures) {
       ? new Date(matchDate).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'})
       : '—';
 
-    const matchBadge = opponent
-      ? '<span style="font-size:10px;color:var(--m2);margin-left:auto;background:var(--s3);padding:2px 8px;border-radius:4px">vs ' + opponent + ' · ' + dateStr + '</span>'
-      : '<span style="font-size:10px;color:var(--m);margin-left:auto">Prochain match à venir</span>';
+    if (!opponent) return; // ne pas afficher les joueurs sans prochain match
+    const matchBadge = '<span style="font-size:10px;color:var(--m2);margin-left:auto;background:var(--s3);padding:2px 8px;border-radius:4px">vs ' + opponent + ' · ' + dateStr + '</span>';
 
     const barW = fill + '%';
     const barBg = 'linear-gradient(90deg,' + predLabel.color + ',' + predLabel.colorDim + ')';
@@ -700,8 +753,9 @@ function renderGrid(list) {
   const c = document.getElementById('pgrid');
   c.innerHTML = '';
   hot.forEach((p, i) => {
-    const recent_g = p.recent_goals ?? p.form?.slice(-5).filter(f=>f==='g').length ?? 0;
-    const recent_a = p.recent_assists ?? p.form?.slice(-5).filter(f=>f==='a').length ?? 0;
+    const last5 = (p.last5 || []).slice(0, 5);
+    const recent_g = last5.reduce((s, m) => s + (m.goals || 0), 0);
+    const recent_a = last5.reduce((s, m) => s + (m.assists || 0), 0);
     const formHtml = (p.last5 || p.form || []).map((f, i) => {
       const match = p.last5?.[i];
       if (match?.played === null) return `<div class="fd ab">❌</div>`;
@@ -736,14 +790,14 @@ function renderGrid(list) {
         </div>
       </div>
       <div class="formrow">
-        <span class="fl">${p.totalGames||p.last5?.length||1} match${(p.totalGames||1)>1?'s':''}</span>
+        <span class="fl">${last5.length} match${last5.length>1?'s':''}</span>
         <div class="fdots">${formHtml}</div>
       </div>
       <div class="chips">
-        <div class="chip"><div class="chip-n" style="color:var(--g)">${p.totalGoals||p.goals||0}</div><div class="chip-l">Buts</div></div>
-        <div class="chip"><div class="chip-n" style="color:var(--b)">${p.totalAssists||p.assists||0}</div><div class="chip-l">Passes</div></div>
+        <div class="chip"><div class="chip-n" style="color:var(--g)">${recent_g}</div><div class="chip-l">Buts</div></div>
+        <div class="chip"><div class="chip-n" style="color:var(--b)">${recent_a}</div><div class="chip-l">Passes</div></div>
         <div class="chip"><div class="chip-n" style="color:var(--o)">${recent_g + recent_a}</div><div class="chip-l">GA/5J</div></div>
-        <div class="chip"><div class="chip-n" style="color:var(--y)">${p.avg||0}</div><div class="chip-l">Moy.</div></div>
+        <div class="chip"><div class="chip-n" style="color:var(--y)">${((recent_g+recent_a)/Math.max(Math.min(last5.length||1,5),1)).toFixed(2)}</div><div class="chip-l">Moy.</div></div>
       </div>
       <div class="sigbar">
         <div class="sigbar-head"><span>TendScore</span><span>${p.signal}%</span></div>
@@ -762,7 +816,7 @@ function renderGrid(list) {
   if (hot.length === 0) c.innerHTML = '<div style="color:var(--m);font-size:13px;padding:16px">Aucun joueur "en forme" pour cette sélection.</div>';
 }
 
-function renderTable(list, photosMap={}, page=1) {
+function renderTable(list, photosMap={}, page=1, filterLeagueId=null) {
   currentPageIndex = page;
   const tbody = document.getElementById('tbody');
   tbody.innerHTML = '';
@@ -788,10 +842,17 @@ function renderTable(list, photosMap={}, page=1) {
         <div class="pt">${p.teamName||p.team}</div>
       </td>
       <td><span class="lpill ${p.leagueCls==='lg'?'liga':p.leagueCls}">${p.leagueLabel==='LIGA'?'Liga':p.leagueLabel}</span></td>
-      <td><span class="num g">${p.totalGoals||p.goals||0}</span></td>
-      <td><span class="num a">${p.totalAssists||p.assists||0}</span></td>
-      <td><span class="num" style="color:var(--m2)">${p.totalGames||p.games||0}</span></td>
-      <td><span class="num" style="color:var(--y)">${p.avg||0}</span></td>
+      ${(() => {
+        const ls = filterLeagueId ? getLeagueStats(p, filterLeagueId) : null;
+        const g = ls ? ls.goals   : (p.totalGoals||p.goals||0);
+        const a = ls ? ls.assists : (p.totalAssists||p.assists||0);
+        const n = ls ? ls.games   : (p.totalGames||p.games||0);
+        const m = ls ? ls.avg     : (p.avg||0);
+        return `<td><span class="num g">${g}</span></td>
+      <td><span class="num a">${a}</span></td>
+      <td><span class="num" style="color:var(--m2)">${n}</span></td>
+      <td><span class="num" style="color:var(--y)">${m}</span></td>`;
+      })()}
     `;
     tbody.appendChild(tr);
   });
@@ -806,7 +867,7 @@ function renderTable(list, photosMap={}, page=1) {
   prev.className = 'pag-btn' + (page === 1 ? ' disabled' : '');
   prev.textContent = '← Précédent';
   prev.style.opacity = page === 1 ? '0.4' : '1';
-  prev.onclick = () => { if (page > 1) renderTable(list, photosMap, page - 1); };
+  prev.onclick = () => { if (page > 1) renderTable(list, photosMap, page - 1, filterLeagueId); };
   pag.appendChild(prev);
 
   const info = document.createElement('span');
@@ -818,7 +879,7 @@ function renderTable(list, photosMap={}, page=1) {
   next.className = 'pag-btn' + (page === pages ? ' disabled' : '');
   next.textContent = 'Suivant →';
   next.style.opacity = page === pages ? '0.4' : '1';
-  next.onclick = () => { if (page < pages) renderTable(list, photosMap, page + 1); };
+  next.onclick = () => { if (page < pages) renderTable(list, photosMap, page + 1, filterLeagueId); };
   pag.appendChild(next);
 }
 
