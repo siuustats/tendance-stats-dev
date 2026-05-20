@@ -19,302 +19,160 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <meta property="og:site_name" content="Tendance Stats">
   <meta property="og:title" content="CDM 2026 — Stats & Pronostics Coupe du Monde 2026 | Tendance Stats">
   <meta property="og:description" content="Suivez les stats, tendances et pronostics de la Coupe du Monde 2026. Joueurs à surveiller, classement buteurs CDM, effectifs des 48 nations qualifiées.">
-  <meta property="og:url" content="https://tendancestats.com">
+  <meta property="og:url" content="https://tendancestats.com/worldcup.html">
   <meta property="og:image" content="https://tendancestats.com/og-image.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="CDM 2026 — Stats & Pronostics Coupe du Monde 2026 | Tendance Stats">
   <meta name="twitter:description" content="Suivez les stats, tendances et pronostics de la Coupe du Monde 2026. Joueurs à surveiller, classement buteurs CDM, effectifs des 48 nations qualifiées.">
-  <link rel="canonical" href="https://tendancestats.com">
+  <link rel="canonical" href="https://tendancestats.com/worldcup.html">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏆</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg:     #080608;
-      --g: #d4a843;
-      --g2: rgba(212,168,67,0.12);
-      --b: #5e81f4;
-      --y: #ffd60a;
-      --o: #ff6b35;
-      --r: #ff4d6d;
-      --m: #6b6478;
-      --m2: #9c96a8;
-      --s2: #161318;
-      --s3: #1e1a20;
-      --border2: #2a2f45;
-      --s1:     #0f0d10;
-      --s2:     #161318;
-      --s3:     #1e1a20;
-      --gold:   #d4a843;
-      --gold2:  #f0c060;
-      --silver: #c0bcc8;
-      --red:    #c0392b;
-      --text:   #f0eef8;
-      --muted:  #6b6478;
-      --muted2: #9c96a8;
-      --border: #1e1a20;
-    }
-    * { box-sizing:border-box; margin:0; padding:0; }
-    body { background:var(--bg); color:var(--text); font-family:'Oswald',sans-serif; min-height:100vh; overflow-x:hidden; }
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ── VARIABLES CDM (thème doré) ── */
+:root {
+  --bg:     #080608;
+  --s1:     #0f0d10;
+  --s2:     #161318;
+  --s3:     #1e1a20;
+  --border: #1e1a20;
+  --border2: #2a2736;
+  --g:   #d4a843;   /* doré = couleur principale CDM */
+  --g2:  rgba(212,168,67,0.12);
+  --b:   #5e81f4;
+  --y:   #ffd60a;
+  --o:   #ff6b35;
+  --r:   #ff4d6d;
+  --text:  #f0eef8;
+  --m:   #6b6478;
+  --m2:  #9c96a8;
+  --gold:  #d4a843;
+  --gold2: #f0c060;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden; }
 
-    /* ── HERO ─────────────────────────────────────────────────────── */
-    .hero {
-      position:relative; min-height:100vh;
-      display:flex; flex-direction:column; align-items:center; justify-content:center;
-      text-align:center; padding:40px 24px;
-      overflow:hidden;
-    }
-    .hero-bg {
-      position:absolute; inset:0; z-index:0;
-      background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(212,168,67,0.12) 0%, transparent 70%),
-                  radial-gradient(ellipse 60% 40% at 20% 100%, rgba(192,57,43,0.08) 0%, transparent 60%),
-                  radial-gradient(ellipse 60% 40% at 80% 100%, rgba(30,26,32,0.9) 0%, transparent 60%);
-    }
-    /* Grille décorative */
-    .hero-grid {
-      position:absolute; inset:0; z-index:0; opacity:0.04;
-      background-image: linear-gradient(var(--gold) 1px, transparent 1px),
-                        linear-gradient(90deg, var(--gold) 1px, transparent 1px);
-      background-size: 60px 60px;
-    }
-    .hero-content { position:relative; z-index:1; }
-    .hero-eyebrow {
-      font-size:12px; letter-spacing:6px; color:var(--gold);
-      text-transform:uppercase; margin-bottom:16px; opacity:0.9;
-    }
-    .hero-title {
-      font-family:'Bebas Neue',sans-serif;
-      font-size:clamp(60px, 12vw, 120px);
-      line-height:0.9; letter-spacing:4px;
-      background: linear-gradient(135deg, #f0c060 0%, #d4a843 40%, #f0c060 60%, #b8902a 100%);
-      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-      background-clip:text;
-    }
-    .hero-year {
-      font-family:'Bebas Neue',sans-serif;
-      font-size:clamp(80px, 15vw, 160px);
-      line-height:0.85; letter-spacing:2px; color:var(--text);
-      text-shadow: 0 0 80px rgba(212,168,67,0.3);
-    }
-    .hero-hosts {
-      display:flex; align-items:center; justify-content:center; gap:20px;
-      margin:24px 0; font-size:14px; letter-spacing:3px; color:var(--muted2);
-    }
-    .hero-hosts span { color:var(--gold); font-weight:600; }
-    .hero-hosts .sep { color:var(--muted); }
+/* ── HERO ── */
+.hero {
+  position:relative; min-height:100vh;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; padding:40px 24px; overflow:hidden;
+}
+.hero-bg {
+  position:absolute; inset:0; z-index:0;
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(212,168,67,0.12) 0%, transparent 70%),
+              radial-gradient(ellipse 60% 40% at 20% 100%, rgba(192,57,43,0.08) 0%, transparent 60%),
+              radial-gradient(ellipse 60% 40% at 80% 100%, rgba(30,26,32,0.9) 0%, transparent 60%);
+}
+.hero-grid {
+  position:absolute; inset:0; z-index:0; opacity:0.04;
+  background-image: linear-gradient(var(--gold) 1px, transparent 1px),
+                    linear-gradient(90deg, var(--gold) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+.hero-content { position:relative; z-index:1; }
+.hero-eyebrow { font-size:12px; letter-spacing:6px; color:var(--gold); text-transform:uppercase; margin-bottom:16px; opacity:0.9; }
+.hero-title {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(60px, 12vw, 120px);
+  line-height:0.9; letter-spacing:4px;
+  background: linear-gradient(135deg, #f0c060 0%, #d4a843 40%, #f0c060 60%, #b8902a 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.hero-year {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(80px, 15vw, 160px);
+  line-height:0.85; letter-spacing:2px; color:var(--text);
+  text-shadow: 0 0 80px rgba(212,168,67,0.3);
+}
+.hero-hosts {
+  display:flex; align-items:center; justify-content:center; gap:20px;
+  margin:24px 0; font-size:14px; letter-spacing:3px; color:var(--m2);
+}
+.hero-hosts span { color:var(--gold); font-weight:600; }
+.hero-hosts .sep { color:var(--m); }
+.countdown { display:flex; gap:20px; justify-content:center; margin:32px 0; flex-wrap:wrap; }
+.cd-block {
+  background:rgba(212,168,67,0.08); border:1px solid rgba(212,168,67,0.2);
+  border-radius:12px; padding:16px 24px; min-width:90px; text-align:center;
+}
+.cd-num { font-family:'Bebas Neue',sans-serif; font-size:52px; line-height:1; color:var(--gold2); }
+.cd-label { font-size:10px; letter-spacing:3px; color:var(--m); margin-top:4px; }
+.hero-cta {
+  display:inline-flex; align-items:center; gap:10px;
+  background:linear-gradient(135deg, #d4a843, #b8902a);
+  color:#0a0808; font-weight:700; font-size:14px; letter-spacing:2px;
+  padding:14px 32px; border-radius:8px; text-decoration:none; margin-top:8px;
+  transition:transform .2s, box-shadow .2s;
+}
+.hero-cta:hover { transform:translateY(-2px); box-shadow:0 8px 30px rgba(212,168,67,0.4); }
+.scroll-hint {
+  position:absolute; bottom:30px; left:50%; transform:translateX(-50%);
+  font-size:11px; letter-spacing:3px; color:var(--m); z-index:1;
+  animation:bounce 2s infinite;
+}
+@keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(6px)} }
 
-    /* Compte à rebours */
-    .countdown {
-      display:flex; gap:20px; justify-content:center; margin:32px 0;
-      flex-wrap:wrap;
-    }
-    .cd-block {
-      background:rgba(212,168,67,0.08); border:1px solid rgba(212,168,67,0.2);
-      border-radius:12px; padding:16px 24px; min-width:90px; text-align:center;
-    }
-    .cd-num {
-      font-family:'Bebas Neue',sans-serif; font-size:52px; line-height:1;
-      color:var(--gold2);
-    }
-    .cd-label { font-size:10px; letter-spacing:3px; color:var(--muted); margin-top:4px; }
+/* ── NAV ── */
+.topnav {
+  position:fixed; top:0; left:0; right:0; z-index:200;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 24px;
+  background:rgba(8,6,8,0.85); backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(212,168,67,0.1);
+}
+.nav-logo { font-family:'Bebas Neue',sans-serif; font-size:18px; color:var(--gold); letter-spacing:3px; text-decoration:none; }
+.nav-back { font-size:12px; letter-spacing:2px; color:var(--m2); text-decoration:none; transition:color .2s; }
+.nav-back:hover { color:var(--gold); }
+.nav-tag { font-size:10px; font-weight:700; letter-spacing:2px; background:rgba(212,168,67,0.15); color:var(--gold); border:1px solid rgba(212,168,67,0.3); border-radius:4px; padding:3px 8px; }
 
-    .hero-cta {
-      display:inline-flex; align-items:center; gap:10px;
-      background:linear-gradient(135deg, #d4a843, #b8902a);
-      color:#0a0808; font-weight:700; font-size:14px; letter-spacing:2px;
-      padding:14px 32px; border-radius:8px; text-decoration:none; margin-top:8px;
-      transition:transform .2s, box-shadow .2s;
-    }
-    .hero-cta:hover { transform:translateY(-2px); box-shadow:0 8px 30px rgba(212,168,67,0.4); }
+/* ── WRAP & SECTIONS (identique index) ── */
+.wrap { position:relative; z-index:1; max-width:1280px; margin:0 auto; padding:0 24px; }
 
-    .scroll-hint {
-      position:absolute; bottom:30px; left:50%; transform:translateX(-50%);
-      font-size:11px; letter-spacing:3px; color:var(--muted); z-index:1;
-      animation:bounce 2s infinite;
-    }
-    @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(6px)} }
+/* ── KPIs (identique index, couleurs dorées) ── */
+.kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:32px; }
+.kpi {
+  background:var(--s1); border:1px solid var(--border); border-radius:12px;
+  padding:18px 20px; transition:border-color .2s; position:relative; overflow:hidden;
+}
+.kpi::after { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; background:var(--g); transform:scaleX(0); transition:transform .4s; }
+.kpi:hover::after { transform:scaleX(1); }
+.kpi-n { font-family:'Bebas Neue',sans-serif; font-size:38px; line-height:1; margin-bottom:4px; }
+.kpi-l { font-size:11px; color:var(--m); text-transform:uppercase; letter-spacing:1px; }
 
-    /* ── NAV ─────────────────────────────────────────────────────── */
-    .topnav {
-      position:fixed; top:0; left:0; right:0; z-index:100;
-      display:flex; align-items:center; justify-content:space-between;
-      padding:14px 24px;
-      background:rgba(8,6,8,0.85); backdrop-filter:blur(12px);
-      border-bottom:1px solid rgba(212,168,67,0.1);
-    }
-    .nav-logo {
-      font-family:'Bebas Neue',sans-serif; font-size:18px;
-      color:var(--gold); letter-spacing:3px; text-decoration:none;
-    }
-    .nav-back {
-      font-size:12px; letter-spacing:2px; color:var(--muted2);
-      text-decoration:none; transition:color .2s;
-    }
-    .nav-back:hover { color:var(--gold); }
-    .nav-tag {
-      font-size:10px; font-weight:700; letter-spacing:2px;
-      background:rgba(212,168,67,0.15); color:var(--gold);
-      border:1px solid rgba(212,168,67,0.3); border-radius:4px;
-      padding:3px 8px;
-    }
+/* ── SECTION HEADERS (identique index) ── */
+.sh { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+.st { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:1px; }
+.sb {
+  font-size:10px; font-family:'DM Mono',monospace; letter-spacing:1px;
+  background:rgba(212,168,67,0.08); color:var(--g); border:1px solid rgba(212,168,67,0.18);
+  padding:2px 7px; border-radius:4px;
+}
 
-    /* ── SECTIONS ─────────────────────────────────────────────────── */
-    .section { max-width:1280px; margin:0 auto; padding:60px 24px; }
-    .section-header {
-      display:flex; align-items:center; gap:16px; margin-bottom:36px;
-    }
-    .section-title {
-      font-family:'Bebas Neue',sans-serif; font-size:36px;
-      letter-spacing:3px; color:var(--text);
-    }
-    .section-badge {
-      font-size:10px; font-weight:700; letter-spacing:2px;
-      background:rgba(212,168,67,0.15); color:var(--gold);
-      border:1px solid rgba(212,168,67,0.2); border-radius:4px;
-      padding:4px 10px;
-    }
-    .divider { height:0; margin-bottom:0; }
+/* ── SECTION BLOCKS alternés (identique index) ── */
+.section-block { padding:32px 0 0; }
+.section-block.alt {
+  background:var(--s1); border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+  padding:32px 24px; margin:0 -24px;
+}
 
-    /* ── JOUEURS EN FORME ─────────────────────────────────────────── */
-    .players-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px; }
-    .pcard {
-      background:var(--s1); border:1px solid var(--border);
-      border-radius:14px; padding:20px; cursor:pointer;
-      transition:border-color .2s, transform .2s;
-      position:relative; overflow:hidden;
-    }
-    .pcard::before {
-      content:''; position:absolute; top:0; left:0; right:0; height:2px;
-      background:linear-gradient(90deg, var(--gold), transparent);
-      opacity:0;transition:opacity .2s;
-    }
-    .pcard:hover { border-color:rgba(212,168,67,0.3); transform:translateY(-2px); }
-    .pcard:hover::before { opacity:1; }
-    .pcard-top { display:flex; align-items:center; gap:14px; margin-bottom:14px; }
-    .pcard-avatar {
-      width:52px; height:52px; border-radius:50%;
-      border:2px solid rgba(212,168,67,0.3);
-      background:var(--s3); overflow:hidden; flex-shrink:0;
-      display:flex; align-items:center; justify-content:center; font-size:20px;
-    }
-    .pcard-avatar img { width:100%; height:100%; object-fit:cover; }
-    .pcard-name { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:1px; }
-    .pcard-team { font-size:12px; color:var(--muted2); margin-top:2px; }
-    .pcard-flag { width:16px; height:11px; object-fit:cover; border-radius:2px; vertical-align:middle; margin-left:4px; }
-    .pcard-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
-    .pstat { background:var(--s3); border-radius:8px; padding:10px; text-align:center; }
-    .pstat-n { font-family:'DM Mono',monospace; font-size:20px; color:var(--gold2); }
-    .pstat-l { font-size:9px; letter-spacing:1px; color:var(--muted); margin-top:2px; }
-    .pcard-form { display:flex; gap:4px; margin-top:12px; }
-    .fd {
-      width:26px; height:26px; border-radius:5px; font-size:10px; font-weight:700;
-      display:flex; align-items:center; justify-content:center;
-      font-family:'DM Mono',monospace;
-    }
-    .fd.v { background:rgba(0,229,160,0.15); color:#00e5a0; border:1px solid rgba(0,229,160,0.25); }
-    .fd.d { background:rgba(255,80,80,0.15); color:#ff5050; border:1px solid rgba(255,80,80,0.25); }
-    .fd.n { background:rgba(107,114,128,0.15); color:#6b7280; border:1px solid var(--border); }
-    .pcard-score {
-      position:absolute; top:16px; right:16px;
-      font-family:'Bebas Neue',sans-serif; font-size:28px; color:var(--gold);
-    }
+/* ── ALERTS / PRÉDICTIONS (identique index) ── */
+.alerts { display:grid; gap:8px; margin-bottom:36px; }
+.alert {
+  background:var(--s1); border:1px solid var(--border);
+  border-left-width:3px; border-radius:10px;
+  padding:12px 16px; display:flex; align-items:center; gap:12px;
+  animation:slideIn .35s ease both;
+}
+@keyframes slideIn { from{opacity:0;transform:translateX(-8px)} to{opacity:1;transform:translateX(0)} }
+.alert-ic { font-size:20px; flex-shrink:0; }
+.alert-txt { flex:1; font-size:13px; line-height:1.55; color:var(--m2); }
+.alert-txt strong { color:var(--text); }
+.alert-cta { font-size:11px; font-weight:600; padding:4px 10px; border-radius:6px; border:1px solid; cursor:pointer; white-space:nowrap; transition:opacity .2s; }
+.alert-cta:hover { opacity:0.7; }
 
-    /* ── CLASSEMENT ───────────────────────────────────────────────── */
-    .ranking { background:var(--s1); border:1px solid var(--border); border-radius:14px; overflow:hidden; }
-    .ranking-head {
-      display:grid; grid-template-columns:48px 1fr 80px 80px 60px 80px;
-      padding:12px 20px; font-size:10px; letter-spacing:2px; color:var(--muted);
-      border-bottom:1px solid var(--border);
-    }
-    .ranking-row {
-      display:grid; grid-template-columns:48px 1fr 80px 80px 60px 80px;
-      padding:14px 20px; border-bottom:1px solid var(--border);
-      cursor:pointer; transition:background .15s; align-items:center;
-    }
-    .ranking-row:last-child { border-bottom:none; }
-    .ranking-row:hover { background:var(--s2); }
-    .rk { font-family:'Bebas Neue',sans-serif; font-size:22px; color:var(--muted); }
-    .rk.top { color:var(--gold); }
-    .rplayer { display:flex; align-items:center; gap:12px; }
-    .ravatar {
-      width:36px; height:36px; border-radius:50%;
-      background:var(--s3); overflow:hidden; flex-shrink:0;
-      display:flex; align-items:center; justify-content:center; font-size:14px;
-    }
-    .ravatar img { width:100%; height:100%; object-fit:cover; }
-    .rname { font-size:15px; font-weight:500; }
-    .rteam { font-size:11px; color:var(--muted2); }
-    .rnum { font-family:'DM Mono',monospace; font-size:16px; }
-    .rnum.g { color:#00e5a0; }
-    .rnum.a { color:#5e81f4; }
-    .rnation { display:flex; align-items:center; gap:6px; font-size:12px; color:var(--muted2); }
-
-    /* ── NATIONS ──────────────────────────────────────────────────── */
-    .groups-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:20px; }
-    .group-card { background:var(--s1); border:1px solid var(--border); border-radius:14px; overflow:hidden; }
-    .group-header {
-      padding:14px 20px; background:rgba(212,168,67,0.08);
-      border-bottom:1px solid var(--border);
-      font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:2px; color:var(--gold);
-    }
-    .nation-row {
-      display:flex; align-items:center; gap:14px; padding:12px 20px;
-      border-bottom:1px solid rgba(255,255,255,0.04); cursor:pointer;
-      transition:background .15s;
-    }
-    .nation-row:last-child { border-bottom:none; }
-    .nation-row:hover { background:var(--s2); }
-    .nation-flag { width:28px; height:20px; object-fit:cover; border-radius:3px; flex-shrink:0; }
-    .nation-name { font-size:14px; font-weight:500; flex:1; }
-    .nation-arrow { color:var(--muted); font-size:12px; }
-
-    /* ── WINAMAX BANNER ───────────────────────────────────────────── */
-    .wina-banner {
-      background:linear-gradient(90deg,#e30613,#c0000f);
-      padding:14px 24px; display:flex; align-items:center;
-      justify-content:space-between; gap:12px; flex-wrap:wrap;
-    }
-    .wina-text { color:#fff; font-size:14px; font-weight:600; }
-    .wina-btn {
-      background:#fff; color:#e30613; font-size:12px; font-weight:700;
-      padding:8px 20px; border-radius:6px; text-decoration:none; white-space:nowrap;
-    }
-
-    /* ── FOOTER ───────────────────────────────────────────────────── */
-    .page-footer {
-      text-align:center; padding:20px 24px; font-size:11px;
-      color:var(--muted); border-top:1px solid var(--border);
-    }
-    .page-footer a { color:var(--muted2); }
-
-    /* ── PAGINATION ──────────────────────────────────────────────── */
-    .pagination { display:flex; align-items:center; justify-content:center; gap:8px; margin-top:12px; margin-bottom:8px; }
-    .pag-btn {
-      background:var(--s2); border:1px solid var(--border); color:var(--muted2);
-      font-size:12px; font-family:'Oswald',sans-serif; padding:6px 14px;
-      border-radius:8px; cursor:pointer; transition:all .2s;
-    }
-    .pag-btn:hover, .pag-btn.on { border-color:var(--gold); color:var(--gold); background:rgba(212,168,67,0.06); }
-    .pag-info { font-size:11px; color:var(--muted); font-family:'DM Mono',monospace; }
-
-    /* ── LOADING ──────────────────────────────────────────────────── */
-    .loading { text-align:center; padding:60px; color:var(--muted); }
-    .empty { text-align:center; padding:40px; color:var(--muted); font-size:13px; }
-
-    /* ── PHASES ───────────────────────────────────────────────────── */
-    .phases { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:24px; }
-    .phase-btn {
-      font-size:11px; letter-spacing:1px; padding:6px 14px; border-radius:6px;
-      border:1px solid var(--border); background:var(--s2); color:var(--muted2);
-      cursor:pointer; transition:all .2s; font-family:'Oswald',sans-serif;
-    }
-    .phase-btn.on {
-      background:rgba(212,168,67,0.15); color:var(--gold);
-      border-color:rgba(212,168,67,0.3);
-    }
-
-    /* Cartes joueurs — identiques au site principal */
-    .pgrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(290px,1fr)); gap:14px; margin-bottom:36px; }
+/* ── PLAYER GRID (identique index) ── */
+.pgrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(290px,1fr)); gap:14px; margin-bottom:36px; }
 .pc {
   background:var(--s1); border:1px solid var(--border); border-radius:14px;
   padding:18px; cursor:pointer; transition:all .25s; position:relative; overflow:hidden;
@@ -350,16 +208,28 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   display:flex; align-items:center; justify-content:center;
   font-size:9px; font-weight:700; font-family:'DM Mono',monospace;
 }
-.fd.g { background:rgba(0,229,160,0.15); color:var(--g); border:1px solid rgba(0,229,160,0.25); }
+.fd.g { background:rgba(0,229,160,0.15); color:#00e5a0; border:1px solid rgba(0,229,160,0.25); }
 .fd.a { background:rgba(94,129,244,0.15); color:var(--b); border:1px solid rgba(94,129,244,0.25); }
 .fd.r { background:rgba(255,80,80,0.15); color:#ff5050; border:1px solid rgba(255,80,80,0.25); }
 .fd.x { background:rgba(30,34,48,0.5); color:var(--m); border:1px solid var(--border); }
+.fd.b { background:rgba(107,114,128,0.15); color:#6b7280; border:1px solid rgba(107,114,128,0.3); }
+.fd.ab { background:rgba(107,114,128,0.15); color:#6b7280; border:1px solid rgba(107,114,128,0.3); }
 
 /* stats chips */
 .chips { display:flex; gap:6px; }
 .chip { flex:1; background:var(--s2); border-radius:8px; padding:8px 6px; text-align:center; }
 .chip-n { font-family:'DM Mono',monospace; font-size:15px; font-weight:500; }
 .chip-l { font-size:9px; color:var(--m); text-transform:uppercase; letter-spacing:0.5px; margin-top:1px; }
+
+/* pagination */
+.pagination { display:flex; align-items:center; justify-content:center; gap:8px; margin-top:12px; margin-bottom:20px; }
+.pag-btn {
+  background:var(--s2); border:1px solid var(--border2); color:var(--m2);
+  font-size:12px; font-family:'DM Sans',sans-serif; padding:6px 14px;
+  border-radius:8px; cursor:pointer; transition:all .2s;
+}
+.pag-btn:hover, .pag-btn.on { border-color:var(--g); color:var(--g); background:rgba(212,168,67,0.06); }
+.pag-info { font-size:11px; color:var(--m); font-family:'DM Mono',monospace; }
 
 /* signal bar */
 .sigbar { margin-top:10px; }
@@ -370,63 +240,96 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
 .ltag { display:inline-flex; align-items:center; gap:5px; font-size:10px; color:var(--m); margin-top:10px; }
 .lpill { display:inline-block; font-size:9px; padding:2px 6px; border-radius:4px; font-weight:600; letter-spacing:0.5px; }
-.l1 { background:rgba(0,229,160,0.1); color:var(--g); }
-.pl { background:rgba(94,129,244,0.1); color:var(--b); }
-.lg { background:rgba(255,77,109,0.1); color:var(--r); }
-.sa { background:rgba(255,214,10,0.1); color:var(--y); }
-.bl { background:rgba(255,107,53,0.15); color:var(--o); }
-.cl  { background:rgba(0,100,255,0.12); color:#4d9fff; }
-.el  { background:rgba(255,159,67,0.15); color:var(--o); }
-.ecl { background:rgba(0,200,150,0.15); color:#00c896; }
+.cdm { background:rgba(212,168,67,0.15); color:var(--gold); }
 
-  @media(max-width:768px){
-    /* ── GÉNÉRAL ── */
-    .section { padding:40px 12px; }
+/* ── TABLE CLASSEMENT (identique index, couleurs dorées) ── */
+.tw { background:var(--s1); border:1px solid var(--border); border-radius:14px; overflow:hidden; margin-bottom:0; }
+table { width:100%; border-collapse:collapse; }
+thead tr { border-bottom:1px solid var(--border); }
+th { padding:11px 16px; text-align:left; font-size:10px; text-transform:uppercase; letter-spacing:1px; color:var(--m); font-weight:500; }
+td { padding:12px 16px; font-size:13px; border-bottom:1px solid rgba(30,26,32,0.7); }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:rgba(212,168,67,0.02); }
+.rk { font-family:'DM Mono',monospace; color:var(--m); font-size:12px; }
+.pn { font-weight:600; }
+.pt { font-size:11px; color:var(--m); }
+.num { font-family:'DM Mono',monospace; font-weight:500; }
+.num.g { color:#00e5a0; }
+.num.a { color:var(--b); }
 
-    /* ── HERO — Option A : empilé centré ── */
-    .hero { padding:40px 16px 32px; }
-    .hero-content { text-align:center; }
-    .hero-eyebrow { font-size:10px; letter-spacing:4px; }
-    .hero-title { font-size:clamp(42px, 11vw, 72px); }
-    .hero-year { font-size:clamp(56px, 14vw, 100px); }
-    .hero-hosts { font-size:12px; letter-spacing:2px; margin:16px 0; }
-    .countdown { justify-content:center; gap:12px; margin:20px 0; }
-    .cd-num { font-size:38px; }
-    .cd-box { min-width:54px; padding:10px 8px; }
-    .hero-cta { width:100%; max-width:280px; margin:0 auto; display:block; text-align:center; }
+/* ── MODAL CARTE JOUEUR (identique index, couleurs dorées) ── */
+.card-modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.75); z-index:1000; align-items:center; justify-content:center; padding:20px; }
+.card-modal-overlay.open { display:flex; }
+.card-modal { background:var(--s1); border-radius:16px; width:100%; max-width:520px; max-height:90vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 24px 64px rgba(0,0,0,.5); border:1px solid rgba(212,168,67,0.15); }
+.cm-header { display:flex; align-items:center; gap:14px; padding:18px 20px; border-bottom:1px solid var(--border); flex-shrink:0; }
+.cm-avatar { width:52px; height:52px; border-radius:50%; overflow:hidden; background:var(--s3); display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
+.cm-avatar img { width:100%; height:100%; object-fit:cover; }
+.cm-info { flex:1; }
+.cm-name { font-size:16px; font-weight:800; letter-spacing:.3px; }
+.cm-team { font-size:12px; color:var(--m2); margin-top:2px; }
+.cm-score { text-align:right; }
+.cm-score-n { font-size:26px; font-weight:800; }
+.cm-score-l { font-size:10px; color:var(--m); }
+.cm-close { width:30px; height:30px; border-radius:50%; background:var(--s3); border:none; color:var(--text); font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.cm-body { overflow-y:auto; padding:16px 20px; flex:1; }
+.cm-chips { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:16px; }
+.cm-chip { background:var(--s2); border:1px solid var(--border); border-radius:10px; padding:10px 8px; text-align:center; }
+.cm-chip-n { font-size:20px; font-weight:800; }
+.cm-chip-l { font-size:10px; color:var(--m); margin-top:2px; }
+.cm-section { font-size:11px; font-weight:700; color:var(--m); letter-spacing:.8px; text-transform:uppercase; margin-bottom:8px; margin-top:16px; }
+.cm-match-row { display:flex; align-items:center; gap:8px; background:var(--s2); border:1px solid var(--border); border-radius:8px; padding:9px 12px; margin-bottom:6px; font-size:12px; }
+.cm-match-date { color:var(--m); width:38px; flex-shrink:0; font-family:'DM Mono',monospace; font-size:11px; }
+.cm-match-teams { flex:1; }
+.cm-match-score { color:var(--m2); font-family:'DM Mono',monospace; font-size:11px; flex-shrink:0; }
+.cm-stat-pill { font-size:10px; font-weight:700; padding:2px 6px; border-radius:4px; flex-shrink:0; }
+.cm-result { width:22px; height:22px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; flex-shrink:0; }
+.cm-next { background:var(--s2); border:1px solid var(--border); border-radius:10px; padding:12px 14px; }
+.cm-next-match { font-size:13px; font-weight:600; margin-bottom:6px; }
+.cm-next-date { font-size:11px; color:var(--m2); }
+.cm-pred-bar { height:6px; background:var(--s3); border-radius:3px; overflow:hidden; margin-top:8px; }
+.cm-pred-fill { height:6px; border-radius:3px; }
+.cm-view-btn { display:block; text-align:center; margin-top:14px; padding:9px; background:var(--s2); border:1px solid var(--border); border-radius:8px; color:var(--m2); font-size:12px; cursor:pointer; text-decoration:none; transition:background .15s; }
+.cm-view-btn:hover { background:var(--s3); color:var(--text); }
 
-    /* ── CADRES JOUEURS — 1 colonne ── */
-    .pgrid { grid-template-columns:1fr; gap:10px; }
+/* ── NATIONS / GROUPES ── */
+.groups-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:20px; }
 
-    /* ── CLASSEMENT — pas de scroll, colonnes adaptées ── */
-    .ranking-head { display:grid; grid-template-columns:32px 1fr 44px 44px 32px 44px; gap:4px; padding:8px 10px; }
-    .ranking-row { display:grid; grid-template-columns:32px 1fr 44px 44px 32px 44px; gap:4px; padding:10px 10px; }
-    .rplayer { min-width:0; }
-    .rname { font-size:12px; white-space:normal; word-break:break-word; }
-    .rteam { font-size:10px; }
-    .rnum { font-size:12px; text-align:center; }
-    .ravatar { width:28px; height:28px; flex-shrink:0; }
+/* ── WINAMAX ── */
+.wina-banner {
+  background:linear-gradient(90deg,#e30613,#c0000f);
+  padding:10px 24px; display:flex; align-items:center;
+  justify-content:space-between; gap:12px; flex-wrap:wrap;
+}
+.wina-text { color:#fff; font-size:13px; font-weight:600; }
+.wina-btn { background:#fff; color:#e30613; font-size:12px; font-weight:700; padding:7px 16px; border-radius:6px; text-decoration:none; white-space:nowrap; letter-spacing:0.5px; }
 
-    /* ── PHASES ── */
-    .phases { flex-wrap:nowrap; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; padding-bottom:4px; }
-    .phases::-webkit-scrollbar { display:none; }
-    .phase-btn { flex-shrink:0; white-space:nowrap; }
+/* ── FOOTER ── */
+footer { border-top:1px solid var(--border); padding:20px 0; text-align:center; font-size:12px; color:var(--m); }
+footer span { color:var(--g); }
 
-    /* ── PAGINATION ── */
-    .pagination { gap:6px; margin-top:10px; }
-    .pag-btn { padding:5px 10px; font-size:11px; }
-    .pag-info { font-size:10px; }
-
-    /* ── 48 NATIONS — 2 groupes côte à côte, équipes empilées ── */
-    .groups-grid { grid-template-columns:1fr 1fr; gap:10px; }
-    .group-card { border-radius:10px; }
-    .group-header { padding:10px 12px; }
-    .nation-row { padding:8px 10px; gap:8px; }
-    .nation-name { font-size:12px; }
-    .nation-flag { width:22px; height:16px; }
-    .nation-arrow { display:none; }
-  }
-  </style>
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .wrap { padding:0 12px; }
+  .hero { padding:40px 16px 32px; }
+  .hero-eyebrow { font-size:10px; letter-spacing:4px; }
+  .hero-title { font-size:clamp(42px, 11vw, 72px); }
+  .hero-year { font-size:clamp(56px, 14vw, 100px); }
+  .hero-hosts { font-size:12px; letter-spacing:2px; margin:16px 0; }
+  .countdown { justify-content:center; gap:12px; margin:20px 0; }
+  .cd-num { font-size:38px; }
+  .cd-block { min-width:54px; padding:10px 8px; }
+  .hero-cta { width:100%; max-width:280px; margin:0 auto; display:block; text-align:center; }
+  .kpis { grid-template-columns:repeat(2,1fr); }
+  .pgrid { grid-template-columns:1fr; gap:10px; }
+  .tw { overflow-x:auto; -webkit-overflow-scrolling:touch; border-radius:10px; }
+  .tw table { min-width:520px; }
+  .tw th, .tw td { padding:10px 8px; font-size:11px; }
+  .pagination { gap:6px; }
+  .pag-btn { padding:5px 10px; font-size:11px; }
+  .section-block.alt { margin:0 -12px; padding:32px 12px; }
+  .groups-grid { grid-template-columns:1fr 1fr; gap:10px; }
+}
+</style>
 </head>
 <body>
 <!-- Google Tag Manager (noscript) -->
@@ -455,17 +358,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <span>MEXIQUE</span>
     </div>
     <div class="hero-hosts" style="margin-top:-12px">
-      <span style="color:var(--muted2);font-size:13px">11 juin — 19 juillet 2026</span>
+      <span style="color:var(--m2);font-size:13px">11 juin — 19 juillet 2026</span>
     </div>
-
-    <!-- Compte à rebours -->
     <div class="countdown" id="countdown">
       <div class="cd-block"><div class="cd-num" id="cd-j">--</div><div class="cd-label">JOURS</div></div>
       <div class="cd-block"><div class="cd-num" id="cd-h">--</div><div class="cd-label">HEURES</div></div>
       <div class="cd-block"><div class="cd-num" id="cd-m">--</div><div class="cd-label">MINUTES</div></div>
       <div class="cd-block"><div class="cd-num" id="cd-s">--</div><div class="cd-label">SECONDES</div></div>
     </div>
-
     <a href="https://www.winamax.fr/paris-sportifs/sports/1?code=CMONBN" target="_blank" rel="noopener sponsored" class="hero-cta">
       🎯 Parier sur la CDM avec Winamax
     </a>
@@ -473,73 +373,71 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <div class="scroll-hint">↓ DÉCOUVRIR</div>
 </section>
 
-<!-- JOUEURS EN FORME (de nos ligues, sélectionnés en CDM) -->
-<div class="divider"></div>
-<section class="section">
-  <div class="section-header">
-    <div class="section-title">🔥 Joueurs à surveiller</div>
-    <span class="section-badge">CDM 2026</span>
-  </div>
-  <div class="pgrid" id="hotPlayers"></div>
-</section>
+<!-- CONTENU PRINCIPAL -->
+<div class="wrap">
 
-<!-- PRÉDICTIONS CDM -->
-<div class="divider"></div>
-<section class="section">
-  <div class="section-header">
-    <div class="section-title">🔮 Prédictions</div>
-    <span class="section-badge">CDM 2026</span>
-  </div>
-  <div id="cdm-alerts" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px"></div>
-  <div style="text-align:right;margin-bottom:8px">
-    <a href="predictions-cdm.html" style="font-size:12px;font-weight:600;color:var(--muted2);text-decoration:none;padding:6px 14px;border:1px solid var(--border);border-radius:8px;transition:all .2s;display:inline-block" onmouseover="this.style.color='var(--gold)';this.style.borderColor='var(--gold)';this.style.background='rgba(212,168,67,0.06)'" onmouseout="this.style.color='var(--muted2)';this.style.borderColor='var(--border)';this.style.background='transparent'">Voir toutes les prédictions CDM →</a>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- CLASSEMENT BUTEURS CDM -->
-<section class="section">
-  <div class="section-header">
-    <div class="section-title">⚽ Classement joueurs</div>
-    <span class="section-badge" id="phase-label">CDM 2026</span>
-  </div>
-  <div class="phases" id="phases">
-    <button class="phase-btn on" onclick="setPhase('all',this)">Tous</button>
-    <button class="phase-btn" onclick="setPhase('group',this)">Phase de groupes</button>
-    <button class="phase-btn" onclick="setPhase('ko',this)">Phase finale</button>
-  </div>
-  <div class="ranking" id="rankingTable">
-    <div class="ranking-head">
-      <span>#</span><span>JOUEUR</span><span>BUTS</span><span>PASSES</span><span>J</span><span>MOY.</span>
+  <!-- KPIs -->
+  <div id="content" style="padding-top:40px">
+    <div class="kpis">
+      <div class="kpi"><div class="kpi-n" id="k-players" style="color:var(--g)">—</div><div class="kpi-l">Joueurs suivis</div></div>
+      <div class="kpi"><div class="kpi-n" id="k-hot" style="color:var(--o)">—</div><div class="kpi-l">En forme 🔥</div></div>
+      <div class="kpi"><div class="kpi-n" id="k-goals" style="color:var(--g)">—</div><div class="kpi-l">Buts totaux</div></div>
+      <div class="kpi"><div class="kpi-n" style="color:var(--b)">48</div><div class="kpi-l">Nations</div></div>
     </div>
-    <div id="rankingEmpty" style="display:none"></div>
-  </div>
-  <div class="pagination" id="paginationCDM"></div>
-</section>
 
-<div class="divider"></div>
+    <!-- PRÉDICTIONS -->
+    <div class="section-block alt">
+      <div class="sh"><div class="st">🔮 Prédictions</div><div class="sb">CDM 2026</div></div>
+      <div class="alerts" id="alerts"></div>
+      <div style="text-align:right;margin-top:-8px;padding-bottom:32px;">
+        <a href="predictions-cdm.html" style="font-size:12px;font-weight:600;color:var(--m2);text-decoration:none;padding:6px 14px;border:1px solid var(--border);border-radius:8px;transition:all .2s;display:inline-block" onmouseover="this.style.color='var(--g)';this.style.borderColor='var(--g)';this.style.background='rgba(212,168,67,0.06)'" onmouseout="this.style.color='var(--m2)';this.style.borderColor='var(--border)';this.style.background='transparent'">Voir toutes les prédictions CDM →</a>
+      </div>
+    </div>
 
-<!-- NATIONS / GROUPES -->
-<section class="section">
-  <div class="section-header">
-    <div class="section-title">🌍 Les 48 nations</div>
-    <span class="section-badge">CDM 2026</span>
+    <!-- JOUEURS EN FORME -->
+    <div class="section-block">
+      <div class="sh"><div class="st">🔥 Joueurs à surveiller</div><div class="sb">TOP</div></div>
+      <div class="pgrid" id="pgrid"></div>
+    </div>
+
+    <!-- CLASSEMENT -->
+    <div class="section-block alt">
+      <div class="sh"><div class="st">📊 Classement joueurs</div><div class="sb">CDM 2026</div></div>
+      <div class="tw">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th><th></th><th>Joueur</th><th>Nation</th><th>Buts</th>
+              <th>Passes</th><th>Matchs</th><th>Moy./match</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+      <div class="pagination" id="paginationIndex"></div>
+    </div>
+
+  </div><!-- /content -->
+
+  <!-- NATIONS / GROUPES -->
+  <div style="padding-top:40px">
+    <div class="sh"><div class="st">🌍 Les 48 nations</div><div class="sb">CDM 2026</div></div>
+    <div id="groupsGrid"></div>
   </div>
-  <div id="groupsGrid"></div>
-</section>
+
+</div><!-- /wrap -->
 
 <!-- WINAMAX BANNER -->
-<div class="wina-banner">
+<div class="wina-banner" style="margin-top:40px">
   <div class="wina-text">🎁 Winamax — Jusqu'à <strong>200€ offerts</strong> sur votre 1er dépôt</div>
-  <a href="https://www.winamax.fr/paris-sportifs/sports/1?code=CMONBN" target="_blank" rel="noopener sponsored" class="wina-btn">J'en profite →</a>
+  <a href="https://www.winamax.fr/parrain?code=CMONBN" target="_blank" rel="noopener sponsored" class="wina-btn">J'en profite →</a>
 </div>
 <div style="background:#080608;text-align:center;padding:6px 24px;font-size:10px;color:#6b7280;line-height:1.6;">
   Les jeux d'argent et de hasard sont interdits aux mineurs. Jouer comporte des risques : endettement, dépendance.
-  Appelez le <strong style="color:#9ca3af;">09 74 75 13 13</strong> |
-  <a href="https://www.joueurs-info-service.fr" target="_blank" style="color:#9ca3af;">joueurs-info-service.fr</a> | 18+ | Winamax agréé ANJ
+  Appelez le <strong style="color:#9ca3af;">09 74 75 13 13</strong> (appel non surtaxé) |
+  <a href="https://www.joueurs-info-service.fr" target="_blank" style="color:#9ca3af;">joueurs-info-service.fr</a> |
+  18+ | Winamax est agréé par l'ANJ
 </div>
-
 
 <!-- Bloc SEO statique -->
 <div style="max-width:1280px;margin:0 auto;padding:40px 24px 20px;border-top:1px solid #1e2130">
@@ -550,16 +448,39 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     Consultez les <strong style="color:#d4a843">effectifs des 48 nations</strong> qualifiées, le classement des buteurs et passeurs CDM, et nos analyses tendances pour vos pronostics sur la Coupe du Monde 2026.
   </p>
 </div>
-<footer class="page-footer">
-  <strong style="color:var(--text)">Tendance Stats</strong> &nbsp;·&nbsp;
-  Coupe du Monde 2026 &nbsp;·&nbsp;
-  Données : sources publiques &nbsp;·&nbsp;
-  <a href="stats-cdm-2026.html" style="color:var(--muted);font-size:11px;text-decoration:none;opacity:0.6;transition:opacity .2s" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.6'">Stats détaillées CDM →</a>
+<footer>
+  <div class="wrap">
+    <strong style="color:var(--text)">Tendance Stats</strong> &nbsp;·&nbsp;
+    Coupe du Monde 2026 &nbsp;·&nbsp;
+    Données : <span>sources publiques</span> &nbsp;·&nbsp;
+    <span id="last-update"></span> &nbsp;·&nbsp;
+    <a href="stats-cdm-2026.html" style="color:var(--m);font-size:11px;text-decoration:none;opacity:0.6;transition:opacity .2s" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.6'">Stats détaillées CDM →</a>
+  </div>
 </footer>
+
+<!-- Modal carte joueur CDM -->
+<div class="card-modal-overlay" id="cardModal" onclick="if(event.target===this)closeCardModal()">
+  <div class="card-modal">
+    <div class="cm-header">
+      <div class="cm-avatar" id="cmAvatar"></div>
+      <div class="cm-info">
+        <div class="cm-name" id="cmName"></div>
+        <div class="cm-team" id="cmTeam"></div>
+        <div style="margin-top:4px" id="cmBadge"></div>
+      </div>
+      <div class="cm-score">
+        <div class="cm-score-n" id="cmScore"></div>
+        <div class="cm-score-l">TENDSCORE</div>
+      </div>
+      <button class="cm-close" onclick="closeCardModal()">✕</button>
+    </div>
+    <div class="cm-body" id="cmBody"></div>
+  </div>
+</div>
 
 <script>
 // ── COMPTE À REBOURS ───────────────────────────────────────────────────────
-const CDM_DATE = new Date('2026-06-11T17:00:00Z'); // 19h heure française
+const CDM_DATE = new Date('2026-06-11T17:00:00Z');
 function updateCountdown() {
   const now  = new Date();
   const diff = CDM_DATE - now;
@@ -573,85 +494,80 @@ function updateCountdown() {
   const h = Math.floor((diff % 86400000) / 3600000);
   const m = Math.floor((diff % 3600000) / 60000);
   const s = Math.floor((diff % 60000) / 1000);
+  const pad = n => String(n).padStart(2,'0');
   const jEl = document.getElementById('cd-j');
   const hEl = document.getElementById('cd-h');
   const mEl = document.getElementById('cd-m');
   const sEl = document.getElementById('cd-s');
-  if (jEl) jEl.textContent = String(j).padStart(2,'0');
-  if (hEl) hEl.textContent = String(h).padStart(2,'0');
-  if (mEl) mEl.textContent = String(m).padStart(2,'0');
-  if (sEl) sEl.textContent = String(s).padStart(2,'0');
+  if (jEl) jEl.textContent = pad(j);
+  if (hEl) hEl.textContent = pad(h);
+  if (mEl) mEl.textContent = pad(m);
+  if (sEl) sEl.textContent = pad(s);
 }
-// Exécuter immédiatement — le script est en bas du body donc DOM prêt
 updateCountdown();
 setInterval(updateCountdown, 1000);
 
 // ── DONNÉES ────────────────────────────────────────────────────────────────
-let cdmPlayers = [];
-let cdmMatches = [];
-let currentPhase = 'all';
-let currentPageCDM = 1;
-const CDM_PAGE_SIZE = 20;
-
-
+let allPlayers = [];
+let currentPageIndex = 1;
+const PAGE_SIZE = 20;
 
 const TEST_PLAYERS = [
-  {id:"t1", espnId:189108,  name:"Kylian Mbappe",    teamName:"France",     signal:85, totalGoals:0, totalAssists:0, avg:0, totalGames:0, recent_goals:0, recent_assists:0, last5:[], hot:true, trendScore:85, leagueId:6, leagueName:"Coupe du Monde", leagueFlag:"fr",     leagueFlagAlt:"FR",  leagueCls:"cl", leagueLabel:"CDM", photo:""},
-  {id:"t2", espnId:279615,  name:"Vinicius Jr",       teamName:"Bresil",     signal:83, totalGoals:0, totalAssists:0, avg:0, totalGames:0, recent_goals:0, recent_assists:0, last5:[], hot:true, trendScore:83, leagueId:6, leagueName:"Coupe du Monde", leagueFlag:"br",     leagueFlagAlt:"BR",  leagueCls:"cl", leagueLabel:"CDM", photo:""},
-  {id:"t3", espnId:302854,  name:"Pedri",             teamName:"Espagne",    signal:80, totalGoals:0, totalAssists:0, avg:0, totalGames:0, recent_goals:0, recent_assists:0, last5:[], hot:true, trendScore:80, leagueId:6, leagueName:"Coupe du Monde", leagueFlag:"es",     leagueFlagAlt:"ES",  leagueCls:"cl", leagueLabel:"CDM", photo:""},
-  {id:"t4", espnId:47431,   name:"Cristiano Ronaldo", teamName:"Portugal",   signal:82, totalGoals:0, totalAssists:0, avg:0, totalGames:0, recent_goals:0, recent_assists:0, last5:[], hot:true, trendScore:82, leagueId:6, leagueName:"Coupe du Monde", leagueFlag:"pt",     leagueFlagAlt:"PT",  leagueCls:"cl", leagueLabel:"CDM", photo:""},
-  {id:"t5", espnId:253989,  name:"Erling Haaland",    teamName:"Norvege",    signal:84, totalGoals:0, totalAssists:0, avg:0, totalGames:0, recent_goals:0, recent_assists:0, last5:[], hot:true, trendScore:84, leagueId:6, leagueName:"Coupe du Monde", leagueFlag:"no",     leagueFlagAlt:"NO",  leagueCls:"cl", leagueLabel:"CDM", photo:""},
-  {id:"t6", espnId:303859,  name:"Jude Bellingham",   teamName:"Angleterre", signal:81, totalGoals:0, totalAssists:0, avg:0, totalGames:0, recent_goals:0, recent_assists:0, last5:[], hot:true, trendScore:81, leagueId:6, leagueName:"Coupe du Monde", leagueFlag:"gb-eng", leagueFlagAlt:"EN",  leagueCls:"cl", leagueLabel:"CDM", photo:""},
-  {id:"t7", espnId:372944,  name:"Lamine Yamal",      teamName:"Espagne",    signal:79, totalGoals:0, totalAssists:0, avg:0, totalGames:0, recent_goals:0, recent_assists:0, last5:[], hot:true, trendScore:79, leagueId:6, leagueName:"Coupe du Monde", leagueFlag:"es",     leagueFlagAlt:"ES",  leagueCls:"cl", leagueLabel:"CDM", photo:""},
-  {id:"t8", espnId:45843,   name:"Lionel Messi",      teamName:"Argentine",  signal:88, totalGoals:0, totalAssists:0, avg:0, totalGames:0, recent_goals:0, recent_assists:0, last5:[], hot:true, trendScore:88, leagueId:6, leagueName:"Coupe du Monde", leagueFlag:"ar",     leagueFlagAlt:"AR",  leagueCls:"cl", leagueLabel:"CDM", photo:""},
+  {id:"t1", espnId:189108,  name:"Kylian Mbappe",    teamName:"France",     signal:85, totalGoals:0, totalAssists:0, avg:0, totalGames:0, recent_goals:0, recent_assists:0, last5:[], hot:true, trendScore:85, leagueId:6, leagueName:"Coupe du Monde", leagueFlag:"fr",     leagueFlagAlt:"FR",  leagueCls:"cdm", leagueLabel:"CDM", photo:""},
+  {id:"t2", espnId:279615,  name:"Vinicius Jr",       teamName:"Bresil",     signal:83, totalGoals:0, totalAssists:0, avg:0, totalGames:0, recent_goals:0, recent_assists:0, last5:[], hot:true, trendScore:83, leagueId:6, leagueName:"Coupe du Monde", leagueFlag:"br",     leagueFlagAlt:"BR",  leagueCls:"cdm", leagueLabel:"CDM", photo:""},
+  {id:"t3", espnId:302854,  name:"Pedri",             teamName:"Espagne",    signal:80, totalGoals:0, totalAssists:0, avg:0, totalGames:0, recent_goals:0, recent_assists:0, last5:[], hot:true, trendScore:80, leagueId:6, leagueName:"Coupe du Monde", leagueFlag:"es",     leagueFlagAlt:"ES",  leagueCls:"cdm", leagueLabel:"CDM", photo:""},
+  {id:"t4", espnId:47431,   name:"Cristiano Ronaldo", teamName:"Portugal",   signal:82, totalGoals:0, totalAssists:0, avg:0, totalGames:0, recent_goals:0, recent_assists:0, last5:[], hot:true, trendScore:82, leagueId:6, leagueName:"Coupe du Monde", leagueFlag:"pt",     leagueFlagAlt:"PT",  leagueCls:"cdm", leagueLabel:"CDM", photo:""},
+  {id:"t5", espnId:253989,  name:"Erling Haaland",    teamName:"Norvege",    signal:84, totalGoals:0, totalAssists:0, avg:0, totalGames:0, recent_goals:0, recent_assists:0, last5:[], hot:true, trendScore:84, leagueId:6, leagueName:"Coupe du Monde", leagueFlag:"no",     leagueFlagAlt:"NO",  leagueCls:"cdm", leagueLabel:"CDM", photo:""},
+  {id:"t6", espnId:303859,  name:"Jude Bellingham",   teamName:"Angleterre", signal:81, totalGoals:0, totalAssists:0, avg:0, totalGames:0, recent_goals:0, recent_assists:0, last5:[], hot:true, trendScore:81, leagueId:6, leagueName:"Coupe du Monde", leagueFlag:"gb-eng", leagueFlagAlt:"EN",  leagueCls:"cdm", leagueLabel:"CDM", photo:""},
+  {id:"t7", espnId:372944,  name:"Lamine Yamal",      teamName:"Espagne",    signal:79, totalGoals:0, totalAssists:0, avg:0, totalGames:0, recent_goals:0, recent_assists:0, last5:[], hot:true, trendScore:79, leagueId:6, leagueName:"Coupe du Monde", leagueFlag:"es",     leagueFlagAlt:"ES",  leagueCls:"cdm", leagueLabel:"CDM", photo:""},
+  {id:"t8", espnId:45843,   name:"Lionel Messi",      teamName:"Argentine",  signal:88, totalGoals:0, totalAssists:0, avg:0, totalGames:0, recent_goals:0, recent_assists:0, last5:[], hot:true, trendScore:88, leagueId:6, leagueName:"Coupe du Monde", leagueFlag:"ar",     leagueFlagAlt:"AR",  leagueCls:"cdm", leagueLabel:"CDM", photo:""},
 ];
-
-let allPlayers = [];
 
 const RANKING_PLAYERS = [
-  {id:"r1",  espnId:189108,  name:"Kylian Mbappe",      teamName:"France",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:95, photo:"", leagueFlag:"fr"},
-  {id:"r2",  espnId:45843,   name:"Lionel Messi",        teamName:"Argentine",  totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:92, photo:"", leagueFlag:"ar"},
-  {id:"r3",  espnId:253989,  name:"Erling Haaland",      teamName:"Norvege",    totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:90, photo:"", leagueFlag:"no"},
-  {id:"r4",  espnId:279615,  name:"Vinicius Jr",         teamName:"Bresil",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:88, photo:"", leagueFlag:"br"},
-  {id:"r5",  espnId:47431,   name:"Cristiano Ronaldo",   teamName:"Portugal",   totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:85, photo:"", leagueFlag:"pt"},
-  {id:"r6",  espnId:303859,  name:"Jude Bellingham",     teamName:"Angleterre", totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:83, photo:"", leagueFlag:"gb-eng"},
-  {id:"r7",  espnId:372944,  name:"Lamine Yamal",        teamName:"Espagne",    totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:82, photo:"", leagueFlag:"es"},
-  {id:"r8",  espnId:302854,  name:"Pedri",               teamName:"Espagne",    totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:80, photo:"", leagueFlag:"es"},
-  {id:"r9",  espnId:282679,  name:"Bukayo Saka",         teamName:"Angleterre", totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:78, photo:"", leagueFlag:"gb-eng"},
-  {id:"r10", espnId:318143,  name:"Gavi",                teamName:"Espagne",    totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:76, photo:"", leagueFlag:"es"},
-  {id:"r11", espnId:279299,  name:"Phil Foden",          teamName:"Angleterre", totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:74, photo:"", leagueFlag:"gb-eng"},
-  {id:"r12", espnId:289668,  name:"Raphinha",            teamName:"Bresil",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:72, photo:"", leagueFlag:"br"},
-  {id:"r13", espnId:54679,   name:"Antoine Griezmann",   teamName:"France",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:71, photo:"", leagueFlag:"fr"},
-  {id:"r14", espnId:193184,  name:"Bruno Fernandes",     teamName:"Portugal",   totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:70, photo:"", leagueFlag:"pt"},
-  {id:"r15", espnId:199216,  name:"Rodrigo De Paul",     teamName:"Argentine",  totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:68, photo:"", leagueFlag:"ar"},
-  {id:"r16", espnId:300447,  name:"Declan Rice",         teamName:"Angleterre", totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:66, photo:"", leagueFlag:"gb-eng"},
-  {id:"r17", espnId:325354,  name:"Aurelien Tchouameni", teamName:"France",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:64, photo:"", leagueFlag:"fr"},
-  {id:"r18", espnId:148871,  name:"Joshua Kimmich",      teamName:"Allemagne",  totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:62, photo:"", leagueFlag:"de"},
-  {id:"r19", espnId:214616,  name:"Niclas Fullkrug",     teamName:"Allemagne",  totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:60, photo:"", leagueFlag:"de"},
-  {id:"r20", espnId:164469,  name:"Alvaro Morata",       teamName:"Espagne",    totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:58, photo:"", leagueFlag:"es"},
-  {id:"r21", espnId:267831,  name:"Federico Valverde",    teamName:"Uruguay",    totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:57, photo:"", leagueFlag:"uy"},
-  {id:"r22", espnId:172843,  name:"Riyad Mahrez",         teamName:"Algérie",    totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:56, photo:"", leagueFlag:"dz"},
-  {id:"r23", espnId:241351,  name:"Achraf Hakimi",        teamName:"Maroc",      totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:55, photo:"", leagueFlag:"ma"},
-  {id:"r24", espnId:193669,  name:"Victor Osimhen",       teamName:"Nigeria",    totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:54, photo:"", leagueFlag:"ng"},
-  {id:"r25", espnId:156145,  name:"Son Heung-min",        teamName:"Corée du Sud",totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:53, photo:"", leagueFlag:"kr"},
-  {id:"r26", espnId:221728,  name:"Florian Wirtz",        teamName:"Allemagne",  totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:52, photo:"", leagueFlag:"de"},
-  {id:"r27", espnId:193041,  name:"Nico Williams",        teamName:"Espagne",    totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:51, photo:"", leagueFlag:"es"},
-  {id:"r28", espnId:328702,  name:"Kobbie Mainoo",        teamName:"Angleterre", totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:50, photo:"", leagueFlag:"gb-eng"},
-  {id:"r29", espnId:169880,  name:"Neymar Jr",            teamName:"Brésil",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:49, photo:"", leagueFlag:"br"},
-  {id:"r30", espnId:152083,  name:"Robert Lewandowski",   teamName:"Pologne",    totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:48, photo:"", leagueFlag:"pl"},
-  {id:"r31", espnId:191580,  name:"Bernardo Silva",       teamName:"Portugal",   totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:47, photo:"", leagueFlag:"pt"},
-  {id:"r32", espnId:179703,  name:"Marcos Llorente",      teamName:"Espagne",    totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:46, photo:"", leagueFlag:"es"},
-  {id:"r33", espnId:158732,  name:"Memphis Depay",        teamName:"Pays-Bas",   totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:45, photo:"", leagueFlag:"nl"},
-  {id:"r34", espnId:193174,  name:"Cody Gakpo",           teamName:"Pays-Bas",   totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:44, photo:"", leagueFlag:"nl"},
-  {id:"r35", espnId:212331,  name:"Evan Ferguson",        teamName:"Irlande",    totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:43, photo:"", leagueFlag:"ie"},
-  {id:"r36", espnId:197031,  name:"Martin Odegaard",      teamName:"Norvège",    totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:42, photo:"", leagueFlag:"no"},
-  {id:"r37", espnId:258921,  name:"Rodrygo",              teamName:"Brésil",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:41, photo:"", leagueFlag:"br"},
-  {id:"r38", espnId:139919,  name:"Romelu Lukaku",        teamName:"Belgique",   totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:40, photo:"", leagueFlag:"be"},
-  {id:"r39", espnId:233029,  name:"Jamal Musiala",        teamName:"Allemagne",  totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:39, photo:"", leagueFlag:"de"},
-  {id:"r40", espnId:194023,  name:"Hakim Ziyech",         teamName:"Maroc",      totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:38, photo:"", leagueFlag:"ma"},
+  {id:"r1",  espnId:189108,  name:"Kylian Mbappe",      teamName:"France",      totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:95, photo:"", leagueFlag:"fr"},
+  {id:"r2",  espnId:45843,   name:"Lionel Messi",        teamName:"Argentine",   totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:92, photo:"", leagueFlag:"ar"},
+  {id:"r3",  espnId:253989,  name:"Erling Haaland",      teamName:"Norvège",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:90, photo:"", leagueFlag:"no"},
+  {id:"r4",  espnId:279615,  name:"Vinicius Jr",         teamName:"Brésil",      totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:88, photo:"", leagueFlag:"br"},
+  {id:"r5",  espnId:47431,   name:"Cristiano Ronaldo",   teamName:"Portugal",    totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:85, photo:"", leagueFlag:"pt"},
+  {id:"r6",  espnId:303859,  name:"Jude Bellingham",     teamName:"Angleterre",  totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:83, photo:"", leagueFlag:"gb-eng"},
+  {id:"r7",  espnId:372944,  name:"Lamine Yamal",        teamName:"Espagne",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:82, photo:"", leagueFlag:"es"},
+  {id:"r8",  espnId:302854,  name:"Pedri",               teamName:"Espagne",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:80, photo:"", leagueFlag:"es"},
+  {id:"r9",  espnId:282679,  name:"Bukayo Saka",         teamName:"Angleterre",  totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:78, photo:"", leagueFlag:"gb-eng"},
+  {id:"r10", espnId:318143,  name:"Gavi",                teamName:"Espagne",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:76, photo:"", leagueFlag:"es"},
+  {id:"r11", espnId:279299,  name:"Phil Foden",          teamName:"Angleterre",  totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:74, photo:"", leagueFlag:"gb-eng"},
+  {id:"r12", espnId:289668,  name:"Raphinha",            teamName:"Brésil",      totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:72, photo:"", leagueFlag:"br"},
+  {id:"r13", espnId:54679,   name:"Antoine Griezmann",   teamName:"France",      totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:71, photo:"", leagueFlag:"fr"},
+  {id:"r14", espnId:193184,  name:"Bruno Fernandes",     teamName:"Portugal",    totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:70, photo:"", leagueFlag:"pt"},
+  {id:"r15", espnId:199216,  name:"Rodrigo De Paul",     teamName:"Argentine",   totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:68, photo:"", leagueFlag:"ar"},
+  {id:"r16", espnId:300447,  name:"Declan Rice",         teamName:"Angleterre",  totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:66, photo:"", leagueFlag:"gb-eng"},
+  {id:"r17", espnId:325354,  name:"Aurelien Tchouameni", teamName:"France",      totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:64, photo:"", leagueFlag:"fr"},
+  {id:"r18", espnId:148871,  name:"Joshua Kimmich",      teamName:"Allemagne",   totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:62, photo:"", leagueFlag:"de"},
+  {id:"r19", espnId:214616,  name:"Niclas Fullkrug",     teamName:"Allemagne",   totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:60, photo:"", leagueFlag:"de"},
+  {id:"r20", espnId:164469,  name:"Alvaro Morata",       teamName:"Espagne",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:58, photo:"", leagueFlag:"es"},
+  {id:"r21", espnId:267831,  name:"Federico Valverde",   teamName:"Uruguay",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:57, photo:"", leagueFlag:"uy"},
+  {id:"r22", espnId:172843,  name:"Riyad Mahrez",        teamName:"Algérie",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:56, photo:"", leagueFlag:"dz"},
+  {id:"r23", espnId:241351,  name:"Achraf Hakimi",       teamName:"Maroc",       totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:55, photo:"", leagueFlag:"ma"},
+  {id:"r24", espnId:193669,  name:"Victor Osimhen",      teamName:"Nigeria",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:54, photo:"", leagueFlag:"ng"},
+  {id:"r25", espnId:156145,  name:"Son Heung-min",       teamName:"Corée du Sud",totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:53, photo:"", leagueFlag:"kr"},
+  {id:"r26", espnId:221728,  name:"Florian Wirtz",       teamName:"Allemagne",   totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:52, photo:"", leagueFlag:"de"},
+  {id:"r27", espnId:193041,  name:"Nico Williams",       teamName:"Espagne",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:51, photo:"", leagueFlag:"es"},
+  {id:"r28", espnId:328702,  name:"Kobbie Mainoo",       teamName:"Angleterre",  totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:50, photo:"", leagueFlag:"gb-eng"},
+  {id:"r29", espnId:169880,  name:"Neymar Jr",           teamName:"Brésil",      totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:49, photo:"", leagueFlag:"br"},
+  {id:"r30", espnId:152083,  name:"Robert Lewandowski",  teamName:"Pologne",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:48, photo:"", leagueFlag:"pl"},
+  {id:"r31", espnId:191580,  name:"Bernardo Silva",      teamName:"Portugal",    totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:47, photo:"", leagueFlag:"pt"},
+  {id:"r32", espnId:179703,  name:"Marcos Llorente",     teamName:"Espagne",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:46, photo:"", leagueFlag:"es"},
+  {id:"r33", espnId:158732,  name:"Memphis Depay",       teamName:"Pays-Bas",    totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:45, photo:"", leagueFlag:"nl"},
+  {id:"r34", espnId:193174,  name:"Cody Gakpo",          teamName:"Pays-Bas",    totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:44, photo:"", leagueFlag:"nl"},
+  {id:"r35", espnId:212331,  name:"Evan Ferguson",       teamName:"Irlande",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:43, photo:"", leagueFlag:"ie"},
+  {id:"r36", espnId:197031,  name:"Martin Odegaard",     teamName:"Norvège",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:42, photo:"", leagueFlag:"no"},
+  {id:"r37", espnId:258921,  name:"Rodrygo",             teamName:"Brésil",      totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:41, photo:"", leagueFlag:"br"},
+  {id:"r38", espnId:139919,  name:"Romelu Lukaku",       teamName:"Belgique",    totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:40, photo:"", leagueFlag:"be"},
+  {id:"r39", espnId:233029,  name:"Jamal Musiala",       teamName:"Allemagne",   totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:39, photo:"", leagueFlag:"de"},
+  {id:"r40", espnId:194023,  name:"Hakim Ziyech",        teamName:"Maroc",       totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:38, photo:"", leagueFlag:"ma"},
 ];
 
-async function loadData() {
+// ── INIT ────────────────────────────────────────────────────────────────────
+async function init() {
   try {
     const [dataRes, photosRes] = await Promise.all([
       fetch('data.json?v=' + Date.now()),
@@ -661,51 +577,88 @@ async function loadData() {
     const photosMap = photosRes?.ok ? await photosRes.json() : {};
     window._photosMap = photosMap;
 
-    // Joueurs CDM réels si disponibles
     const cdmReal = (data.players || []).filter(p => p.leagueId === 6).map(p => ({
       ...p, photo: photosMap[p.id] || photosMap[String(p.id)] || p.photo || ''
     }));
 
-    // Injecter les photos de photos.json dans TEST_PLAYERS par nom
-    // Construire un index nom → photo depuis data.json
     const nameToPhoto = {};
     (data.players || []).forEach(p => {
-      if (p.photo || photosMap[p.id]) {
-        nameToPhoto[p.name] = photosMap[p.id] || photosMap[String(p.id)] || p.photo;
-      }
+      if (p.photo || photosMap[p.id]) nameToPhoto[p.name] = photosMap[p.id] || photosMap[String(p.id)] || p.photo;
     });
 
-    // Appliquer aux joueurs tests si photo trouvée par nom ou espnId
     const testWithPhotos = TEST_PLAYERS.map(p => ({
-      ...p,
-      photo: photosMap[p.espnId] || photosMap[String(p.espnId)] || nameToPhoto[p.name] || p.photo || ''
+      ...p, photo: photosMap[p.espnId] || photosMap[String(p.espnId)] || nameToPhoto[p.name] || p.photo || ''
     }));
-
-    // Injecter les photos dans RANKING_PLAYERS via espnId
-    const rankingWithPhotos = RANKING_PLAYERS.map(p => ({
-      ...p,
-      photo: photosMap[p.espnId] || photosMap[String(p.espnId)] || nameToPhoto[p.name] || p.photo || ''
+    const rankWithPhotos = RANKING_PLAYERS.map(p => ({
+      ...p, photo: photosMap[p.espnId] || photosMap[String(p.espnId)] || nameToPhoto[p.name] || p.photo || ''
     }));
 
     allPlayers = cdmReal.length ? cdmReal : testWithPhotos;
-    cdmMatches = (data.matches || []).filter(m => m.leagueId === 6);
-    cdmPlayers = cdmReal.length ? cdmReal : rankingWithPhotos;
-    renderCdmPredictions(allPlayers, data.fixtures || []);
-    renderHotPlayers();
-    renderRanking();
+    window._fixtures = data.fixtures || [];
+    window._matches  = (data.matches || []).filter(m => m.leagueId === 6);
+
+    // Précalculer _leagueStats CDM
+    window._leagueStats = {};
+    for (const match of window._matches) {
+      for (const mp of (match.players || [])) {
+        if (!mp.id || mp.played === false || mp.played === null) continue;
+        const pid = String(mp.id);
+        const lid = match.leagueId;
+        if (!window._leagueStats[pid]) window._leagueStats[pid] = {};
+        if (!window._leagueStats[pid][lid]) window._leagueStats[pid][lid] = {goals:0,assists:0,games:0};
+        window._leagueStats[pid][lid].goals   += mp.goals   || 0;
+        window._leagueStats[pid][lid].assists += mp.assists || 0;
+        window._leagueStats[pid][lid].games   += 1;
+      }
+    }
+
+    const rankSource = cdmReal.length ? cdmReal : rankWithPhotos;
+
+    const d = new Date(data.updatedAt);
+    if (data.updatedAt) {
+      document.getElementById('last-update').textContent =
+        'Mis à jour le ' + d.toLocaleDateString('fr-FR') + ' à ' + d.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+    }
+
+    render(rankSource);
   } catch(e) {
     allPlayers = TEST_PLAYERS;
-    renderCdmPredictions(TEST_PLAYERS, []);
-    renderHotPlayers();
+    render(RANKING_PLAYERS);
   }
 }
 
-// ── PRÉDICTIONS CDM ──────────────────────────────────────────────────────────
+// ── RENDER ──────────────────────────────────────────────────────────────────
+function render(rankSource) {
+  const list = allPlayers;
+
+  // KPIs
+  const totalGoals = list.reduce((s, p) => s + (p.totalGoals||0), 0);
+  const hotCount   = list.filter(p => p.hot || (p.trendScore||0) > 0).length;
+  document.getElementById('k-players').textContent = list.length;
+  document.getElementById('k-hot').textContent     = hotCount;
+  document.getElementById('k-goals').textContent   = totalGoals;
+
+  const sorted = [...(rankSource||list)].sort((a, b) => {
+    const bpA = (a.totalGoals||0) + (a.totalAssists||0);
+    const bpB = (b.totalGoals||0) + (b.totalAssists||0);
+    if (bpB !== bpA) return bpB - bpA;
+    return (b.signal||0) - (a.signal||0);
+  });
+
+  renderAlerts(list, window._fixtures || []);
+  renderGrid(list);
+  renderTable(sorted, window._photosMap || {});
+}
+
+// ── PRÉDICTIONS ──────────────────────────────────────────────────────────────
 function calcPredScore(player, fixtures, allP) {
   const gaCdm = (player.totalGoals||0) + (player.totalAssists||0);
+  const ga5   = (player.recent_goals||0) + (player.recent_assists||0);
   const ts    = player.trendScore || player.signal || 0;
-  // CDM : pondérer sur les stats totales de compétition (max ~8 matchs)
-  const playerScore = Math.min(100, (gaCdm * 12) + (ts * 0.6));
+  // Utilise les stats totales CDM si disponibles, sinon stats récentes
+  const base  = gaCdm > 0 ? Math.min(100, (gaCdm * 12) + (ts * 0.6))
+                           : Math.min(100, (ga5 * 15) + (ts * 0.7));
+  const playerScore = base;
 
   const nextMatch = (fixtures||[]).find(f =>
     f.homeTeam === player.teamName || f.awayTeam === player.teamName
@@ -714,11 +667,11 @@ function calcPredScore(player, fixtures, allP) {
   let opponent = null, matchDate = null, finalScore;
 
   if (nextMatch) {
-    const isHome = nextMatch.homeTeam === player.teamName;
-    opponent     = isHome ? nextMatch.awayTeam : nextMatch.homeTeam;
-    matchDate    = nextMatch.date;
-    const wins   = (player.last5||[]).filter(m => m.teamWon === true).length;
-    const total  = (player.last5||[]).length || 1;
+    const isHome  = nextMatch.homeTeam === player.teamName;
+    opponent      = isHome ? nextMatch.awayTeam : nextMatch.homeTeam;
+    matchDate     = nextMatch.date;
+    const wins    = (player.last5||[]).filter(m => m.teamWon === true).length;
+    const total   = (player.last5||[]).length || 1;
     const teamScore = Math.round((wins / total) * 100);
     const oppPlayers = allP.filter(p => p.teamName === opponent);
     let oppScore = 50;
@@ -735,240 +688,329 @@ function calcPredScore(player, fixtures, allP) {
 }
 
 function getPredLabel(score) {
-  if (score >= 75) return { label:'🔥 EN FEU',  color:'#ff9f43', colorDim:'#ff9f4388' };
-  if (score >= 55) return { label:'⚡ CHAUD',    color:'#ffd32a', colorDim:'#ffd32a88' };
-  if (score >= 35) return { label:'📈 EN FORME', color:'#00e5a0', colorDim:'#00e5a088' };
+  if (score >= 75) return { label: '🔥 EN FEU',   color: '#ff9f43', colorDim: '#ff9f4388' };
+  if (score >= 55) return { label: '⚡ CHAUD',     color: '#ffd32a', colorDim: '#ffd32a88' };
+  if (score >= 35) return { label: '📈 EN FORME',  color: '#00e5a0', colorDim: '#00e5a088' };
+  if (score >= 20) return { label: '💤 DISCRET',   color: '#9ca3af', colorDim: '#9ca3af88' };
   return null;
 }
 
-function renderCdmPredictions(players, fixtures) {
-  const leaguesSeen = new Set();
+function renderAlerts(list, fixtures) {
+  const teamsSeen = new Set();
   const picked = [];
-  const withScores = [...players].map(p => ({
-    ...p, _predScore: calcPredScore(p, fixtures, players).score
+
+  const withScores = [...list].map(p => ({
+    ...p, _predScore: calcPredScore(p, fixtures, list).score
   })).sort((a,b) => b._predScore - a._predScore);
 
-  for (const p of withScores) {
+  const withMatch = withScores.filter(p => calcPredScore(p, fixtures, list).opponent);
+
+  // 1 joueur par nation d'abord
+  for (const p of withMatch) {
     if (picked.length >= 4) break;
-    if (!leaguesSeen.has(p.teamName)) {
-      leaguesSeen.add(p.teamName);
+    if (!teamsSeen.has(p.teamName)) {
+      teamsSeen.add(p.teamName);
       picked.push(p);
     }
   }
-  for (const p of withScores) {
+  for (const p of withMatch) {
     if (picked.length >= 4) break;
     if (!picked.find(x => x.id === p.id)) picked.push(p);
   }
 
-  const c = document.getElementById('cdm-alerts');
-  if (!c) return;
+  const c = document.getElementById('alerts');
   c.innerHTML = '';
 
   picked.forEach((p, i) => {
-    const { score, opponent, matchDate } = calcPredScore(p, fixtures, players);
+    const { score, opponent, matchDate } = calcPredScore(p, fixtures, list);
     const predLabel = getPredLabel(score);
-    if (!predLabel) return;
+    if (!predLabel || !opponent) return;
 
-    const g5  = p.totalGoals || 0;
-    const a5  = p.totalAssists || 0;
+    const g5  = p.recent_goals  || p.totalGoals  || 0;
+    const a5  = p.recent_assists || p.totalAssists || 0;
     const dateStr = matchDate
       ? new Date(matchDate).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'})
-      : null;
+      : '—';
+
+    const matchBadge = '<span style="font-size:10px;color:var(--m2);margin-left:auto;background:var(--s3);padding:2px 8px;border-radius:4px">vs ' + opponent + ' · ' + dateStr + '</span>';
+    const barW  = score + '%';
+    const barBg = 'linear-gradient(90deg,' + predLabel.color + ',' + predLabel.colorDim + ')';
 
     const d = document.createElement('div');
-    d.style.cssText = `background:var(--s2);border:1px solid var(--border);border-left:3px solid ${predLabel.color};border-radius:10px;padding:14px 16px;cursor:pointer;transition:background .15s`;
-    d.onmouseover = () => d.style.background = 'var(--s3)';
-    d.onmouseout  = () => d.style.background = 'var(--s2)';
-    const pid = p.id?.startsWith?.('t') ? (p.espnId || p.id) : p.id;
-    d.onclick = () => window.location.href = `player-cdm.html?id=${pid}&name=${encodeURIComponent(p.name)}&teamName=${encodeURIComponent(p.teamName||'')}&photo=${encodeURIComponent(p.photo||'')}`;
-    d.innerHTML = `
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-        <span style="font-size:18px">${predLabel.label.split(' ')[0]}</span>
-        <div style="flex:1">
-          <div style="display:flex;align-items:center;gap:8px">
-            <strong style="color:var(--text);font-size:14px">${p.name}</strong>
-            <span style="font-size:11px;color:var(--muted2)">${p.teamName||''}</span>
-            ${opponent ? `<span style="font-size:10px;color:var(--muted2);margin-left:auto;background:var(--s3);padding:2px 8px;border-radius:4px">vs ${opponent}${dateStr ? ' · '+dateStr : ''}</span>` : '<span style="font-size:10px;color:var(--muted);margin-left:auto">Prochain match à venir</span>'}
-          </div>
-        </div>
-      </div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <div style="width:180px;min-width:180px;flex-shrink:0;margin-left:auto">
-          <div style="height:6px;background:#1e2130;border-radius:3px;overflow:hidden;margin-bottom:4px"><div style="width:${score}%;height:6px;background:linear-gradient(90deg,${predLabel.color},${predLabel.colorDim});border-radius:3px"></div></div>
-        </div>
-        <span style="font-size:11px;font-weight:700;color:${predLabel.color};white-space:nowrap;min-width:80px">${predLabel.label}</span>
-      </div>
-      <div style="font-size:11px;color:var(--muted);margin-top:6px;display:flex;gap:12px">
-        <span>⚽ <strong style="color:var(--gold)">${g5}</strong></span>
-        <span>🎯 <strong style="color:var(--b)">${a5}</strong></span>
-        <span style="margin-left:auto">TendScore : ${p.trendScore||p.signal||0}</span>
-      </div>
-    `;
+    d.className = 'alert';
+    d.style.cssText = 'border-left-color:' + predLabel.color + '; animation-delay:' + (i*0.08) + 's; cursor:pointer';
+    d.onclick = () => {
+      const pid = (p.id && String(p.id).startsWith('t')) ? (p.espnId || p.id) : p.id;
+      window.location.href = 'player-cdm.html?id=' + pid + '&name=' + encodeURIComponent(p.name) + '&teamName=' + encodeURIComponent(p.teamName||'') + '&photo=' + encodeURIComponent(p.photo||'');
+    };
+    d.innerHTML = '<div class="alert-ic">' + predLabel.label.split(' ')[0] + '</div>'
+      + '<div class="alert-txt" style="flex:1">'
+      + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">'
+      + '<strong style="color:var(--text);font-size:14px">' + p.name + '</strong>'
+      + '<span style="font-size:11px;color:var(--m2)">' + (p.teamName||'') + '</span>'
+      + matchBadge
+      + '</div>'
+      + '<div style="display:flex;align-items:center;gap:8px">'
+      + '<div style="flex:1;height:6px;background:var(--s3);border-radius:3px;overflow:hidden">'
+      + '<div style="width:' + barW + ';height:6px;background:' + barBg + ';border-radius:3px"></div>'
+      + '</div>'
+      + '<span style="font-size:11px;font-weight:700;color:' + predLabel.color + ';white-space:nowrap;min-width:80px">' + predLabel.label + '</span>'
+      + '</div>'
+      + '<div style="font-size:11px;color:var(--m);margin-top:6px;display:flex;gap:12px">'
+      + '<span>⚽ <strong style="color:var(--g)">' + g5 + 'B</strong></span>'
+      + '<span>🎯 <strong style="color:#5e81f4">' + a5 + 'P</strong></span>'
+      + '<span style="margin-left:auto">TendScore : ' + (p.trendScore||p.signal||0) + '</span>'
+      + '</div>'
+      + '</div>';
     c.appendChild(d);
   });
 
-  // Animer les barres après insertion
-
-
-  if (!c.children.length) {
-    c.innerHTML = '<div style="color:var(--muted);font-size:13px;padding:16px">Données insuffisantes pour générer des prédictions.</div>';
+  if (c.children.length === 0) {
+    c.innerHTML = '<div style="color:var(--m);font-size:13px;padding:16px">Données insuffisantes pour générer des prédictions.</div>';
   }
 }
 
-// ── JOUEURS À SURVEILLER ──────────────────────────────────────────────────
-function renderHotPlayers() {
-  const list = allPlayers;
-  const hot = list.slice(0, 8);
-  const c = document.getElementById('hotPlayers');
+// ── GRILLE JOUEURS ──────────────────────────────────────────────────────────
+function renderGrid(list) {
+  const hot = list.filter(p => p.hot || (p.trendScore||0) > 0).slice(0, 8);
+  const c = document.getElementById('pgrid');
   c.innerHTML = '';
   hot.forEach((p, i) => {
-    const last5 = (p.last5 || []).slice(0, 5);
-    const recent_g = last5.reduce((s, m) => s + (m.goals || 0), 0);
+    const last5    = (p.last5 || []).slice(0, 5);
+    const recent_g = last5.reduce((s, m) => s + (m.goals  || 0), 0);
     const recent_a = last5.reduce((s, m) => s + (m.assists || 0), 0);
-    const formHtml = (p.last5 || p.form || []).map((f, i) => {
-      const match = p.last5?.[i];
-      const won = match?.teamWon;
+    const formHtml = (p.last5 || []).map((match, idx) => {
+      if (match?.played === null)  return '<div class="fd ab">❌</div>';
+      if (match?.played === false) return '<div class="fd b">🪑</div>';
+      const won   = match?.teamWon;
       const label = won === true ? 'V' : won === false ? 'D' : 'N';
       const cls   = won === true ? 'g' : won === false ? 'r' : 'x';
-      return `<div class="fd ${cls}">${label}</div>`;
+      return '<div class="fd ' + cls + '">' + label + '</div>';
     }).join('');
     const sc = p.signal > 88 ? 'var(--o)' : p.signal > 78 ? 'var(--g)' : 'var(--b)';
 
     const card = document.createElement('div');
     card.className = 'pc';
     card.style.animationDelay = (i*0.06)+'s';
-    card.style.cursor = 'pointer';
-    card.onclick = () => {
-      const pid = p.id.startsWith('t') ? (p.espnId || p.id) : p.id;
-      const url = `player-cdm.html?id=${pid}&name=${encodeURIComponent(p.name)}&teamName=${encodeURIComponent(p.teamName||'')}&photo=${encodeURIComponent(p.photo||'')}`;
-      window.location.href = url;
-    };
-    card.innerHTML = `
-      <div class="hot-tag">🔥 EN FORME</div>
-      <div class="ct">
-        <div class="pinfo">
-          <div class="pav">
-            <img src="${p.photo||''}" referrerpolicy="no-referrer" onerror="this.outerHTML='⚽'" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>
-          </div>
-          <div>
-            <div class="pname">${p.name}</div>
-            <div class="pteam">${p.teamName||p.team||''} <img src="https://flagcdn.com/w20/${p.leagueFlag}.png" alt="${p.leagueFlagAlt}" style="width:16px;height:11px;object-fit:cover;border-radius:2px;vertical-align:middle;margin-left:2px"></div>
-          </div>
-        </div>
-        <div class="pscore">
-          <div class="pscore-n" style="color:${sc}">${p.signal}</div>
-          <div class="pscore-l">TendScore</div>
-        </div>
-      </div>
-      <div class="formrow">
-        <span class="fl">${last5.length} match${last5.length>1?'s':''}</span>
-        <div class="fdots">${formHtml}</div>
-      </div>
-      <div class="chips">
-        <div class="chip"><div class="chip-n" style="color:var(--g)">${recent_g}</div><div class="chip-l">Buts</div></div>
-        <div class="chip"><div class="chip-n" style="color:var(--b)">${recent_a}</div><div class="chip-l">Passes</div></div>
-        <div class="chip"><div class="chip-n" style="color:var(--o)">${recent_g + recent_a}</div><div class="chip-l">GA/5J</div></div>
-        <div class="chip"><div class="chip-n" style="color:var(--y)">${((recent_g+recent_a)/Math.max(Math.min(last5.length||1,5),1)).toFixed(2)}</div><div class="chip-l">Moy.</div></div>
-      </div>
-      <div class="sigbar">
-        <div class="sigbar-head"><span>TendScore</span><span>${p.signal}%</span></div>
-        <div class="track"><div class="fill" style="width:${p.signal}%"></div></div>
-      </div>
-      <div class="ltag" style="display:flex;align-items:center;justify-content:space-between;">
-        <div><span class="lpill ${p.leagueCls}">${p.leagueLabel}</span></div>
-        <a href="https://www.winamax.fr/paris-sportifs/sports/1?code=CMONBN" target="_blank" rel="noopener sponsored" onclick="event.stopPropagation()"
-           style="font-size:10px;font-weight:700;color:#fff;background:#e30613;padding:4px 10px;border-radius:4px;text-decoration:none;white-space:nowrap;">
-          Voir la cote →
-        </a>
-      </div>
-    `;
+    card.onclick = () => openCardModal(p);
+    card.innerHTML =
+      '<div class="hot-tag">🔥 EN FORME</div>'
+      + '<div class="ct">'
+      +   '<div class="pinfo">'
+      +     '<div class="pav"><img src="' + (p.photo||'') + '" referrerpolicy="no-referrer" onerror="this.outerHTML=\'⚽\'" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/></div>'
+      +     '<div>'
+      +       '<div class="pname">' + p.name + '</div>'
+      +       '<div class="pteam">' + (p.teamName||'') + (p.leagueFlag ? ' <img src="https://flagcdn.com/w20/' + p.leagueFlag + '.png" style="width:16px;height:11px;object-fit:cover;border-radius:2px;vertical-align:middle;margin-left:2px">' : '') + '</div>'
+      +     '</div>'
+      +   '</div>'
+      +   '<div class="pscore"><div class="pscore-n" style="color:' + sc + '">' + p.signal + '</div><div class="pscore-l">TendScore</div></div>'
+      + '</div>'
+      + '<div class="formrow"><span class="fl">' + last5.length + ' match' + (last5.length>1?'s':'') + '</span><div class="fdots">' + formHtml + '</div></div>'
+      + '<div class="chips">'
+      +   '<div class="chip"><div class="chip-n" style="color:var(--g)">' + recent_g + '</div><div class="chip-l">Buts</div></div>'
+      +   '<div class="chip"><div class="chip-n" style="color:var(--b)">' + recent_a + '</div><div class="chip-l">Passes</div></div>'
+      +   '<div class="chip"><div class="chip-n" style="color:var(--o)">' + (recent_g+recent_a) + '</div><div class="chip-l">GA/5J</div></div>'
+      +   '<div class="chip"><div class="chip-n" style="color:var(--y)">' + ((recent_g+recent_a)/Math.max(Math.min(last5.length||1,5),1)).toFixed(2) + '</div><div class="chip-l">Moy.</div></div>'
+      + '</div>'
+      + '<div class="sigbar"><div class="sigbar-head"><span>TendScore</span><span>' + p.signal + '%</span></div><div class="track"><div class="fill" style="width:' + p.signal + '%"></div></div></div>'
+      + '<div class="ltag" style="display:flex;align-items:center;justify-content:space-between;">'
+      +   '<div><span class="lpill cdm">CDM</span> Coupe du Monde</div>'
+      +   '<a href="https://www.winamax.fr/paris-sportifs/sports/1?code=CMONBN" target="_blank" rel="noopener sponsored" onclick="event.stopPropagation()" style="font-size:10px;font-weight:700;color:#fff;background:#e30613;padding:4px 10px;border-radius:4px;text-decoration:none;white-space:nowrap;">Voir la cote →</a>'
+      + '</div>';
     c.appendChild(card);
   });
-  if (hot.length === 0) c.innerHTML = '<div style="color:var(--m);font-size:13px;padding:16px">Aucun joueur "en forme" pour cette sélection.</div>';
+  if (hot.length === 0) c.innerHTML = '<div style="color:var(--m);font-size:13px;padding:16px">Aucun joueur disponible pour cette sélection.</div>';
 }
 
-function renderRanking(page=1) {
-  currentPageCDM = page;
-  const table = document.getElementById('rankingTable');
-  const empty = document.getElementById('rankingEmpty');
-
-  const source = cdmPlayers.length ? cdmPlayers : RANKING_PLAYERS;
-  const sorted = [...source]
-    .sort((a,b) => (b.totalGoals+b.totalAssists) - (a.totalGoals+a.totalAssists));
-
-  const existingRows = table.querySelectorAll('.ranking-row');
-  existingRows.forEach(r => r.remove());
-
-  if (!sorted.length) {
-    if (empty) empty.style.display = 'block';
-    renderPaginationCDM(0, page);
-    return;
-  }
-  if (empty) empty.style.display = 'none';
-
-  const total = Math.min(sorted.length, 40);
-  const start = (page - 1) * CDM_PAGE_SIZE;
-  const slice = sorted.slice(start, Math.min(start + CDM_PAGE_SIZE, total));
+// ── CLASSEMENT ──────────────────────────────────────────────────────────────
+function renderTable(list, photosMap, page) {
+  page = page || 1;
+  currentPageIndex = page;
+  const tbody = document.getElementById('tbody');
+  tbody.innerHTML = '';
+  const total = Math.min(list.length, 40);
+  const start = (page - 1) * PAGE_SIZE;
+  const slice = list.slice(start, start + PAGE_SIZE);
 
   slice.forEach((p, i) => {
-    const rank = start + i + 1;
-    const photo = p.photo || '';
-    const tr = document.createElement('div');
-    tr.className = 'ranking-row';
+    const rank  = start + i + 1;
+    const photo = photosMap?.[p.id] || photosMap?.[String(p.id)] || photosMap?.[p.espnId] || photosMap?.[String(p.espnId)] || p.photo || '';
+    const flag  = p.leagueFlag ? '<img src="https://flagcdn.com/w20/' + p.leagueFlag + '.png" style="width:16px;height:11px;object-fit:cover;border-radius:2px;vertical-align:middle;margin-right:4px">' : '';
+    const tr = document.createElement('tr');
+    tr.style.cursor = 'pointer';
     tr.onclick = () => {
-      const pid = (p.espnId) ? p.espnId : p.id;
-      window.location.href = `player-cdm.html?id=${pid}&name=${encodeURIComponent(p.name)}&teamName=${encodeURIComponent(p.teamName||'')}&photo=${encodeURIComponent(p.photo||'')}`;
+      const pid = (p.id && String(p.id).startsWith('r')) ? (p.espnId || p.id) : p.id;
+      window.location.href = 'player-cdm.html?id=' + pid + '&name=' + encodeURIComponent(p.name) + '&teamName=' + encodeURIComponent(p.teamName||'') + '&photo=' + encodeURIComponent(photo);
     };
-    tr.innerHTML = `
-      <div class="rk ${rank<=3?'top':''}">${rank}</div>
-      <div class="rplayer">
-        <div class="ravatar">
-          ${photo ? '<img src="' + photo + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%">' : '⚽'}
-        </div>
-        <div>
-          <div class="rname">${p.name}</div>
-          <div class="rteam">${p.teamName||''}</div>
-        </div>
-      </div>
-      <div class="rnum g">${p.totalGoals||0}</div>
-      <div class="rnum a">${p.totalAssists||0}</div>
-      <div class="rnum" style="color:var(--muted2)">${p.totalGames||0}</div>
-      <div class="rnum" style="color:var(--gold)">${p.avg||0}</div>
-    `;
-    table.appendChild(tr);
+    const g = p.totalGoals  || 0;
+    const a = p.totalAssists || 0;
+    const n = p.totalGames  || 0;
+    const m = p.avg         || (n > 0 ? ((g+a)/n).toFixed(2) : '0.00');
+    tr.innerHTML =
+      '<td class="rk">' + rank + '</td>'
+      + '<td style="width:36px;padding:6px 4px"><div style="width:32px;height:32px;border-radius:50%;overflow:hidden;background:var(--s3);display:flex;align-items:center;justify-content:center;font-size:14px">'
+      + (photo ? '<img src="' + photo + '" style="width:100%;height:100%;object-fit:cover" referrerpolicy="no-referrer" onerror="this.outerHTML=\'⚽\'">' : '⚽')
+      + '</div></td>'
+      + '<td><div class="pn">' + p.name + '</div><div class="pt">' + (p.teamName||'') + '</div></td>'
+      + '<td>' + flag + '<span style="font-size:11px;color:var(--m2)">' + (p.teamName||'') + '</span></td>'
+      + '<td><span class="num g">' + g + '</span></td>'
+      + '<td><span class="num a">' + a + '</span></td>'
+      + '<td><span class="num" style="color:var(--m2)">' + n + '</span></td>'
+      + '<td><span class="num" style="color:var(--y)">' + m + '</span></td>';
+    tbody.appendChild(tr);
   });
-  renderPaginationCDM(sorted.length, page);
-}
 
-function renderPaginationCDM(total, page) {
-  const pag = document.getElementById('paginationCDM');
+  // Pagination
+  const pages = Math.ceil(total / PAGE_SIZE);
+  const pag   = document.getElementById('paginationIndex');
   if (!pag) return;
   pag.innerHTML = '';
-  const pages = Math.ceil(Math.min(total, 40) / CDM_PAGE_SIZE);
   if (pages <= 1) return;
-  const start = (page - 1) * CDM_PAGE_SIZE;
-
   const prev = document.createElement('button');
-  prev.className = 'pag-btn';
+  prev.className = 'pag-btn' + (page === 1 ? ' disabled' : '');
   prev.textContent = '← Précédent';
   prev.style.opacity = page === 1 ? '0.4' : '1';
-  prev.onclick = () => { if (page > 1) renderRanking(page - 1); };
+  prev.onclick = () => { if (page > 1) renderTable(list, photosMap, page - 1); };
   pag.appendChild(prev);
-
   const info = document.createElement('span');
   info.className = 'pag-info';
-  info.textContent = `${start + 1}–${Math.min(start + CDM_PAGE_SIZE, Math.min(total, 40))} / ${Math.min(total, 40)}`;
+  info.textContent = (start + 1) + '–' + Math.min(start + PAGE_SIZE, total) + ' / ' + total;
   pag.appendChild(info);
-
   const next = document.createElement('button');
-  next.className = 'pag-btn';
+  next.className = 'pag-btn' + (page === pages ? ' disabled' : '');
   next.textContent = 'Suivant →';
   next.style.opacity = page === pages ? '0.4' : '1';
-  next.onclick = () => { if (page < pages) renderRanking(page + 1); };
+  next.onclick = () => { if (page < pages) renderTable(list, photosMap, page + 1); };
   pag.appendChild(next);
 }
 
-// ── GROUPES / NATIONS ──────────────────────────────────────────────────────
+// ── MODAL CARTE JOUEUR CDM ───────────────────────────────────────────────────
+function closeCardModal() {
+  document.getElementById('cardModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function openCardModal(player) {
+  const fixtures = window._fixtures || [];
+
+  const sc = player.signal > 88 ? 'var(--o)' : player.signal > 78 ? 'var(--g)' : 'var(--b)';
+  document.getElementById('cmAvatar').innerHTML = player.photo
+    ? '<img src="' + player.photo + '" referrerpolicy="no-referrer" onerror="this.outerHTML=\'⚽\'">'
+    : '⚽';
+  document.getElementById('cmName').textContent  = player.name;
+  document.getElementById('cmTeam').textContent  = player.teamName || '';
+  document.getElementById('cmScore').style.color = sc;
+  document.getElementById('cmScore').textContent = player.signal;
+  document.getElementById('cmBadge').innerHTML   = '<span class="lpill cdm">CDM</span>';
+
+  const pid    = String(player.id);
+  const history = [];
+  for (const match of (window._matches || [])) {
+    const mp = (match.players || []).find(pl => String(pl.id) === pid);
+    if (!mp) continue;
+    history.push({
+      date:      match.date,
+      leagueId:  match.leagueId,
+      homeTeam:  match.homeTeam,
+      awayTeam:  match.awayTeam,
+      homeGoals: match.homeGoals,
+      awayGoals: match.awayGoals,
+      goals:     mp.goals   || 0,
+      assists:   mp.assists || 0,
+      played:    mp.played,
+      absenceReason: mp.absenceReason || null,
+      teamWon:   mp.teamWon,
+    });
+  }
+  history.sort((a, b) => new Date(b.date) - new Date(a.date));
+  const last5 = history.slice(0, 5);
+  const g   = last5.reduce((s, m) => s + (m.goals||0), 0);
+  const a   = last5.reduce((s, m) => s + (m.assists||0), 0);
+  const moy = last5.length ? ((g+a)/last5.length).toFixed(2) : '0.00';
+
+  const nextMatch = fixtures.find(f =>
+    f.homeTeam === player.teamName || f.awayTeam === player.teamName
+  );
+  const predResult = calcPredScore(player, fixtures, allPlayers);
+  const predLabel  = getPredLabel(predResult.score);
+
+  let html = '';
+
+  // Stats chips
+  html += '<div class="cm-chips">'
+    + '<div class="cm-chip"><div class="cm-chip-n" style="color:var(--g)">' + g + '</div><div class="cm-chip-l">Buts</div></div>'
+    + '<div class="cm-chip"><div class="cm-chip-n" style="color:var(--b)">' + a + '</div><div class="cm-chip-l">Passes</div></div>'
+    + '<div class="cm-chip"><div class="cm-chip-n" style="color:var(--o)">' + (g+a) + '</div><div class="cm-chip-l">GA/5J</div></div>'
+    + '<div class="cm-chip"><div class="cm-chip-n" style="color:var(--y)">' + moy + '</div><div class="cm-chip-l">Moy.</div></div>'
+    + '</div>';
+
+  // Historique
+  html += '<div class="cm-section">Historique</div>';
+  if (!last5.length) {
+    html += '<div style="color:var(--m);font-size:12px">Aucun match enregistré</div>';
+  } else {
+    last5.forEach(m => {
+      const date     = new Date(m.date||'').toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'});
+      const won      = m.teamWon;
+      const label    = won === true ? 'V' : won === false ? 'D' : 'N';
+      const rcls     = won === true ? 'var(--g)' : won === false ? '#ff5050' : 'var(--m)';
+      const rbg      = won === true ? 'rgba(0,229,160,.15)' : won === false ? 'rgba(255,80,80,.15)' : 'rgba(30,34,48,.5)';
+      const home     = m.homeTeam || player.teamName;
+      const away     = m.awayTeam || '—';
+      const scoreStr = m.homeGoals !== undefined ? m.homeGoals + '-' + m.awayGoals : '—';
+
+      let pills = '';
+      if (m.played === null)        pills += '<span class="cm-stat-pill" style="background:rgba(107,114,128,.15);color:#6b7280">❌ Absent</span>';
+      else if (m.played === false)  pills += '<span class="cm-stat-pill" style="background:rgba(107,114,128,.15);color:#6b7280">🪑 Banc</span>';
+      else {
+        if (m.goals   > 0) pills += '<span class="cm-stat-pill" style="background:rgba(0,229,160,.15);color:var(--g)">⚽ ' + m.goals + 'B</span>';
+        if (m.assists > 0) pills += '<span class="cm-stat-pill" style="background:rgba(94,129,244,.15);color:var(--b)">🎯 ' + m.assists + 'P</span>';
+      }
+
+      html += '<div class="cm-match-row">'
+        + '<span class="cm-match-date">' + date + '</span>'
+        + '<span class="lpill cdm" style="font-size:9px;padding:1px 5px">CDM</span>'
+        + '<div class="cm-match-teams">' + home + ' <span style="color:var(--m)">vs</span> ' + away + '</div>'
+        + '<span class="cm-match-score">' + scoreStr + '</span>'
+        + pills
+        + '<div class="cm-result" style="background:' + rbg + ';color:' + rcls + '">' + label + '</div>'
+        + '</div>';
+    });
+  }
+
+  // Prochain match
+  html += '<div class="cm-section">Prochain match</div>';
+  if (!nextMatch) {
+    html += '<div style="color:var(--m);font-size:12px">Aucun match programmé</div>';
+  } else {
+    const isHome   = nextMatch.homeTeam === player.teamName;
+    const dateStr  = new Date(nextMatch.date).toLocaleDateString('fr-FR',{weekday:'short',day:'2-digit',month:'2-digit'});
+    const predColor = predLabel ? predLabel.color : '#9ca3af';
+    const predText  = predLabel ? predLabel.label  : '—';
+    const barW      = Math.round(predResult.score) + '%';
+    html += '<div class="cm-next">'
+      + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">'
+      +   '<span class="lpill cdm" style="font-size:9px;padding:1px 5px">CDM</span>'
+      +   '<span class="cm-next-match">' + nextMatch.homeTeam + ' vs ' + nextMatch.awayTeam + '</span>'
+      + '</div>'
+      + '<div class="cm-next-date">' + dateStr + '</div>'
+      + '<div style="display:flex;align-items:center;gap:8px;margin-top:8px">'
+      +   '<div class="cm-pred-bar" style="flex:1"><div class="cm-pred-fill" style="width:' + barW + ';background:' + predColor + '"></div></div>'
+      +   '<span style="font-size:12px;font-weight:700;color:' + predColor + ';white-space:nowrap">' + predText + '</span>'
+      + '</div>'
+      + '</div>';
+  }
+
+  // Lien fiche joueur
+  const epid = (player.id && String(player.id).startsWith('t')) ? (player.espnId || player.id) : player.id;
+  html += '<a class="cm-view-btn" href="player-cdm.html?id=' + epid + '&name=' + encodeURIComponent(player.name) + '&teamName=' + encodeURIComponent(player.teamName||'') + '&photo=' + encodeURIComponent(player.photo||'') + '">Voir la fiche complète →</a>';
+
+  document.getElementById('cmBody').innerHTML = html;
+  document.getElementById('cardModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+// ── GROUPES / 48 NATIONS ────────────────────────────────────────────────────
 const GROUPS = [
   { name: "Groupe A", nations: ["Mexique","Afrique du Sud","Corée du Sud","Tchéquie"] },
   { name: "Groupe B", nations: ["Canada","Bosnie-Herzégovine","Qatar","Suisse"] },
@@ -984,7 +1026,6 @@ const GROUPS = [
   { name: "Groupe L", nations: ["Angleterre","Croatie","Ghana","Panama"] },
 ];
 
-// Mapping nom → ID ESPN pour les logos
 const NATION_IDS = {
   "Mexique":"203","Afrique du Sud":"467","Corée du Sud":"451","Tchéquie":"450",
   "Canada":"206","Bosnie-Herzégovine":"452","Qatar":"4398","Suisse":"475",
@@ -1014,32 +1055,26 @@ function getLogoUrl(name) {
     "2570":"uzb","208":"col","448":"eng","477":"cro","4469":"gha","2659":"pan"
   };
   const slug = slugMap[id];
-  if (!slug) return "https://a.espncdn.com/i/teamlogos/soccer/500/" + id + ".png";
-  return "https://a.espncdn.com/i/teamlogos/countries/500/" + slug + ".png";
+  if (!slug) return 'https://a.espncdn.com/i/teamlogos/soccer/500/' + id + '.png';
+  return 'https://a.espncdn.com/i/teamlogos/countries/500/' + slug + '.png';
 }
 
 function renderGroups() {
   const grid = document.getElementById('groupsGrid');
   if (!grid) return;
   grid.innerHTML = '';
-
   GROUPS.forEach(function(g) {
-    // Titre du groupe
     const groupDiv = document.createElement('div');
     groupDiv.style.cssText = 'margin-bottom:32px;';
-
     const title = document.createElement('div');
-    title.style.cssText = 'font-family:Bebas Neue,sans-serif;font-size:22px;letter-spacing:3px;color:var(--gold);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(212,168,67,0.2);';
+    title.style.cssText = 'font-family:Bebas Neue,sans-serif;font-size:22px;letter-spacing:3px;color:var(--g);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(212,168,67,0.2);';
     title.textContent = g.name;
     groupDiv.appendChild(title);
-
-    // Grille des 4 équipes
     const teamsRow = document.createElement('div');
     teamsRow.style.cssText = 'display:grid;grid-template-columns:repeat(4,1fr);gap:10px;';
-
     g.nations.forEach(function(n) {
       const logo = getLogoUrl(n);
-      const id = NATION_IDS[n];
+      const id   = NATION_IDS[n];
       const card = document.createElement('div');
       card.style.cssText = 'background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:16px 12px;text-align:center;cursor:pointer;transition:border-color .2s,transform .15s;';
       card.onmouseover = function(){ this.style.borderColor='rgba(212,168,67,0.35)'; this.style.transform='translateY(-2px)'; };
@@ -1050,14 +1085,13 @@ function renderGroups() {
         : '<div style="font-size:28px;margin-bottom:6px;">🏳️</div><div style="font-size:12px;font-weight:500;">' + n + '</div>';
       teamsRow.appendChild(card);
     });
-
     groupDiv.appendChild(teamsRow);
     grid.appendChild(groupDiv);
   });
 }
 
 renderGroups();
-loadData();
+init();
 </script>
 </body>
 </html>
