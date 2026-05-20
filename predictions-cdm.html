@@ -338,7 +338,7 @@ function render() {
         <div style="font-size:13px;color:var(--m2)">Classement des joueurs CDM 2026 inscrits</div>
       </div>
       <div class="match-section">
-        <div class="players-list">${match.players.length > 0 ? playersHtml : '<div style="padding:16px 20px;font-size:13px;color:var(--m);font-style:italic">📊 Données insuffisantes pour établir des prédictions sur ce match</div>'}</div>
+        <div class="players-list">${playersHtml || '<div style="padding:16px 20px;font-size:13px;color:var(--m);font-style:italic">📊 Données insuffisantes pour ce filtre</div>'}</div>
       </div>`;
 
     // Animer les barres
