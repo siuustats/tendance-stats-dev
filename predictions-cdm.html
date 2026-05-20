@@ -13,6 +13,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <title>Prédictions CDM 2026 — Joueurs à Surveiller | Tendance Stats</title>
 <meta name="description" content="Prédictions Coupe du Monde 2026 basées sur la forme des joueurs et des équipes. Découvrez les joueurs les plus susceptibles de marquer sur les prochains matchs CDM.">
 <meta name="robots" content="index, follow">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔮</text></svg>">
 <link rel="canonical" href="https://tendancestats.com/predictions-cdm.html">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -177,7 +178,7 @@ body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif
 // Groupes CDM 2026
 const CDM_GROUPS = {
   A:['Mexique','Afrique du Sud','Corée du Sud','Tchéquie'],
-  B:['Canada','Bosnie','Qatar','Suisse'],
+  B:['Canada','Bosnie-Herzégovine','Qatar','Suisse'],
   C:['Brésil','Maroc','Haïti','Écosse'],
   D:['États-Unis','Paraguay','Australie','Turquie'],
   E:['Allemagne','Curaçao',"Côte d'Ivoire",'Équateur'],
@@ -290,7 +291,13 @@ function render() {
       .slice(0, 12);
 
     const playersHtml = sorted.length ? sorted.map(p => {
-      const score = Math.min(98, Math.round((p.signal||50) * 0.8));
+      // Score pré-CDM : basé sur totalGoals+Assists CDM si dispo, sinon signal
+      const gaTot = (p.totalGoals||0) + (p.totalAssists||0);
+      const ts    = p.trendScore || p.signal || 0;
+      const rawScore = gaTot > 0
+        ? Math.min(100, (gaTot * 12) + (ts * 0.6))
+        : Math.min(100, (ts * 0.7));
+      const score = Math.min(98, Math.round(rawScore * 0.70 + 50 * 0.30));
       const predLabel = getPredLabel(score);
       if (!predLabel) return '';
       const goals   = p.totalGoals || 0;
@@ -435,17 +442,19 @@ async function init() {
     const data   = await dataRes.json();
     const photos = photosRes?.ok ? await photosRes.json() : {};
 
-    allPlayers  = (data.players || []).map(p => ({
-      ...p, photo: photos[p.id] || photos[String(p.id)] || p.photo || ''
-    }));
-    const todayStr = new Date().toISOString().slice(0, 10);
-    allFixtures = (data.fixtures || []).filter(f => f.date && f.date.slice(0, 10) >= todayStr);
-
-    // Joueurs CDM inscrits (RANKING_PLAYERS) avec photos injectées
-    allCdmPlayers = RANKING_PLAYERS.map(p => ({
+    // Injecter photos par id, String(id) et espnId
+    allPlayers = (data.players || []).map(p => ({
       ...p,
-      photo: photos[p.espnId] || photos[String(p.espnId)] || p.photo || ''
+      photo: photos[p.id] || photos[String(p.id)] || photos[p.espnId] || photos[String(p.espnId)] || p.photo || ''
     }));
+
+    const todayStr = new Date().toISOString().slice(0, 10);
+    allFixtures = (data.fixtures || []).filter(f => f.leagueId === 6 && f.date && f.date.slice(0, 10) >= todayStr);
+
+    // allCdmPlayers = joueurs leagueId===6 depuis data.json (réels ou fictifs dev)
+    // Fallback sur liste hardcodée si data.json n'en a pas encore
+    const cdmFromData = allPlayers.filter(p => p.leagueId === 6);
+    allCdmPlayers = cdmFromData.length ? cdmFromData : [];
 
     render();
   } catch(e) {
