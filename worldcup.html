@@ -52,6 +52,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 * { margin:0; padding:0; box-sizing:border-box; }
 body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden; }
 
+/* grid bg — identique index */
+body::before {
+  content:''; position:fixed; inset:0; z-index:0;
+  background-image:
+    radial-gradient(circle at 20% 50%, rgba(212,168,67,0.03) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(94,129,244,0.03) 0%, transparent 50%),
+    linear-gradient(rgba(255,255,255,0.008) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.008) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 48px 48px, 48px 48px;
+}
+
 /* ── HERO ── */
 .hero {
   position:relative; min-height:100vh;
@@ -128,6 +139,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 
 /* ── WRAP & SECTIONS (identique index) ── */
 .wrap { position:relative; z-index:1; max-width:1280px; margin:0 auto; padding:0 24px; }
+.main-content { position:relative; z-index:1; }
 
 /* ── KPIs (identique index, couleurs dorées) ── */
 .kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:32px; }
@@ -152,7 +164,9 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 /* ── SECTION BLOCKS alternés (identique index) ── */
 .section-block { padding:32px 0 0; }
 .section-block.alt {
-  background:var(--s1); border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+  background:rgba(15,13,16,0.55);
+  border-top:1px solid rgba(212,168,67,0.07);
+  border-bottom:1px solid rgba(212,168,67,0.07);
   padding:32px 24px; margin:0 -24px;
 }
 
@@ -374,7 +388,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </section>
 
 <!-- CONTENU PRINCIPAL -->
-<div class="wrap">
+<div class="wrap" style="position:relative;z-index:1">
 
   <!-- KPIs -->
   <div id="content" style="padding-top:40px">
@@ -420,7 +434,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </div><!-- /content -->
 
   <!-- NATIONS / GROUPES -->
-  <div style="padding-top:40px">
+  <div style="padding-top:40px;position:relative;z-index:1">
     <div class="sh"><div class="st">🌍 Les 48 nations</div><div class="sb">CDM 2026</div></div>
     <div id="groupsGrid"></div>
   </div>
