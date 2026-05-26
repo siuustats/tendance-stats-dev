@@ -10,19 +10,20 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!-- End Google Tag Manager -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tendance Stats — Joueurs en forme & Statistiques Football 2026</title>
+<title>TendanceStats</title>
   <meta name="description" content="Découvrez les joueurs de football en forme, en série et en confiance. Statistiques en temps réel, TendScore et tendances pour la Ligue 1, Premier League, Liga, Serie A et plus.">
   <meta name="keywords" content="statistiques football, joueurs en forme, joueurs en série, Premier League stats, Ligue 1 buteurs, tendance football, pronostic football, joueur en confiance">
   <meta name="author" content="Tendance Stats">
   <meta name="robots" content="index, follow">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Tendance Stats">
-  <meta property="og:title" content="Tendance Stats — Joueurs en forme & Statistiques Football 2026">
+  <meta property="og:title" content="TendanceStats — Joueurs en forme & Statistiques Football 2026">
   <meta property="og:description" content="Découvrez les joueurs de football en forme, en série et en confiance. Statistiques en temps réel, TendScore et tendances pour la Ligue 1, Premier League, Liga, Serie A et plus.">
   <meta property="og:url" content="https://tendancestats.com">
-  <meta property="og:image" content="https://tendancestats.com/og-image.png">
+  <meta property="og:image" content="https://tendancestats.com/logo.png">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Tendance Stats — Joueurs en forme & Statistiques Football 2026">
+  <meta name="twitter:title" content="TendanceStats — Joueurs en forme & Statistiques Football 2026">
+  <meta name="twitter:image" content="https://tendancestats.com/logo.png">
   <meta name="twitter:description" content="Découvrez les joueurs de football en forme, en série et en confiance. Statistiques en temps réel, TendScore et tendances pour la Ligue 1, Premier League, Liga, Serie A et plus.">
   <link rel="canonical" href="https://tendancestats.com">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>">
@@ -453,14 +454,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <h2 style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:#9ca3af;margin-bottom:12px">Statistiques Football & Joueurs en Forme — Saison 2025/2026</h2>
   <p style="font-size:13px;color:#6b7280;line-height:1.8;max-width:900px">
     Tendance Stats suit en temps réel les joueurs les plus en forme de la saison sur les 5 grands championnats européens : <strong style="color:#9ca3af">Premier League</strong>, <strong style="color:#9ca3af">Ligue 1</strong>, <strong style="color:#9ca3af">La Liga</strong>, <strong style="color:#9ca3af">Serie A</strong> et <strong style="color:#9ca3af">Bundesliga</strong>, ainsi que la Ligue des Champions, l'Europa League et la Conference League.
-    Notre indicateur exclusif <strong style="color:#00e5a0">TendScore</strong> identifie les joueurs en série, en confiance et décisifs sur leurs 5 derniers matchs — buteurs, passeurs et joueurs influents à surveiller pour vos pronostics et paris sportifs.
+    Notre indicateur exclusif <strong style="color:#9ca3af">TendScore</strong> identifie les joueurs en série, en confiance et décisifs sur leurs 5 derniers matchs — buteurs, passeurs et joueurs influents à surveiller pour vos pronostics et paris sportifs.
     Données mises à jour après chaque journée de matchs.
   </p>
 </div>
 <footer>
   <div class="wrap">
-    <strong style="color:var(--text)">Tendance Stats</strong> &nbsp;·&nbsp;
-    Données : <span>sources publiques</span> &nbsp;·&nbsp;
+    <strong style="color:#9ca3af">Tendance Stats</strong> &nbsp;·&nbsp;
+    Données : <span style="color:#9ca3af">sources publiques</span> &nbsp;·&nbsp;
     Saison 2025/2026 &nbsp;·&nbsp;
     <span id="last-update"></span> &nbsp;·&nbsp;
     <a href="stats-saison-2026.html" style="color:var(--m);font-size:11px;text-decoration:none;opacity:0.6;transition:opacity .2s" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.6'">Stats détaillées →</a>
@@ -637,19 +638,37 @@ function openCardModal(player) {
 
   // Détecter les ligues jouées par le joueur
   const leaguesPlayed = new Set();
+  // Depuis last5
   (player.last5 || []).forEach(m => { if (m.leagueId) leaguesPlayed.add(m.leagueId); });
-  const euroPlayed = [...leaguesPlayed].filter(id => euroIds.includes(id));
-  const domLeague  = player.leagueId && !euroIds.includes(player.leagueId) ? player.leagueId : null;
+  // Depuis allLeagueIds (si disponible)
+  (player.allLeagueIds || []).forEach(id => leaguesPlayed.add(id));
+  // Toujours inclure la ligue principale du joueur
+  if (player.leagueId) leaguesPlayed.add(player.leagueId);
 
-  // Construire les filtres
-  const filters = [];
-  if (domLeague || euroPlayed.length) {
-    if (domLeague) filters.push({ id: domLeague, label: LMAP_MODAL[domLeague]?.l || 'Dom' });
-    euroPlayed.forEach(id => filters.push({ id, label: LMAP_MODAL[id]?.l || 'EUR' }));
-    if (filters.length >= 2) filters.unshift({ id: 'all', label: 'Tous' });
+  const euroPlayed = [...leaguesPlayed].filter(id => euroIds.includes(id));
+  // Ligue domestique = leagueId principal si c'est bien une ligue domestique
+  // Sinon chercher dans last5 une ligue non-euro
+  let domLeague = player.leagueId && !euroIds.includes(player.leagueId) ? player.leagueId : null;
+  if (!domLeague) {
+    // Chercher depuis last5
+    const domFromLast5 = [...leaguesPlayed].find(id => !euroIds.includes(id));
+    // Chercher depuis _leagueStats (tous les matchs de saison)
+    const pid = String(player.id);
+    const allStatLeagues = Object.keys(window._leagueStats?.[pid] || {}).map(Number);
+    const domFromStats = allStatLeagues.find(id => !euroIds.includes(id));
+    domLeague = domFromLast5 || domFromStats || null;
+    // Ajouter aussi les ligues euro depuis _leagueStats
+    allStatLeagues.filter(id => euroIds.includes(id)).forEach(id => leaguesPlayed.add(id));
   }
 
-  let activeFilter = filters.length ? filters[0].id : 'all';
+  // Construire les filtres — ligue dom + ligues euro jouées
+  const filters = [];
+  if (domLeague) filters.push({ id: String(domLeague), label: LMAP_MODAL[domLeague]?.l || 'Dom' });
+  euroPlayed.forEach(id => filters.push({ id: String(id), label: LMAP_MODAL[id]?.l || 'EUR' }));
+  // Filtre "Tous" si 2+ ligues
+  if (filters.length >= 2) filters.unshift({ id: 'all', label: 'Tous' });
+
+  let activeFilter = filters.length ? String(filters[0].id) : 'all';
 
   // Header
   const sc = player.signal > 88 ? 'var(--o)' : player.signal > 78 ? 'var(--g)' : 'var(--b)';
@@ -667,11 +686,31 @@ function openCardModal(player) {
     : '';
 
   function renderBody() {
-    const lid = activeFilter === 'all' ? null : activeFilter;
-    const filtered = lid
-      ? (player.last5 || []).filter(m => m.leagueId === lid)
-      : (player.last5 || []);
-    const last5 = filtered.slice(0, 5);
+    const lid = activeFilter === 'all' ? null : parseInt(activeFilter);
+    const pid = String(player.id);
+
+    // Toujours reconstruire depuis _matches — garantit scores + équipes + filtre par ligue
+    const history = [];
+    for (const match of (window._matches || [])) {
+      if (lid && match.leagueId !== lid) continue;
+      const mp = (match.players || []).find(pl => String(pl.id) === pid);
+      if (!mp) continue;
+      history.push({
+        date:      match.date,
+        leagueId:  match.leagueId,
+        homeTeam:  match.homeTeam,
+        awayTeam:  match.awayTeam,
+        homeGoals: match.homeGoals,
+        awayGoals: match.awayGoals,
+        goals:     mp.goals   || 0,
+        assists:   mp.assists || 0,
+        played:    mp.played,
+        absenceReason: mp.absenceReason || null,
+        teamWon:   mp.teamWon,
+      });
+    }
+    history.sort((a, b) => new Date(b.date) - new Date(a.date));
+    const last5 = history.slice(0, 5);
     const g = last5.reduce((s, m) => s + (m.goals||0), 0);
     const a = last5.reduce((s, m) => s + (m.assists||0), 0);
     const moy = last5.length ? ((g+a)/last5.length).toFixed(2) : '0.00';
@@ -717,17 +756,10 @@ function openCardModal(player) {
         const label = won === true ? 'V' : won === false ? 'D' : 'N';
         const rcls  = won === true ? 'var(--g)' : won === false ? '#ff5050' : 'var(--m)';
         const rbg   = won === true ? 'rgba(0,229,160,.15)' : won === false ? 'rgba(255,80,80,.15)' : 'rgba(30,34,48,.5)';
-        const lb2   = LMAP_MODAL[m.leagueId] || {l:'—',c:'x',color:'#9ca3af'};
-        const pTeam = player.teamName;
-        // Reconstituer les équipes depuis les fixtures ou last5
-        const matchData = (window._matches||[]).find(mx =>
-          mx.date && mx.date.startsWith((m.date||'').slice(0,10)) &&
-          (mx.homeTeam === pTeam || mx.awayTeam === pTeam) &&
-          mx.leagueId === m.leagueId
-        );
-        const home = matchData?.homeTeam || pTeam;
-        const away = matchData?.awayTeam || '—';
-        const scoreStr = matchData ? `${matchData.homeGoals}-${matchData.awayGoals}` : '—';
+        const lb2      = LMAP_MODAL[m.leagueId] || {l:'—',c:'x',color:'#9ca3af'};
+        const home     = m.homeTeam  || player.teamName;
+        const away     = m.awayTeam  || '—';
+        const scoreStr = m.homeGoals !== undefined ? `${m.homeGoals}-${m.awayGoals}` : '—';
 
         let pills = '';
         if (m.played === null) pills += '<span class="cm-stat-pill" style="background:rgba(107,114,128,.15);color:#6b7280">❌ Absent</span>';
@@ -783,7 +815,7 @@ function openCardModal(player) {
   }
 
   window._cmFilter = (filterId) => {
-    activeFilter = filterId;
+    activeFilter = String(filterId);
     renderBody();
   };
 
@@ -1169,5 +1201,7 @@ init().then(() => {
     </div>
   </div>
 
+
+<div style="text-align:center;padding:12px 24px;font-size:11px;color:#4b5563;border-top:1px solid #111318;">© 2026 TendanceStats. Tous droits réservés.</div>
 </body>
 </html>
