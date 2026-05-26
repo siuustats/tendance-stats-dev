@@ -376,6 +376,20 @@ async function init() {
   // Hero
   document.title = `${player.name} — Tendance Stats`;
   document.getElementById('playerName').textContent = player.name;
+
+  // Lien vers page statique SEO si le joueur fait partie des stars
+  const STAR_SLUGS = {"189108": "kylian-mbappe", "279615": "vinicius-jr", "303859": "jude-bellingham", "267831": "federico-valverde", "258921": "rodrygo", "372944": "lamine-yamal", "302854": "pedri", "289668": "raphinha", "318143": "gavi", "164469": "alvaro-morata", "93901": "mohamed-salah", "253989": "erling-haaland", "282679": "bukayo-saka", "198825": "ollie-watkins", "323409": "cole-palmer", "265893": "alexander-isak", "279299": "phil-foden", "208499": "leandro-trossard", "318399": "jeremy-doku", "156145": "son-heung-min", "300447": "declan-rice", "316028": "bradley-barcola", "232847": "ousmane-dembele", "358361": "desire-doue", "357719": "rayan-cherki", "349093": "warren-zaire-emery", "328098": "michael-olise", "274046": "marcus-thuram", "221728": "florian-wirtz", "233029": "jamal-musiala", "148871": "joshua-kimmich", "214616": "niclas-fullkrug", "177094": "granit-xhaka", "185695": "jonathan-tah", "193669": "victor-osimhen", "241351": "achraf-hakimi", "209568": "theo-hernandez", "182450": "nicolo-barella", "139919": "romelu-lukaku", "141746": "kevin-de-bruyne", "45843": "lionel-messi", "47431": "cristiano-ronaldo", "169880": "neymar-jr", "84274": "luka-modric", "54679": "antoine-griezmann", "193184": "bruno-fernandes", "197031": "martin-odegaard", "325354": "aurelien-tchouameni", "353765": "nico-williams", "193174": "cody-gakpo"};
+  const starSlug = STAR_SLUGS[String(playerId)];
+  if (starSlug) {
+    const starLink = document.createElement('a');
+    starLink.href = `players/${starSlug}.html`;
+    starLink.style.cssText = 'display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:11px;font-weight:600;color:var(--m2);background:var(--s2);border:1px solid var(--border);padding:5px 12px;border-radius:6px;text-decoration:none;letter-spacing:.5px;transition:all .2s';
+    starLink.innerHTML = '🔗 Page complète du joueur →';
+    starLink.onmouseover = () => { starLink.style.color = 'var(--g)'; starLink.style.borderColor = 'var(--g)'; };
+    starLink.onmouseout  = () => { starLink.style.color = 'var(--m2)'; starLink.style.borderColor = 'var(--border)'; };
+    document.querySelector('.hero-trend')?.after(starLink);
+  }
+
   document.getElementById('playerTeam').textContent = player.teamName || '—';
   const leagueEl = document.getElementById('playerLeague');
   leagueEl.textContent = player.leagueLabel || '—';
