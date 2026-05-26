@@ -404,7 +404,10 @@ function render() {
 
   function getAbsenceBadge(played, absenceReason) {
     if (played !== null && played !== undefined) return '';
-    return '<span class="stat-pill" style="background:rgba(107,114,128,0.15);color:#6b7280">❌ Absent</span>';
+    const r = (absenceReason || '').toLowerCase();
+    if (r.includes('injur') || r.includes('bless')) return `<span class="stat-pill" style="background:rgba(239,68,68,0.15);color:#f87171;font-size:9px;padding:1px 6px;border-radius:4px;font-weight:700">🏥 Blessé</span>`;
+    if (r.includes('suspend') || r.includes('red'))  return `<span class="stat-pill" style="background:rgba(239,68,68,0.15);color:#f87171;font-size:9px;padding:1px 6px;border-radius:4px;font-weight:700">🟥 Suspendu</span>`;
+    return `<span class="stat-pill" style="background:rgba(239,68,68,0.15);color:#f87171;font-size:9px;padding:1px 6px;border-radius:4px;font-weight:700">❌ Absent</span>`;
   }
 
 async function init() {
@@ -435,5 +438,7 @@ async function init() {
 
 init();
 </script>
+
+<div style="text-align:center;padding:12px 24px;font-size:11px;color:#4b5563;border-top:1px solid #111318;">© 2026 TendanceStats. Tous droits réservés.</div>
 </body>
 </html>
