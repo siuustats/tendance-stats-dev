@@ -13,7 +13,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <title>Prédictions CDM 2026 — Joueurs à Surveiller | Tendance Stats</title>
 <meta name="description" content="Prédictions Coupe du Monde 2026 basées sur la forme des joueurs et des équipes. Découvrez les joueurs les plus susceptibles de marquer sur les prochains matchs CDM.">
 <meta name="robots" content="index, follow">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔮</text></svg>">
 <link rel="canonical" href="https://tendancestats.com/predictions-cdm.html">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -178,7 +177,7 @@ body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif
 // Groupes CDM 2026
 const CDM_GROUPS = {
   A:['Mexique','Afrique du Sud','Corée du Sud','Tchéquie'],
-  B:['Canada','Bosnie-Herzégovine','Qatar','Suisse'],
+  B:['Canada','Bosnie','Qatar','Suisse'],
   C:['Brésil','Maroc','Haïti','Écosse'],
   D:['États-Unis','Paraguay','Australie','Turquie'],
   E:['Allemagne','Curaçao',"Côte d'Ivoire",'Équateur'],
@@ -291,13 +290,7 @@ function render() {
       .slice(0, 12);
 
     const playersHtml = sorted.length ? sorted.map(p => {
-      // Score pré-CDM : basé sur totalGoals+Assists CDM si dispo, sinon signal
-      const gaTot = (p.totalGoals||0) + (p.totalAssists||0);
-      const ts    = p.trendScore || p.signal || 0;
-      const rawScore = gaTot > 0
-        ? Math.min(100, (gaTot * 12) + (ts * 0.6))
-        : Math.min(100, (ts * 0.7));
-      const score = Math.min(98, Math.round(rawScore * 0.70 + 50 * 0.30));
+      const score = Math.min(98, Math.round((p.signal||50) * 0.8));
       const predLabel = getPredLabel(score);
       if (!predLabel) return '';
       const goals   = p.totalGoals || 0;
@@ -309,7 +302,7 @@ function render() {
           ${p.photo ? `<img src="${p.photo}" onerror="this.outerHTML='⚽'" alt="${p.name}">` : '⚽'}
         </div>
         <div class="pred-info">
-          <div class="pred-name" style="display:flex;align-items:center;gap:6px">${p.name} <span style="font-size:9px;background:${getRole(goals,assists).bg};color:${getRole(goals,assists).color};border-radius:4px;padding:1px 6px;font-weight:700">${getRole(goals,assists).tag}</span></div>
+          <div class="pred-name" style="display:flex;align-items:center;gap:6px">${p.name} <span style="font-size:9px;background:${getRole(goals,assists).bg};color:${getRole(goals,assists).color};border-radius:4px;padding:1px 6px;font-weight:700">${getRole(goals,assists).tag}</span>${getAbsenceBadge(p.last5?.[0]?.played, p.last5?.[0]?.absenceReason)}</div>
           <div class="pred-team">${p.teamName} · <span style="color:var(--g)">Groupe ${group}</span></div>
         </div>
         <div class="pred-right">
@@ -338,7 +331,7 @@ function render() {
         <div style="font-size:13px;color:var(--m2)">Classement des joueurs CDM 2026 inscrits</div>
       </div>
       <div class="match-section">
-        <div class="players-list">${playersHtml || '<div style="padding:16px 20px;font-size:13px;color:var(--m);font-style:italic">📊 Données insuffisantes pour ce filtre</div>'}</div>
+        <div class="players-list">${match.players.length > 0 ? playersHtml : '<div style="padding:16px 20px;font-size:13px;color:var(--m);font-style:italic">📊 Données insuffisantes pour établir des prédictions sur ce match</div>'}</div>
       </div>`;
 
     // Animer les barres
@@ -396,7 +389,7 @@ function render() {
           ${p.photo ? `<img src="${p.photo}" onerror="this.outerHTML='⚽'" alt="${p.name}">` : '⚽'}
         </div>
         <div class="pred-info">
-          <div class="pred-name" style="display:flex;align-items:center;gap:6px">${p.name} <span style="font-size:9px;background:${getRole(g5,a5).bg};color:${getRole(g5,a5).color};border-radius:4px;padding:1px 6px;font-weight:700">${getRole(g5,a5).tag}</span></div>
+          <div class="pred-name" style="display:flex;align-items:center;gap:6px">${p.name} <span style="font-size:9px;background:${getRole(g5,a5).bg};color:${getRole(g5,a5).color};border-radius:4px;padding:1px 6px;font-weight:700">${getRole(g5,a5).tag}</span>${getAbsenceBadge(p.last5?.[0]?.played, p.last5?.[0]?.absenceReason)}</div>
           <div class="pred-team">${p.teamName}</div>
         </div>
         <div class="pred-right">
@@ -430,7 +423,10 @@ function render() {
 
   function getAbsenceBadge(played, absenceReason) {
     if (played !== null && played !== undefined) return '';
-    return '<span class="stat-pill" style="background:rgba(107,114,128,0.15);color:#6b7280">❌ Absent</span>';
+    const r = (absenceReason || '').toLowerCase();
+    if (r.includes('injur') || r.includes('bless')) return `<span style="font-size:9px;background:rgba(239,68,68,0.15);color:#f87171;border-radius:4px;padding:1px 6px;font-weight:700">🏥 Blessé</span>`;
+    if (r.includes('suspend') || r.includes('red'))  return `<span style="font-size:9px;background:rgba(239,68,68,0.15);color:#f87171;border-radius:4px;padding:1px 6px;font-weight:700">🟥 Suspendu</span>`;
+    return `<span style="font-size:9px;background:rgba(239,68,68,0.15);color:#f87171;border-radius:4px;padding:1px 6px;font-weight:700">❌ Absent</span>`;
   }
 
 async function init() {
@@ -442,19 +438,17 @@ async function init() {
     const data   = await dataRes.json();
     const photos = photosRes?.ok ? await photosRes.json() : {};
 
-    // Injecter photos par id, String(id) et espnId
-    allPlayers = (data.players || []).map(p => ({
-      ...p,
-      photo: photos[p.id] || photos[String(p.id)] || photos[p.espnId] || photos[String(p.espnId)] || p.photo || ''
+    allPlayers  = (data.players || []).map(p => ({
+      ...p, photo: photos[p.id] || photos[String(p.id)] || p.photo || ''
     }));
-
     const todayStr = new Date().toISOString().slice(0, 10);
-    allFixtures = (data.fixtures || []).filter(f => f.leagueId === 6 && f.date && f.date.slice(0, 10) >= todayStr);
+    allFixtures = (data.fixtures || []).filter(f => f.date && f.date.slice(0, 10) >= todayStr);
 
-    // allCdmPlayers = joueurs leagueId===6 depuis data.json (réels ou fictifs dev)
-    // Fallback sur liste hardcodée si data.json n'en a pas encore
-    const cdmFromData = allPlayers.filter(p => p.leagueId === 6);
-    allCdmPlayers = cdmFromData.length ? cdmFromData : [];
+    // Joueurs CDM inscrits (RANKING_PLAYERS) avec photos injectées
+    allCdmPlayers = RANKING_PLAYERS.map(p => ({
+      ...p,
+      photo: photos[p.espnId] || photos[String(p.espnId)] || p.photo || ''
+    }));
 
     render();
   } catch(e) {
@@ -465,5 +459,7 @@ async function init() {
 
 init();
 </script>
+
+<div style="text-align:center;padding:12px 24px;font-size:11px;color:#4b5563;border-top:1px solid #111318;">© 2026 TendanceStats. Tous droits réservés.</div>
 </body>
 </html>
