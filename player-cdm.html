@@ -373,32 +373,50 @@ function openHistModalCdm() {
 async function init() {
   const params   = new URLSearchParams(window.location.search);
   const playerId = params.get('id');
-  const name     = params.get('name') ? decodeURIComponent(params.get('name')) : null;
-  const photo    = params.get('photo') ? decodeURIComponent(params.get('photo')) : null;
-  const teamName = params.get('teamName') ? decodeURIComponent(params.get('teamName')) : null;
+  let name     = params.get('name') ? decodeURIComponent(params.get('name')) : null;
+  let photo    = params.get('photo') ? decodeURIComponent(params.get('photo')) : null;
+  let teamName = params.get('teamName') ? decodeURIComponent(params.get('teamName')) : null;
 
-  if (!name && !playerId) {
+  if (!playerId) {
     document.body.innerHTML = '<p style="padding:40px;color:#fff">Joueur introuvable</p>';
     return;
   }
 
-  // Photo — uniquement depuis photos.json (par espnId/id) ou paramètre URL
-  // On ne touche PAS à data.json pour éviter de récupérer des stats de club
-  let playerPhoto = photo || '';
+  // Charger data.json et photos.json en parallèle
+  let photosMap = {}, dataFull = { players: [], matches: [], fixtures: [] };
   try {
-    const photosRes = await fetch('photos.json?v=' + Date.now());
-    if (photosRes.ok) {
-      const photosMap = await photosRes.json();
-      playerPhoto = photosMap[playerId] || photosMap[String(playerId)] || photo || '';
-    }
+    const [photosRes, dataRes] = await Promise.all([
+      fetch('photos.json?v=' + Date.now()).catch(() => null),
+      fetch('data.json?v=' + Date.now()),
+    ]);
+    if (photosRes?.ok) photosMap = await photosRes.json();
+    dataFull = await dataRes.json();
   } catch(e) {}
+
+  // Chercher le joueur dans data.json players (leagueId=6) pour compléter les infos manquantes
+  const cdmPlayerData = (dataFull.players || []).find(p =>
+    p.leagueId === 6 && (String(p.id) === String(playerId) || String(p.espnId) === String(playerId))
+  );
+  if (cdmPlayerData) {
+    name     = name     || cdmPlayerData.name;
+    teamName = teamName || cdmPlayerData.teamName;
+    photo    = photo    || cdmPlayerData.photo || '';
+  }
+
+  if (!name) {
+    document.body.innerHTML = '<p style="padding:40px;color:#fff">Joueur introuvable</p>';
+    return;
+  }
+
+  // Photo depuis photos.json, puis data.json, puis URL
+  let playerPhoto = photosMap[playerId] || photosMap[String(playerId)] || photo || '';
 
   const avatarEl = document.getElementById('avatar');
   if (playerPhoto) {
     avatarEl.innerHTML = `<img src="${playerPhoto}" referrerpolicy="no-referrer" onerror="this.outerHTML='⚽'" alt="${name || ''}">`;
   }
 
-  // Hero — données 100% depuis l'URL, pas depuis data.json
+  // Hero
   const displayName = name || '—';
   document.title = `${displayName} — CDM 2026 — Tendance Stats`;
   document.getElementById('playerName').textContent = displayName;
@@ -426,13 +444,18 @@ async function init() {
     teamEl.textContent = teamName || '—';
   }
   document.getElementById('playerLeague').textContent = 'CDM 2026';
+  // Badge ABSENT si joueur retiré de l'effectif
+  if (cdmPlayerData?.cdmStatus === 'absent') {
+    const absentBadge = document.createElement('span');
+    absentBadge.style.cssText = 'font-size:10px;font-weight:700;background:rgba(255,77,109,.15);color:#ff4d6d;border:1px solid rgba(255,77,109,.3);padding:2px 8px;border-radius:4px;margin-left:8px;vertical-align:middle';
+    absentBadge.textContent = 'ABSENT';
+    document.getElementById('playerLeague').appendChild(absentBadge);
+  }
   document.getElementById('trendScore').textContent = '—';
   document.getElementById('trendFill').style.width = '0%';
 
   // ── KPIs + Forme + Historique CDM ────────────────────────────────────────
   try {
-    const dataRes2 = await fetch('data.json?v=' + Date.now());
-    const dataFull = await dataRes2.json();
 
     // Chercher les matchs CDM du joueur
     const cdmMatches = [];
@@ -507,15 +530,12 @@ async function init() {
   // ── PRÉDICTION PROCHAIN MATCH CDM ──────────────────────────────────────
   const predEl = document.getElementById('predNext');
   try {
-    const dataRes = await fetch('data.json?v=' + Date.now());
-    const data = await dataRes.json();
-    const cdmPlayers = data.players?.filter(p => p.leagueId === 6) || [];
-    const fixtures   = data.fixtures || [];
+    const cdmPlayers = (dataFull.players || []).filter(p => p.leagueId === 6);
+    const fixtures   = dataFull.fixtures || [];
 
     const cdmPlayer = cdmPlayers.find(p =>
-      (playerId && (String(p.id) === String(playerId) || String(p.espnId) === String(playerId))) ||
-      (name && p.name === name && p.teamName === teamName)
-    );
+      String(p.id) === String(playerId) || String(p.espnId) === String(playerId)
+    ) || cdmPlayerData;
 
     if (!cdmPlayer) {
       predEl.innerHTML = '<div class="pred-next-no-match">Prédictions disponibles dès le début de la CDM (11 juin 2026)</div>';
@@ -629,21 +649,20 @@ async function init() {
       <span class="analysis-value" style="color:var(--y)">⏳ En attente · 11 juin 2026</span>
     </div>
   `;
-}
-
 
   // Lien vers page statique SEO si le joueur fait partie des stars
-  const STAR_SLUGS = {"189108": "kylian-mbappe", "279615": "vinicius-jr", "303859": "jude-bellingham", "267831": "federico-valverde", "258921": "rodrygo", "372944": "lamine-yamal", "302854": "pedri", "289668": "raphinha", "318143": "gavi", "164469": "alvaro-morata", "93901": "mohamed-salah", "253989": "erling-haaland", "282679": "bukayo-saka", "198825": "ollie-watkins", "323409": "cole-palmer", "265893": "alexander-isak", "279299": "phil-foden", "208499": "leandro-trossard", "318399": "jeremy-doku", "156145": "son-heung-min", "300447": "declan-rice", "316028": "bradley-barcola", "232847": "ousmane-dembele", "358361": "desire-doue", "357719": "rayan-cherki", "349093": "warren-zaire-emery", "328098": "michael-olise", "274046": "marcus-thuram", "221728": "florian-wirtz", "233029": "jamal-musiala", "148871": "joshua-kimmich", "214616": "niclas-fullkrug", "177094": "granit-xhaka", "185695": "jonathan-tah", "193669": "victor-osimhen", "241351": "achraf-hakimi", "209568": "theo-hernandez", "182450": "nicolo-barella", "139919": "romelu-lukaku", "141746": "kevin-de-bruyne", "45843": "lionel-messi", "47431": "cristiano-ronaldo", "169880": "neymar-jr", "84274": "luka-modric", "54679": "antoine-griezmann", "193184": "bruno-fernandes", "197031": "martin-odegaard", "325354": "aurelien-tchouameni", "353765": "nico-williams", "193174": "cody-gakpo"};
+  const STAR_SLUGS = {"231388":"kylian-mbappe","291281":"jude-bellingham","235818":"federico-valverde","362150":"lamine-yamal","250465":"pedri","231050":"raphinha","323702":"gavi","140416":"antoine-griezmann","312146":"nico-williams","173896":"mohamed-salah","253989":"erling-haaland","280555":"bukayo-saka","198825":"ollie-watkins","296395":"cole-palmer","235662":"alexander-isak","250787":"phil-foden","174980":"leandro-trossard","283672":"jeremy-doku","238262":"declan-rice","124091":"bruno-fernandes","231182":"kai-havertz","298008":"rayan-cherki","303748":"florian-wirtz","149981":"granit-xhaka","249524":"cody-gakpo","328238":"bradley-barcola","229744":"ousmane-dembele","345581":"warren-zaire-emery","286831":"michael-olise","240233":"achraf-hakimi","303821":"jamal-musiala","190161":"joshua-kimmich","170257":"niclas-fullkrug","188052":"jonathan-tah","220703":"ramy-bensebaini","217331":"marcus-thuram","204441":"nicolo-barella","134947":"kevin-de-bruyne","235677":"dusan-vlahovic","309273":"rasmus-hojlund","76762":"luka-modric","154446":"alvaro-morata"};
   const starSlug = STAR_SLUGS[String(playerId)];
   if (starSlug) {
     const starLink = document.createElement('a');
-    starLink.href = `players/${starSlug}.html`;
+    starLink.href = 'players/' + starSlug + '.html';
     starLink.style.cssText = 'display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:11px;font-weight:600;color:var(--m2);background:var(--s2);border:1px solid var(--border);padding:5px 12px;border-radius:6px;text-decoration:none;letter-spacing:.5px;transition:all .2s';
     starLink.innerHTML = '🔗 Page complète du joueur →';
-    starLink.onmouseover = () => { starLink.style.color = 'var(--g)'; starLink.style.borderColor = 'var(--g)'; };
-    starLink.onmouseout  = () => { starLink.style.color = 'var(--m2)'; starLink.style.borderColor = 'var(--border)'; };
+    starLink.onmouseover = function() { starLink.style.color = 'var(--g)'; starLink.style.borderColor = 'var(--g)'; };
+    starLink.onmouseout  = function() { starLink.style.color = 'var(--m2)'; starLink.style.borderColor = 'var(--border)'; };
     document.querySelector('.hero-trend')?.after(starLink);
   }
+}
 
 init().catch(console.error);
 </script>
