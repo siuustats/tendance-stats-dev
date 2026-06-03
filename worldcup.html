@@ -343,6 +343,21 @@ footer span { color:var(--g); }
   .groups-grid { grid-template-columns:1fr 1fr; gap:10px; }
 }
 </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "TendanceStats",
+  "url": "https://tendancestats.com",
+  "logo": "https://tendancestats.com/logo.png",
+  "description": "Statistiques football en temps réel, joueurs en forme, TendScore et prédictions pour la Ligue 1, Premier League, La Liga, Serie A, Bundesliga et Coupe du Monde 2026.",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://tendancestats.com/player.html?id={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
 </head>
 <body>
 <!-- Google Tag Manager (noscript) -->
@@ -523,59 +538,108 @@ let allPlayers = [];
 let currentPageIndex = 1;
 const PAGE_SIZE = 20;
 
-const TEST_PLAYERS = [
-  {id:"t1", espnId:189108,  name:"Kylian Mbappe",    teamName:"France",     signal:85, totalGoals:0, totalAssists:0, avg:0, totalGames:0, recent_goals:0, recent_assists:0, last5:[], hot:true, trendScore:85, leagueId:6, leagueName:"Coupe du Monde", leagueFlag:"fr",     leagueFlagAlt:"FR",  leagueCls:"cdm", leagueLabel:"CDM", photo:""},
-  {id:"t2", espnId:279615,  name:"Vinicius Jr",       teamName:"Bresil",     signal:83, totalGoals:0, totalAssists:0, avg:0, totalGames:0, recent_goals:0, recent_assists:0, last5:[], hot:true, trendScore:83, leagueId:6, leagueName:"Coupe du Monde", leagueFlag:"br",     leagueFlagAlt:"BR",  leagueCls:"cdm", leagueLabel:"CDM", photo:""},
-  {id:"t3", espnId:302854,  name:"Pedri",             teamName:"Espagne",    signal:80, totalGoals:0, totalAssists:0, avg:0, totalGames:0, recent_goals:0, recent_assists:0, last5:[], hot:true, trendScore:80, leagueId:6, leagueName:"Coupe du Monde", leagueFlag:"es",     leagueFlagAlt:"ES",  leagueCls:"cdm", leagueLabel:"CDM", photo:""},
-  {id:"t4", espnId:47431,   name:"Cristiano Ronaldo", teamName:"Portugal",   signal:82, totalGoals:0, totalAssists:0, avg:0, totalGames:0, recent_goals:0, recent_assists:0, last5:[], hot:true, trendScore:82, leagueId:6, leagueName:"Coupe du Monde", leagueFlag:"pt",     leagueFlagAlt:"PT",  leagueCls:"cdm", leagueLabel:"CDM", photo:""},
-  {id:"t5", espnId:253989,  name:"Erling Haaland",    teamName:"Norvege",    signal:84, totalGoals:0, totalAssists:0, avg:0, totalGames:0, recent_goals:0, recent_assists:0, last5:[], hot:true, trendScore:84, leagueId:6, leagueName:"Coupe du Monde", leagueFlag:"no",     leagueFlagAlt:"NO",  leagueCls:"cdm", leagueLabel:"CDM", photo:""},
-  {id:"t6", espnId:303859,  name:"Jude Bellingham",   teamName:"Angleterre", signal:81, totalGoals:0, totalAssists:0, avg:0, totalGames:0, recent_goals:0, recent_assists:0, last5:[], hot:true, trendScore:81, leagueId:6, leagueName:"Coupe du Monde", leagueFlag:"gb-eng", leagueFlagAlt:"EN",  leagueCls:"cdm", leagueLabel:"CDM", photo:""},
-  {id:"t7", espnId:372944,  name:"Lamine Yamal",      teamName:"Espagne",    signal:79, totalGoals:0, totalAssists:0, avg:0, totalGames:0, recent_goals:0, recent_assists:0, last5:[], hot:true, trendScore:79, leagueId:6, leagueName:"Coupe du Monde", leagueFlag:"es",     leagueFlagAlt:"ES",  leagueCls:"cdm", leagueLabel:"CDM", photo:""},
-  {id:"t8", espnId:45843,   name:"Lionel Messi",      teamName:"Argentine",  signal:88, totalGoals:0, totalAssists:0, avg:0, totalGames:0, recent_goals:0, recent_assists:0, last5:[], hot:true, trendScore:88, leagueId:6, leagueName:"Coupe du Monde", leagueFlag:"ar",     leagueFlagAlt:"AR",  leagueCls:"cdm", leagueLabel:"CDM", photo:""},
+const CDM_TEAMS = [
+  {id:'203',  name:'Mexique',          flag:'mx'},
+  {id:'467',  name:'Afrique du Sud',   flag:'za'},
+  {id:'451',  name:'Corée du Sud',     flag:'kr'},
+  {id:'450',  name:'Tchéquie',         flag:'cz'},
+  {id:'206',  name:'Canada',           flag:'ca'},
+  {id:'452',  name:'Bosnie-Herzégovine',flag:'ba'},
+  {id:'4398', name:'Qatar',            flag:'qa'},
+  {id:'475',  name:'Suisse',           flag:'ch'},
+  {id:'205',  name:'Brésil',           flag:'br'},
+  {id:'2869', name:'Maroc',            flag:'ma'},
+  {id:'2654', name:'Haïti',            flag:'ht'},
+  {id:'580',  name:'Écosse',           flag:'gb-sct'},
+  {id:'660',  name:'États-Unis',       flag:'us'},
+  {id:'210',  name:'Paraguay',         flag:'py'},
+  {id:'628',  name:'Australie',        flag:'au'},
+  {id:'465',  name:'Turquie',          flag:'tr'},
+  {id:'481',  name:'Allemagne',        flag:'de'},
+  {id:'11678',name:'Curaçao',          flag:'cw'},
+  {id:'4789', name:"Côte d'Ivoire",    flag:'ci'},
+  {id:'209',  name:'Équateur',         flag:'ec'},
+  {id:'449',  name:'Pays-Bas',         flag:'nl'},
+  {id:'627',  name:'Japon',            flag:'jp'},
+  {id:'466',  name:'Suède',            flag:'se'},
+  {id:'659',  name:'Tunisie',          flag:'tn'},
+  {id:'459',  name:'Belgique',         flag:'be'},
+  {id:'2620', name:'Égypte',           flag:'eg'},
+  {id:'469',  name:'Iran',             flag:'ir'},
+  {id:'2666', name:'Nouvelle-Zélande', flag:'nz'},
+  {id:'164',  name:'Espagne',          flag:'es'},
+  {id:'2597', name:'Cap-Vert',         flag:'cv'},
+  {id:'655',  name:'Arabie Saoudite',  flag:'sa'},
+  {id:'212',  name:'Uruguay',          flag:'uy'},
+  {id:'478',  name:'France',           flag:'fr'},
+  {id:'654',  name:'Sénégal',          flag:'sn'},
+  {id:'4375', name:'Irak',             flag:'iq'},
+  {id:'464',  name:'Norvège',          flag:'no'},
+  {id:'202',  name:'Argentine',        flag:'ar'},
+  {id:'624',  name:'Algérie',          flag:'dz'},
+  {id:'474',  name:'Autriche',         flag:'at'},
+  {id:'2917', name:'Jordanie',         flag:'jo'},
+  {id:'482',  name:'Portugal',         flag:'pt'},
+  {id:'2850', name:'RD Congo',         flag:'cd'},
+  {id:'2570', name:'Ouzbékistan',      flag:'uz'},
+  {id:'208',  name:'Colombie',         flag:'co'},
+  {id:'448',  name:'Angleterre',       flag:'gb-eng'},
+  {id:'477',  name:'Croatie',          flag:'hr'},
+  {id:'4469', name:'Ghana',            flag:'gh'},
+  {id:'2659', name:'Panama',           flag:'pa'},
 ];
 
-const RANKING_PLAYERS = [
-  {id:"r1",  espnId:189108,  name:"Kylian Mbappe",      teamName:"France",      totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:95, photo:"", leagueFlag:"fr"},
-  {id:"r2",  espnId:45843,   name:"Lionel Messi",        teamName:"Argentine",   totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:92, photo:"", leagueFlag:"ar"},
-  {id:"r3",  espnId:253989,  name:"Erling Haaland",      teamName:"Norvège",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:90, photo:"", leagueFlag:"no"},
-  {id:"r4",  espnId:279615,  name:"Vinicius Jr",         teamName:"Brésil",      totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:88, photo:"", leagueFlag:"br"},
-  {id:"r5",  espnId:47431,   name:"Cristiano Ronaldo",   teamName:"Portugal",    totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:85, photo:"", leagueFlag:"pt"},
-  {id:"r6",  espnId:303859,  name:"Jude Bellingham",     teamName:"Angleterre",  totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:83, photo:"", leagueFlag:"gb-eng"},
-  {id:"r7",  espnId:372944,  name:"Lamine Yamal",        teamName:"Espagne",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:82, photo:"", leagueFlag:"es"},
-  {id:"r8",  espnId:302854,  name:"Pedri",               teamName:"Espagne",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:80, photo:"", leagueFlag:"es"},
-  {id:"r9",  espnId:282679,  name:"Bukayo Saka",         teamName:"Angleterre",  totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:78, photo:"", leagueFlag:"gb-eng"},
-  {id:"r10", espnId:318143,  name:"Gavi",                teamName:"Espagne",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:76, photo:"", leagueFlag:"es"},
-  {id:"r11", espnId:279299,  name:"Phil Foden",          teamName:"Angleterre",  totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:74, photo:"", leagueFlag:"gb-eng"},
-  {id:"r12", espnId:289668,  name:"Raphinha",            teamName:"Brésil",      totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:72, photo:"", leagueFlag:"br"},
-  {id:"r13", espnId:54679,   name:"Antoine Griezmann",   teamName:"France",      totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:71, photo:"", leagueFlag:"fr"},
-  {id:"r14", espnId:193184,  name:"Bruno Fernandes",     teamName:"Portugal",    totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:70, photo:"", leagueFlag:"pt"},
-  {id:"r15", espnId:199216,  name:"Rodrigo De Paul",     teamName:"Argentine",   totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:68, photo:"", leagueFlag:"ar"},
-  {id:"r16", espnId:300447,  name:"Declan Rice",         teamName:"Angleterre",  totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:66, photo:"", leagueFlag:"gb-eng"},
-  {id:"r17", espnId:325354,  name:"Aurelien Tchouameni", teamName:"France",      totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:64, photo:"", leagueFlag:"fr"},
-  {id:"r18", espnId:148871,  name:"Joshua Kimmich",      teamName:"Allemagne",   totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:62, photo:"", leagueFlag:"de"},
-  {id:"r19", espnId:214616,  name:"Niclas Fullkrug",     teamName:"Allemagne",   totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:60, photo:"", leagueFlag:"de"},
-  {id:"r20", espnId:164469,  name:"Alvaro Morata",       teamName:"Espagne",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:58, photo:"", leagueFlag:"es"},
-  {id:"r21", espnId:267831,  name:"Federico Valverde",   teamName:"Uruguay",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:57, photo:"", leagueFlag:"uy"},
-  {id:"r22", espnId:172843,  name:"Riyad Mahrez",        teamName:"Algérie",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:56, photo:"", leagueFlag:"dz"},
-  {id:"r23", espnId:241351,  name:"Achraf Hakimi",       teamName:"Maroc",       totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:55, photo:"", leagueFlag:"ma"},
-  {id:"r24", espnId:193669,  name:"Victor Osimhen",      teamName:"Nigeria",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:54, photo:"", leagueFlag:"ng"},
-  {id:"r25", espnId:156145,  name:"Son Heung-min",       teamName:"Corée du Sud",totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:53, photo:"", leagueFlag:"kr"},
-  {id:"r26", espnId:221728,  name:"Florian Wirtz",       teamName:"Allemagne",   totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:52, photo:"", leagueFlag:"de"},
-  {id:"r27", espnId:193041,  name:"Nico Williams",       teamName:"Espagne",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:51, photo:"", leagueFlag:"es"},
-  {id:"r28", espnId:328702,  name:"Kobbie Mainoo",       teamName:"Angleterre",  totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:50, photo:"", leagueFlag:"gb-eng"},
-  {id:"r29", espnId:169880,  name:"Neymar Jr",           teamName:"Brésil",      totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:49, photo:"", leagueFlag:"br"},
-  {id:"r30", espnId:152083,  name:"Robert Lewandowski",  teamName:"Pologne",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:48, photo:"", leagueFlag:"pl"},
-  {id:"r31", espnId:191580,  name:"Bernardo Silva",      teamName:"Portugal",    totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:47, photo:"", leagueFlag:"pt"},
-  {id:"r32", espnId:179703,  name:"Marcos Llorente",     teamName:"Espagne",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:46, photo:"", leagueFlag:"es"},
-  {id:"r33", espnId:158732,  name:"Memphis Depay",       teamName:"Pays-Bas",    totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:45, photo:"", leagueFlag:"nl"},
-  {id:"r34", espnId:193174,  name:"Cody Gakpo",          teamName:"Pays-Bas",    totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:44, photo:"", leagueFlag:"nl"},
-  {id:"r35", espnId:212331,  name:"Evan Ferguson",       teamName:"Irlande",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:43, photo:"", leagueFlag:"ie"},
-  {id:"r36", espnId:197031,  name:"Martin Odegaard",     teamName:"Norvège",     totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:42, photo:"", leagueFlag:"no"},
-  {id:"r37", espnId:258921,  name:"Rodrygo",             teamName:"Brésil",      totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:41, photo:"", leagueFlag:"br"},
-  {id:"r38", espnId:139919,  name:"Romelu Lukaku",       teamName:"Belgique",    totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:40, photo:"", leagueFlag:"be"},
-  {id:"r39", espnId:233029,  name:"Jamal Musiala",       teamName:"Allemagne",   totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:39, photo:"", leagueFlag:"de"},
-  {id:"r40", espnId:194023,  name:"Hakim Ziyech",        teamName:"Maroc",       totalGoals:0, totalAssists:0, totalGames:0, avg:0, signal:38, photo:"", leagueFlag:"ma"},
-];
+async function loadCDMRosters(photosMap) {
+  const players = [];
+  const nameToPhoto = {};
+  // Index photos par nom pour fallback
+  Object.entries(photosMap).forEach(([id, url]) => { /* on utilisera juste photosMap[id] */ });
+
+  let fetched = 0;
+  const promises = CDM_TEAMS.map(async (team) => {
+    try {
+      const url = `https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/teams/${team.id}/roster`;
+      const res = await fetch(url);
+      if (!res.ok) return;
+      const data = await res.json();
+      const athletes = data.athletes || [];
+      fetched++;
+      for (const a of athletes) {
+        const id   = String(a.athlete?.id || a.id || '');
+        const name = a.athlete?.displayName || a.displayName || a.fullName || '';
+        if (!id || !name) continue;
+        const photo = photosMap[id] || photosMap[String(id)] || '';
+        players.push({
+          id,
+          name,
+          teamName:    team.name,
+          leagueId:    6,
+          leagueName:  'Coupe du Monde',
+          leagueFlag:  team.flag,
+          leagueCls:   'cdm',
+          leagueLabel: 'CDM',
+          photo,
+          totalGoals:   0,
+          totalAssists: 0,
+          totalGames:   0,
+          avg:          0,
+          signal:       0,
+          trendScore:   0,
+          recent_goals: 0,
+          recent_assists:0,
+          hot:          false,
+          last5:        [],
+        });
+      }
+    } catch(e) { /* silencieux */ }
+  });
+
+  await Promise.all(promises);
+
+  // Dédupliquer par ID
+  const seen = new Set();
+  return players.filter(p => { if (seen.has(p.id)) return false; seen.add(p.id); return true; });
+}
 
 // ── INIT ────────────────────────────────────────────────────────────────────
 async function init() {
@@ -588,23 +652,20 @@ async function init() {
     const photosMap = photosRes?.ok ? await photosRes.json() : {};
     window._photosMap = photosMap;
 
-    const cdmReal = (data.players || []).filter(p => p.leagueId === 6).map(p => ({
+    // Joueurs CDM depuis data.json (vrais matchs une fois CDM lancée)
+    const cdmFromData = (data.players || []).filter(p => p.leagueId === 6).map(p => ({
       ...p, photo: photosMap[p.id] || photosMap[String(p.id)] || p.photo || ''
     }));
 
-    const nameToPhoto = {};
-    (data.players || []).forEach(p => {
-      if (p.photo || photosMap[p.id]) nameToPhoto[p.name] = photosMap[p.id] || photosMap[String(p.id)] || p.photo;
-    });
+    // Charger les rosters ESPN pour avoir tous les joueurs CDM avec leurs photos
+    const rosterPlayers = await loadCDMRosters(photosMap);
 
-    const testWithPhotos = TEST_PLAYERS.map(p => ({
-      ...p, photo: photosMap[p.espnId] || photosMap[String(p.espnId)] || nameToPhoto[p.name] || p.photo || ''
-    }));
-    const rankWithPhotos = RANKING_PLAYERS.map(p => ({
-      ...p, photo: photosMap[p.espnId] || photosMap[String(p.espnId)] || nameToPhoto[p.name] || p.photo || ''
-    }));
+    // Fusionner : priorité aux joueurs de data.json (qui ont les vraies stats)
+    // Les joueurs du roster sans stats dans data.json ont 0 partout
+    const dataIds = new Set(cdmFromData.map(p => String(p.id)));
+    const rosterOnly = rosterPlayers.filter(p => !dataIds.has(String(p.id)));
+    allPlayers = [...cdmFromData, ...rosterOnly];
 
-    allPlayers = cdmReal.length ? cdmReal : testWithPhotos;
     window._fixtures = data.fixtures || [];
     window._matches  = (data.matches || []).filter(m => m.leagueId === 6);
 
@@ -631,15 +692,15 @@ async function init() {
         'Mis à jour le ' + d.toLocaleDateString('fr-FR') + ' à ' + d.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
     }
 
-    render(rankSource);
+    render();
   } catch(e) {
-    allPlayers = TEST_PLAYERS;
-    render(RANKING_PLAYERS);
+    console.error('Erreur init:', e);
+    render();
   }
 }
 
 // ── RENDER ──────────────────────────────────────────────────────────────────
-function render(rankSource) {
+function render() {
   const list = allPlayers;
 
   // KPIs
@@ -649,7 +710,8 @@ function render(rankSource) {
   document.getElementById('k-hot').textContent     = hotCount;
   document.getElementById('k-goals').textContent   = totalGoals;
 
-  const sorted = [...(rankSource||list)].sort((a, b) => {
+  // Trier : d'abord par B+P (vrais stats), puis par signal, puis alphabétique
+  const sorted = [...list].sort((a, b) => {
     const bpA = (a.totalGoals||0) + (a.totalAssists||0);
     const bpB = (b.totalGoals||0) + (b.totalAssists||0);
     if (bpB !== bpA) return bpB - bpA;
@@ -714,7 +776,8 @@ function renderAlerts(list, fixtures) {
     ...p, _predScore: calcPredScore(p, fixtures, list).score
   })).sort((a,b) => b._predScore - a._predScore);
 
-  const withMatch = withScores.filter(p => calcPredScore(p, fixtures, list).opponent);
+  // Exclure les joueurs absents (blessés/retirés de l'effectif)
+  const withMatch = withScores.filter(p => p.cdmStatus !== 'absent' && calcPredScore(p, fixtures, list).opponent);
 
   // 1 joueur par nation d'abord
   for (const p of withMatch) {
@@ -783,7 +846,14 @@ function renderAlerts(list, fixtures) {
 
 // ── GRILLE JOUEURS ──────────────────────────────────────────────────────────
 function renderGrid(list) {
-  const hot = list.filter(p => p.hot || (p.trendScore||0) > 0).slice(0, 8);
+  // Avant CDM : afficher les 8 joueurs avec le plus de stats (ou signal)
+  // Pendant CDM : joueurs avec buts/passes en premier
+  // Exclure les joueurs absents des cadres
+  const activeList = list.filter(p => p.cdmStatus !== 'absent');
+  const withStats = activeList.filter(p => (p.totalGoals||0) + (p.totalAssists||0) > 0);
+  const hot = withStats.length >= 8
+    ? withStats.sort((a,b) => ((b.totalGoals||0)+(b.totalAssists||0)) - ((a.totalGoals||0)+(a.totalAssists||0))).slice(0,8)
+    : activeList.filter(p => p.hot || (p.signal||0) > 0).slice(0,8);
   const c = document.getElementById('pgrid');
   c.innerHTML = '';
   hot.forEach((p, i) => {
@@ -849,6 +919,7 @@ function renderTable(list, photosMap, page) {
     const flag  = p.leagueFlag ? '<img src="https://flagcdn.com/w20/' + p.leagueFlag + '.png" style="width:16px;height:11px;object-fit:cover;border-radius:2px;vertical-align:middle;margin-right:4px">' : '';
     const tr = document.createElement('tr');
     tr.style.cursor = 'pointer';
+    if (p.cdmStatus === 'absent') tr.style.opacity = '0.55';
     tr.onclick = () => {
       const pid = (p.id && String(p.id).startsWith('r')) ? (p.espnId || p.id) : p.id;
       window.location.href = 'player-cdm.html?id=' + pid + '&name=' + encodeURIComponent(p.name) + '&teamName=' + encodeURIComponent(p.teamName||'') + '&photo=' + encodeURIComponent(photo);
@@ -862,7 +933,13 @@ function renderTable(list, photosMap, page) {
       + '<td style="width:36px;padding:6px 4px"><div style="width:32px;height:32px;border-radius:50%;overflow:hidden;background:var(--s3);display:flex;align-items:center;justify-content:center;font-size:14px">'
       + (photo ? '<img src="' + photo + '" style="width:100%;height:100%;object-fit:cover" referrerpolicy="no-referrer" onerror="this.outerHTML=\'⚽\'">' : '⚽')
       + '</div></td>'
-      + '<td><div class="pn">' + p.name + '</div><div class="pt">' + (p.teamName||'') + '</div></td>'
+      + '<td>'
+      + '<div class="pn" style="' + (p.cdmStatus === 'absent' ? 'color:#6b6478' : '') + '">'
+      + p.name
+      + (p.cdmStatus === 'absent' ? ' <span style="font-size:9px;font-weight:700;background:rgba(255,77,109,.15);color:#ff4d6d;border:1px solid rgba(255,77,109,.3);padding:1px 6px;border-radius:4px;vertical-align:middle;margin-left:4px">ABSENT</span>' : '')
+      + '</div>'
+      + '<div class="pt">' + (p.teamName||'') + '</div>'
+      + '</td>'
       + '<td>' + flag + '<span style="font-size:11px;color:var(--m2)">' + (p.teamName||'') + '</span></td>'
       + '<td><span class="num g">' + g + '</span></td>'
       + '<td><span class="num a">' + a + '</span></td>'
