@@ -13,7 +13,7 @@
 :root{--bg:#080a0f;--s1:#0f1118;--s2:#161923;--s3:#1c2030;--border:#222636;--border2:#2a2f45;--g:#00e5a0;--r:#ff4d6d;--y:#ffd60a;--b:#5e81f4;--o:#ff6b35;--text:#e2e6f0;--m:#4a5068;--m2:#6b7394;--gold:#d4a843;}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
-body::before{content:'';position:fixed;inset:0;z-index:0;background-image:radial-gradient(circle at 20% 50%,rgba(212,168,67,0.03) 0%,transparent 50%),radial-gradient(circle at 80% 20%,rgba(212,168,67,0.02) 0%,transparent 50%),linear-gradient(rgba(255,255,255,0.012) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.012) 1px,transparent 1px);background-size:100% 100%,100% 100%,48px 48px,48px 48px;}
+body::before{content:'';position:fixed;inset:0;z-index:0;background-image:radial-gradient(ellipse 80% 60% at 60% -10%,rgba(212,168,67,0.08) 0%,transparent 60%),radial-gradient(circle at 10% 80%,rgba(212,168,67,0.04) 0%,transparent 40%),linear-gradient(rgba(255,255,255,0.012) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.012) 1px,transparent 1px);background-size:100% 100%,100% 100%,48px 48px,48px 48px;}
 .wrap{position:relative;z-index:1;max-width:1280px;margin:0 auto;padding:0 24px;}
 /* NAVBAR CDM */
 .navbar{position:sticky;top:0;z-index:200;background:rgba(8,10,15,0.92);backdrop-filter:blur(16px);border-bottom:1px solid rgba(212,168,67,0.1);padding:0 24px;height:54px;display:flex;align-items:center;justify-content:space-between;}
@@ -211,10 +211,10 @@ function renderRow(p, rank, col) {
   const absent = p.cdmStatus === 'absent' ? '<span class="absent-badge">ABSENT</span>' : '';
 
   const extra = col==='ga'
-    ? `<td><span class="num g">${g}</span></td><td><span class="num a">${a}</span></td><td><span class="num ga">${g+a}</span></td><td><span class="num" style="color:var(--m2)">${n}</span></td><td><span class="num" style="color:var(--y)">${avg}</span></td>`
+    ? `<td style="text-align:right"><span class="num g">${g}</span></td><td style="text-align:right"><span class="num a">${a}</span></td><td style="text-align:right"><span class="num ga">${g+a}</span></td><td style="text-align:right"><span class="num" style="color:var(--m2)">${n}</span></td><td style="text-align:right"><span class="num" style="color:var(--y)">${avg}</span></td>`
     : col==='goals'
-      ? `<td><span class="num g">${g}</span></td><td><span class="num" style="color:var(--m2)">${n}</span></td><td><span class="num" style="color:var(--y)">${n?(g/n).toFixed(2):'0.00'}</span></td>`
-      : `<td><span class="num a">${a}</span></td><td><span class="num" style="color:var(--m2)">${n}</span></td><td><span class="num" style="color:var(--y)">${n?(a/n).toFixed(2):'0.00'}</span></td>`;
+      ? `<td style="text-align:right"><span class="num g">${g}</span></td><td style="text-align:right"><span class="num" style="color:var(--m2)">${n}</span></td><td style="text-align:right"><span class="num" style="color:var(--y)">${n?(g/n).toFixed(2):'0.00'}</span></td>`
+      : `<td style="text-align:right"><span class="num a">${a}</span></td><td style="text-align:right"><span class="num" style="color:var(--m2)">${n}</span></td><td style="text-align:right"><span class="num" style="color:var(--y)">${n?(a/n).toFixed(2):'0.00'}</span></td>`;
 
   const opacity = p.cdmStatus === 'absent' ? 'opacity:0.55;' : '';
   return `<tr onclick="window.location.href='player-cdm.html?id=${p.id}&name=${encodeURIComponent(p.name)}&teamName=${encodeURIComponent(p.teamName)}'" style="${opacity}">
@@ -226,11 +226,25 @@ function renderRow(p, rank, col) {
   </tr>`;
 }
 
-function renderTable(tbodyId, sorted, col) {
-  const rows = sorted.slice(0,20);
-  document.getElementById(tbodyId).innerHTML = rows.length
-    ? rows.map((p,i) => renderRow(p,i+1,col)).join('')
-    : '<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--m)">Aucun joueur avec des stats pour l\'instant — disponible dès le 11 juin 2026</td></tr>';
+function renderTable(tbodyId, sorted, col, expanded) {
+  const limit = expanded ? 20 : 10;
+  const rows = sorted.slice(0, limit);
+  const empty = '<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--m)">Aucun joueur avec des stats pour l\'instant — disponible dès le 11 juin 2026</td></tr>';
+  let html = rows.length ? rows.map((p,i) => renderRow(p,i+1,col)).join('') : empty;
+  if (rows.length >= 10 && sorted.length > 10 && !expanded) {
+    html += `<tr><td colspan="8" style="text-align:center;padding:14px"><button onclick="expandCdm('${tbodyId}','${col}')" style="background:rgba(212,168,67,0.08);border:1px solid rgba(212,168,67,0.2);color:#d4a843;padding:7px 20px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">Voir les 20 premiers ↓</button></td></tr>`;
+  }
+  document.getElementById(tbodyId).innerHTML = html;
+}
+
+function expandCdm(tbodyId, col) {
+  const list = getList();
+  const sorted = col==='goals'
+    ? [...list].filter(p=>(p.totalGoals||0)>0).sort((a,b)=>(b.totalGoals||0)-(a.totalGoals||0))
+    : col==='assists'
+      ? [...list].filter(p=>(p.totalAssists||0)>0).sort((a,b)=>(b.totalAssists||0)-(a.totalAssists||0))
+      : [...list].filter(p=>(p.totalGoals||0)+(p.totalAssists||0)>0).sort((a,b)=>((b.totalGoals||0)+(b.totalAssists||0))-((a.totalGoals||0)+(a.totalAssists||0)));
+  renderTable(tbodyId, sorted, col, true);
 }
 
 function render() {
@@ -239,9 +253,12 @@ function render() {
   const withA = [...list].filter(p=>(p.totalAssists||0)>0).sort((a,b)=>(b.totalAssists||0)-(a.totalAssists||0));
   const withGA = [...list].filter(p=>(p.totalGoals||0)+(p.totalAssists||0)>0)
     .sort((a,b)=>((b.totalGoals||0)+(b.totalAssists||0))-((a.totalGoals||0)+(a.totalAssists||0)));
-  renderTable('tb-goals',   withG,  'goals');
-  renderTable('tb-assists', withA,  'assists');
-  renderTable('tb-ga',      withGA, 'ga');
+  _cdmSorted['tb-goals']   = withG;
+  _cdmSorted['tb-assists'] = withA;
+  _cdmSorted['tb-ga']      = withGA;
+  renderTable('tb-goals',   withG,  'goals',   10);
+  renderTable('tb-assists', withA,  'assists', 10);
+  renderTable('tb-ga',      withGA, 'ga',      10);
 }
 
 init();
