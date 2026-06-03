@@ -11,7 +11,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Stats Joueurs Coupe du Monde 2026 — Qui est en forme ? | Tendance Stats</title>
-<meta name="description" content="Découvrez les statistiques détaillées des joueurs de la Coupe du Monde 2026 : buteurs, passeurs, joueurs en série et TendScore. Données mises à jour après chaque journée de matchs pour vous aider à mieux parier sur la CDM 2026.">
+<meta name="description" content="Statistiques complètes des joueurs de la Coupe du Monde 2026 — buteurs, passeurs, joueurs en forme. Données mises à jour après chaque match. TendanceStats, votre référence pour la CDM 2026.">
 <meta name="keywords" content="stats joueurs coupe du monde 2026, statistiques CDM 2026, joueurs en forme CDM 2026, buteurs coupe du monde 2026, pronostic CDM 2026, TendScore CDM, joueurs en série CDM 2026">
 <meta name="author" content="Tendance Stats">
 <meta name="robots" content="index, follow">
@@ -273,6 +273,26 @@ tbody td:not(:first-child) { text-align:center; }
   .players-grid { grid-template-columns:1fr; }
   .wina-banner { padding:12px 16px; }
 }
+
+/* ── NAVBAR PILL ── */
+.navbar{position:sticky;top:0;z-index:200;background:rgba(8,10,15,0.92);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,0.06);padding:0 24px;height:54px;display:flex;align-items:center;justify-content:space-between;}
+.navbar-logo{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:3px;color:#00e5a0;text-decoration:none;flex-shrink:0;}
+.navbar-logo.cdm-logo{color:#d4a843;}
+.navbar-links{display:flex;align-items:center;gap:3px;background:rgba(255,255,255,0.05);border-radius:10px;padding:4px;}
+.navbar-links.cdm-bg{background:rgba(212,168,67,0.06);}
+.navbar-link{font-size:12px;font-weight:600;padding:6px 14px;border-radius:7px;color:rgba(255,255,255,0.45);letter-spacing:0.3px;text-decoration:none;transition:all .2s;white-space:nowrap;}
+.navbar-link:hover{color:rgba(255,255,255,0.8);background:rgba(255,255,255,0.06);}
+.navbar-link.active{background:#00e5a0;color:#080a0f;}
+.navbar-link.gold{color:#d4a843;}
+.navbar-link.gold:hover{background:rgba(212,168,67,0.12);color:#d4a843;}
+.navbar-link.green{color:rgba(0,229,160,0.7);}
+.navbar-sep{width:1px;height:18px;background:rgba(255,255,255,0.1);margin:0 2px;flex-shrink:0;}
+.navbar-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.dot{width:6px;height:6px;border-radius:50%;background:#ff4d6d;animation:blink 1.4s infinite;display:inline-block;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.navbar-live{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:#ff4d6d;letter-spacing:1px;}
+@media(max-width:520px){.navbar-links{display:none;}}
+
 </style>
 </head>
 <body>
@@ -280,15 +300,17 @@ tbody td:not(:first-child) { text-align:center; }
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WCCFQHTP" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <!-- HEADER -->
-<header class="header">
-  <a href="/" class="logo">Tendance Stats</a>
-  <nav class="header-nav">
-    <a href="/" class="nav-link">Saison</a>
-    <a href="/worldcup.html" class="nav-link">CDM 2026 🏆</a>
-    <a href="/stats-cdm-2026.html" class="nav-link active">Stats CDM</a>
-    <span class="pill-live">LIVE</span>
-  </nav>
-</header>
+<nav class="navbar">
+  <a href="worldcup.html" class="navbar-logo cdm-logo">TendanceStats</a>
+  <div class="navbar-links cdm-bg">
+    <a href="worldcup.html" class="navbar-link gold">Accueil</a>
+    <a href="predictions-cdm.html" class="navbar-link gold">Prédictions</a>
+    <a href="classement-cdm.html" class="navbar-link gold">Classement</a>
+    <div class="navbar-sep"></div>
+    <a href="index.html" class="navbar-link green">⚽ Saison</a>
+  </div>
+  <div class="navbar-right"><div class="navbar-live"><div class="dot"></div>LIVE</div></div>
+</nav>
 
 <!-- BANNIERE WINAMAX HAUT -->
 <a href="https://www.winamax.fr/paris-sportifs/sports/1?code=CMONBN" target="_blank" rel="nofollow noopener" class="wina-banner">
@@ -571,6 +593,22 @@ function goPage(p) { currentPage = p; renderTable(); window.scrollTo({top:docume
 loadData();
 </script>
 
-<div style="text-align:center;padding:12px 24px;font-size:11px;color:#4b5563;border-top:1px solid #111318;">© 2026 TendanceStats. Tous droits réservés.</div>
+<footer style="border-top:1px solid rgba(255,255,255,0.06);padding:32px 24px 16px;margin-top:48px;">
+  <div style="max-width:1280px;margin:0 auto;">
+    <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:16px;margin-bottom:16px;">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;color:#d4a843">TendanceStats</div>
+      <nav style="display:flex;gap:20px;flex-wrap:wrap;">
+        <a href="index.html" style="font-size:12px;color:#6b7394;text-decoration:none;">Accueil</a>
+        <a href="predictions.html" style="font-size:12px;color:#6b7394;text-decoration:none;">Prédictions</a>
+        <a href="classement.html" style="font-size:12px;color:#6b7394;text-decoration:none;">Classement</a>
+        <a href="worldcup.html" style="font-size:12px;color:#d4a843;text-decoration:none;">🏆 CDM 2026</a>
+      </nav>
+    </div>
+    <div style="border-top:1px solid rgba(255,255,255,0.04);padding-top:16px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;">
+      <p style="font-size:11px;color:#4a5068;margin:0">© 2026 TendanceStats. Tous droits réservés. Reproduction interdite sans autorisation.</p>
+      <p style="font-size:11px;color:#4a5068;margin:0">Données sportives issues de sources publiques — à titre informatif uniquement.</p>
+    </div>
+  </div>
+</footer>
 </body>
 </html>
