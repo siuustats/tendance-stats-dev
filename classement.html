@@ -119,19 +119,19 @@ footer{border-top:1px solid var(--border);padding:20px 0;text-align:center;font-
 
     <div class="sh"><div class="st">⚽ Top Buteurs</div><div class="sb">SAISON</div></div>
     <div class="tw"><table>
-      <thead><tr><th>#</th><th></th><th>Joueur</th><th>Ligue</th><th>Buts</th><th>Matchs</th><th>Moy.</th></tr></thead>
+      <thead><tr><th style="width:40px">#</th><th style="width:44px"></th><th>Joueur</th><th style="width:80px">Ligue</th><th style="width:80px;text-align:right">Buts</th><th style="width:80px;text-align:right">Matchs</th><th style="width:80px;text-align:right">Moy.</th></tr></thead>
       <tbody id="tb-goals"></tbody>
     </table></div>
 
     <div class="sh"><div class="st">🎯 Top Passeurs</div><div class="sb">SAISON</div></div>
     <div class="tw"><table>
-      <thead><tr><th>#</th><th></th><th>Joueur</th><th>Ligue</th><th>Passes</th><th>Matchs</th><th>Moy.</th></tr></thead>
+      <thead><tr><th style="width:40px">#</th><th style="width:44px"></th><th>Joueur</th><th style="width:80px">Ligue</th><th style="width:80px;text-align:right">Passes</th><th style="width:80px;text-align:right">Matchs</th><th style="width:80px;text-align:right">Moy.</th></tr></thead>
       <tbody id="tb-assists"></tbody>
     </table></div>
 
     <div class="sh"><div class="st">📊 Top Buts + Passes</div><div class="sb">SAISON</div></div>
     <div class="tw"><table>
-      <thead><tr><th>#</th><th></th><th>Joueur</th><th>Ligue</th><th>Buts</th><th>Passes</th><th>GA</th><th>Matchs</th><th>Moy.</th></tr></thead>
+      <thead><tr><th style="width:40px">#</th><th style="width:44px"></th><th>Joueur</th><th style="width:80px">Ligue</th><th style="width:70px;text-align:right">Buts</th><th style="width:70px;text-align:right">Passes</th><th style="width:70px;text-align:right">GA</th><th style="width:80px;text-align:right">Matchs</th><th style="width:80px;text-align:right">Moy.</th></tr></thead>
       <tbody id="tb-ga"></tbody>
     </table></div>
 
@@ -198,10 +198,10 @@ function renderRow(p, rank, col) {
   const assistsAvg = n ? (a/n).toFixed(2) : '0.00';
 
   const extra = col==='ga'
-    ? `<td><span class="num g">${g}</span></td><td><span class="num a">${a}</span></td><td><span class="num ga">${g+a}</span></td><td><span class="num" style="color:var(--m2)">${n}</span></td><td><span class="num" style="color:var(--y)">${avg}</span></td>`
+    ? `<td style="text-align:right"><span class="num g">${g}</span></td><td style="text-align:right"><span class="num a">${a}</span></td><td style="text-align:right"><span class="num ga">${g+a}</span></td><td style="text-align:right"><span class="num" style="color:var(--m2)">${n}</span></td><td style="text-align:right"><span class="num" style="color:var(--y)">${avg}</span></td>`
     : col==='goals'
-      ? `<td><span class="num g">${g}</span></td><td><span class="num" style="color:var(--m2)">${n}</span></td><td><span class="num" style="color:var(--y)">${goalsAvg}</span></td>`
-      : `<td><span class="num a">${a}</span></td><td><span class="num" style="color:var(--m2)">${n}</span></td><td><span class="num" style="color:var(--y)">${assistsAvg}</span></td>`;
+      ? `<td style="text-align:right"><span class="num g">${g}</span></td><td style="text-align:right"><span class="num" style="color:var(--m2)">${n}</span></td><td style="text-align:right"><span class="num" style="color:var(--y)">${goalsAvg}</span></td>`
+      : `<td style="text-align:right"><span class="num a">${a}</span></td><td style="text-align:right"><span class="num" style="color:var(--m2)">${n}</span></td><td style="text-align:right"><span class="num" style="color:var(--y)">${assistsAvg}</span></td>`;
 
   return `<tr onclick="window.location.href='player.html?id=${p.id}'">
     <td class="rk ${rkcls}">${rank}</td>
@@ -212,8 +212,27 @@ function renderRow(p, rank, col) {
   </tr>`;
 }
 
-function renderTable(tbodyId, sorted, col) {
-  document.getElementById(tbodyId).innerHTML = sorted.slice(0,20).map((p,i)=>renderRow(p,i+1,col)).join('');
+function renderTable(tbodyId, sorted, col, limit) {
+  const rows = sorted.slice(0, limit||10);
+  const hasMore = sorted.length > 10 && (!limit || limit === 10);
+  let html = rows.map((p,i)=>renderRow(p,i+1,col)).join('');
+  if (hasMore) {
+    html += `<tr><td colspan="7" style="text-align:center;padding:12px">
+      <button onclick="expandTable('${tbodyId}',${JSON.stringify(sorted.map(p=>p.id))}, '${col}')" 
+        style="background:var(--s2);border:1px solid var(--border);color:var(--m2);font-size:12px;padding:7px 20px;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s"
+        onmouseover="this.style.borderColor='var(--g)';this.style.color='var(--g)'"
+        onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--m2)'">
+        Voir les 20 premiers →
+      </button></td></tr>`;
+  }
+  document.getElementById(tbodyId).innerHTML = html;
+}
+
+// Cache des listes triées pour l'expansion
+const _sorted = {};
+function expandTable(tbodyId, ids, col) {
+  const list = ids.map(id => allPlayers.find(p => p.id == id)).filter(Boolean);
+  renderTable(tbodyId, list, col, 20);
 }
 
 function render() {
@@ -222,9 +241,12 @@ function render() {
   const byAssists = [...list].filter(p=>(p.totalAssists||0)>0).sort((a,b)=>(b.totalAssists||0)-(a.totalAssists||0));
   const byGA      = [...list].filter(p=>(p.totalGoals||0)+(p.totalAssists||0)>0)
     .sort((a,b)=>((b.totalGoals||0)+(b.totalAssists||0))-((a.totalGoals||0)+(a.totalAssists||0)));
-  renderTable('tb-goals',   byGoals,   'goals');
-  renderTable('tb-assists', byAssists, 'assists');
-  renderTable('tb-ga',      byGA,      'ga');
+  _sorted['tb-goals']   = byGoals;
+  _sorted['tb-assists'] = byAssists;
+  _sorted['tb-ga']      = byGA;
+  renderTable('tb-goals',   byGoals,   'goals',   10);
+  renderTable('tb-assists', byAssists, 'assists', 10);
+  renderTable('tb-ga',      byGA,      'ga',      10);
 }
 
 init();
