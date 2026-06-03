@@ -208,9 +208,75 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     /* ── MATCHS ── */
     .match-row { gap:8px; padding:10px 12px; }
   }
-  </style>
+  
+/* ── NAVBAR PILL ── */
+.navbar {
+  position:sticky; top:0; z-index:200;
+  background:rgba(8,10,15,0.92); backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(255,255,255,0.06);
+  padding:0 24px; height:54px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.navbar-logo {
+  font-family:'Bebas Neue',sans-serif; font-size:22px;
+  letter-spacing:3px; color:#00e5a0; text-decoration:none;
+  text-shadow:0 0 20px rgba(0,229,160,0.3); flex-shrink:0;
+}
+.navbar-logo.cdm-logo { color:#d4a843; text-shadow:0 0 20px rgba(212,168,67,0.3); }
+.navbar-links {
+  display:flex; align-items:center; gap:3px;
+  background:rgba(255,255,255,0.05); border-radius:10px; padding:4px;
+}
+.navbar-links.cdm-bg { background:rgba(212,168,67,0.06); }
+.navbar-link {
+  font-size:12px; font-weight:600; padding:6px 14px;
+  border-radius:7px; color:rgba(255,255,255,0.45);
+  letter-spacing:0.3px; text-decoration:none;
+  transition:all .2s; white-space:nowrap;
+}
+.navbar-link:hover { color:rgba(255,255,255,0.8); background:rgba(255,255,255,0.06); }
+.navbar-link.active { background:#00e5a0; color:#080a0f; }
+.navbar-link.gold { color:#d4a843; }
+.navbar-link.gold:hover { background:rgba(212,168,67,0.12); color:#d4a843; }
+.navbar-link.gold.active { background:linear-gradient(135deg,#d4a843,#b8902a); color:#080a0f; }
+.navbar-sep { width:1px; height:18px; background:rgba(255,255,255,0.1); margin:0 2px; flex-shrink:0; }
+.navbar-right { display:flex; align-items:center; gap:10px; flex-shrink:0; }
+.navbar-live {
+  display:flex; align-items:center; gap:5px;
+  font-size:11px; font-weight:700; color:#ff4d6d;
+  font-family:'DM Mono',monospace; letter-spacing:1px;
+}
+.navbar-refresh {
+  background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1);
+  color:rgba(255,255,255,0.4); font-size:12px; padding:5px 12px;
+  border-radius:8px; cursor:pointer; font-family:'DM Sans',sans-serif;
+  transition:all .2s;
+}
+.navbar-refresh:hover { border-color:#00e5a0; color:#00e5a0; }
+@media(max-width:768px){
+  .navbar-links { gap:2px; }
+  .navbar-link { font-size:11px; padding:5px 9px; }
+  .navbar-logo { font-size:18px; }
+}
+@media(max-width:520px){ .navbar-links { display:none; } }
+
+</style>
 </head>
 <body>
+<nav class="navbar">
+  <a href="index.html" class="navbar-logo">TendanceStats</a>
+  <div class="navbar-links">
+    <a href="index.html" class="navbar-link active".strip()>Accueil</a>
+    <a href="predictions.html" class="navbar-link ".strip()>Prédictions</a>
+    <a href="#classement" class="navbar-link ".strip()>Classement</a>
+    <div class="navbar-sep"></div>
+    <a href="worldcup.html" class="navbar-link gold">🏆 CDM</a>
+  </div>
+  <div class="navbar-right">
+    <div class="navbar-live"><div class="dot"></div>LIVE</div>
+  </div>
+</nav>
+
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WCCFQHTP"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
