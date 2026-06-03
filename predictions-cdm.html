@@ -280,7 +280,8 @@ function render() {
     const days = Math.floor((target - new Date()) / 86400000);
 
     // Utiliser uniquement les joueurs CDM inscrits (RANKING_PLAYERS avec espnId)
-    let cdmPlayers = allCdmPlayers;
+    // Exclure joueurs absents (blessés/retirés)
+    let cdmPlayers = allCdmPlayers.filter(p => p.cdmStatus !== 'absent');
     if (currentFilter !== 'all') {
       cdmPlayers = cdmPlayers.filter(p => TEAM_TO_GROUP[p.teamName] === currentFilter);
     }
@@ -331,7 +332,7 @@ function render() {
         <div style="font-size:13px;color:var(--m2)">Classement des joueurs CDM 2026 inscrits</div>
       </div>
       <div class="match-section">
-        <div class="players-list">${match.players.length > 0 ? playersHtml : '<div style="padding:16px 20px;font-size:13px;color:var(--m);font-style:italic">📊 Données insuffisantes pour établir des prédictions sur ce match</div>'}</div>
+        <div class="players-list">${playersHtml || '<div style="padding:16px 20px;font-size:13px;color:var(--m);font-style:italic">📊 Données insuffisantes</div>'}</div>
       </div>`;
 
     // Animer les barres
@@ -343,7 +344,8 @@ function render() {
   }
 
   // Après le 11 juin — vraies prédictions CDM
-  let players = allPlayers.filter(p => p.leagueId === 6);
+  // Exclure joueurs absents des prédictions après CDM
+  let players = allPlayers.filter(p => p.leagueId === 6 && p.cdmStatus !== 'absent');
   if (currentFilter !== 'all') {
     players = players.filter(p => TEAM_TO_GROUP[p.teamName] === currentFilter);
   }
@@ -415,7 +417,7 @@ function render() {
         <span class="match-teams">${match.homeTeam} <span style="color:var(--m);font-size:14px">vs</span> ${match.awayTeam}</span>
         <span class="match-date">${dateStr}</span>
       </div>
-      <div class="players-list">${match.players.length > 0 ? playersHtml : '<div style="padding:16px 20px;font-size:13px;color:var(--m);font-style:italic">📊 Données insuffisantes pour établir des prédictions sur ce match</div>'}</div>
+      <div class="players-list">${playersHtml || '<div style="padding:16px 20px;font-size:13px;color:var(--m);font-style:italic">📊 Données insuffisantes</div>'}</div>
     </div>`;
   }).join('');
 }
