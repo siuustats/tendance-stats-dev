@@ -28,7 +28,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <link rel="canonical" href="https://tendancestats.com/worldcup.html">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏆</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 <style>
 /* ── VARIABLES CDM (thème doré) ── */
 :root {
@@ -55,7 +55,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 
 /* grid bg — identique index */
 body::before {
-  content:''; position:fixed; inset:0; z-index:0;
+  content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
   background-image:
     radial-gradient(circle at 20% 50%, rgba(212,168,67,0.03) 0%, transparent 50%),
     radial-gradient(circle at 80% 20%, rgba(94,129,244,0.03) 0%, transparent 50%),
@@ -308,13 +308,6 @@ tr:hover td { background:rgba(212,168,67,0.02); }
 .groups-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:20px; }
 
 /* ── WINAMAX ── */
-.wina-banner {
-  background:linear-gradient(90deg,#e30613,#c0000f);
-  padding:10px 24px; display:flex; align-items:center;
-  justify-content:space-between; gap:12px; flex-wrap:wrap;
-}
-.wina-text { color:#fff; font-size:13px; font-weight:600; }
-.wina-btn { background:#fff; color:#e30613; font-size:12px; font-weight:700; padding:7px 16px; border-radius:6px; text-decoration:none; white-space:nowrap; letter-spacing:0.5px; }
 
 /* ── FOOTER ── */
 footer { border-top:1px solid var(--border); padding:20px 0; text-align:center; font-size:12px; color:var(--m); }
@@ -359,10 +352,42 @@ footer span { color:var(--g); }
 .dot { width:6px; height:6px; border-radius:50%; background:#ff4d6d; animation:blink 1.4s infinite; display:inline-block; }
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
 .navbar-live { display:flex; align-items:center; gap:5px; font-size:11px; font-weight:700; color:#ff4d6d; letter-spacing:1px; font-family:'DM Mono',monospace; }
-.navbar-refresh { background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); color:rgba(255,255,255,0.4); font-size:11px; font-family:'DM Sans',sans-serif; padding:5px 12px; border-radius:7px; cursor:pointer; transition:all .2s; }
-.navbar-refresh:hover { border-color:#d4a843; color:#d4a843; }
 @media(max-width:768px){ .navbar-links { gap:2px; } }
 @media(max-width:520px){ .navbar-links { display:none; } }
+/* ── HAMBURGER MOBILE ── */
+.hamburger {
+  display:none; flex-direction:column; justify-content:center;
+  gap:5px; width:36px; height:36px; cursor:pointer;
+  background:rgba(255,255,255,0.05); border-radius:8px;
+  padding:7px; border:none;
+}
+.hamburger span {
+  display:block; height:2px; background:rgba(255,255,255,0.7);
+  border-radius:2px; transition:all .25s;
+}
+.hamburger.open span:nth-child(1) { transform:translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity:0; }
+.hamburger.open span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
+.mobile-menu {
+  display:none; position:fixed; top:54px; left:0; right:0;
+  backdrop-filter:blur(20px); border-bottom:1px solid rgba(255,255,255,0.08);
+  padding:12px 16px 16px; z-index:199; flex-direction:column; gap:4px;
+}
+.mobile-menu.open { display:flex; }
+.mobile-menu a {
+  font-size:13px; font-weight:600; padding:10px 14px; border-radius:8px;
+  text-decoration:none; transition:all .2s; letter-spacing:0.3px;
+}
+.mobile-menu-sep { height:1px; background:rgba(255,255,255,0.06); margin:4px 0; }
+@media(max-width:520px){ .hamburger { display:flex; } }
+.mobile-menu { background:rgba(8,6,8,0.98); }
+.mobile-menu a { color:rgba(255,255,255,0.6); }
+.mobile-menu a:hover { background:rgba(255,255,255,0.06); color:#fff; }
+.mobile-menu a.active { background:linear-gradient(135deg,#d4a843,#b8902a); color:#080a0f; }
+.mobile-menu a.gold { color:#d4a843; }
+.mobile-menu a.gold:hover { background:rgba(212,168,67,0.12); }
+.mobile-menu a.green-link { color:rgba(0,229,160,0.7); }
+.mobile-menu a.green-link:hover { color:#00e5a0; } }
 
 .navbar-link.green{color:rgba(0,229,160,0.7);}
 .navbar-link.green:hover{color:#00e5a0;background:rgba(0,229,160,0.08);}
@@ -426,11 +451,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="navbar-sep"></div>
     <a href="index.html" class="navbar-link green">⚽ Saison</a>
   </div>
-  <div class="navbar-right">
-    <div class="navbar-live"><div class="dot"></div>LIVE</div>
-    <button class="navbar-refresh" onclick="init()">↻ Actualiser</button>
-  </div>
+  <div class="navbar-right"><div class="navbar-live"><div class="dot"></div>LIVE</div><button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu"><span></span><span></span><span></span></button></div>
 </nav>
+<div class="mobile-menu" id="mobileMenu"><a href="worldcup.html" class="gold active">Accueil</a><a href="predictions-cdm.html" class="gold">Prédictions</a><a href="classement-cdm.html" class="gold">Classement</a><a href="squad.html" class="gold">Effectifs</a><div class="mobile-menu-sep"></div><a href="index.html" class="green-link">⚽ Saison</a></div>
 <!-- HERO -->
 <section class="hero">
   <div class="hero-bg"></div>
@@ -514,34 +537,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 </div><!-- /wrap -->
 
-<!-- WINAMAX BANNER -->
-<div class="wina-banner" style="margin-top:40px">
-  <div class="wina-text">🎁 Winamax — Jusqu'à <strong>200€ offerts</strong> sur votre 1er dépôt</div>
-  <a href="https://www.winamax.fr/parrain?code=CMONBN" target="_blank" rel="noopener sponsored" class="wina-btn">J'en profite →</a>
-</div>
-<div style="background:#080608;text-align:center;padding:6px 24px;font-size:10px;color:#6b7280;line-height:1.6;">
-  Les jeux d'argent et de hasard sont interdits aux mineurs. Jouer comporte des risques : endettement, dépendance.
-  Appelez le <strong style="color:#9ca3af;">09 74 75 13 13</strong> (appel non surtaxé) |
-  <a href="https://www.joueurs-info-service.fr" target="_blank" style="color:#9ca3af;">joueurs-info-service.fr</a> |
-  18+ | Winamax est agréé par l'ANJ
-</div>
 
 <!-- Bloc SEO statique -->
-<div style="max-width:1280px;margin:0 auto;padding:40px 24px 20px;border-top:1px solid #1e2130">
+<div style="max-width:1280px;margin:0 auto;padding:40px 24px 20px">
   <h2 style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:#9ca3af;margin-bottom:12px">Coupe du Monde 2026 — Stats, Pronostics & Joueurs à Surveiller</h2>
   <p style="font-size:13px;color:#6b7280;line-height:1.8;">
     Tendance Stats est votre référence pour suivre les statistiques et tendances de la <strong style="color:#9ca3af">Coupe du Monde 2026</strong> organisée aux États-Unis, au Canada et au Mexique du 11 juin au 19 juillet 2026. Suivez les <strong style="color:#9ca3af">joueurs à surveiller</strong> comme Kylian Mbappé, Lionel Messi, Erling Haaland, Vinicius Jr ou Jude Bellingham — leurs stats CDM, leur TendScore et leur forme au fil de la compétition. Consultez les <strong style="color:#9ca3af">effectifs des 48 nations</strong> qualifiées, le classement des buteurs et passeurs CDM, et nos analyses tendances pour vos pronostics sur la Coupe du Monde 2026. Notre indicateur exclusif <strong style="color:#9ca3af">TendScore</strong> calcule en temps réel la tendance de chaque joueur en croisant ses performances individuelles, les résultats de sa sélection et la difficulté de l'adversaire à venir — pour identifier les joueurs les plus susceptibles de briller lors du prochain match de la CDM 2026. Données mises à jour automatiquement après chaque journée de la compétition.
   </p>
 </div>
-<footer>
-  <div class="wrap">
-    <strong style="color:#9ca3af">Tendance Stats</strong> &nbsp;·&nbsp;
-    Coupe du Monde 2026 &nbsp;·&nbsp;
-    Données : <span style="color:#9ca3af">sources publiques</span> &nbsp;·&nbsp;
-    <span id="last-update"></span> &nbsp;·&nbsp;
-    <a href="stats-cdm-2026.html" style="color:var(--m);font-size:11px;text-decoration:none;opacity:0.6;transition:opacity .2s" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.6'">Stats détaillées CDM →</a>
-  </div>
-</footer>
+
 
 <!-- Modal carte joueur CDM -->
 <div class="card-modal-overlay" id="cardModal" onclick="if(event.target===this)closeCardModal()">
@@ -707,6 +711,22 @@ CDM_TEAMS.forEach(function(n){ FLAG_MAP[n.name] = n.flag; });
 // ── CLASSEMENT GROUPES ────────────────────────────────────────────────────────
 
 // ── INIT ────────────────────────────────────────────────────────────────────
+// ── STARS CDM (stats club en attente du 11 juin) ─────────────────────────────
+const CDM_STAR_IDS = [
+  {id:'231388', name:'Kylian Mbappé',     nation:'France',     clubTeam:'Real Madrid'},
+  {id:'253989', name:'Erling Haaland',    nation:'Norvège',    clubTeam:'Manchester City'},
+  {id:'362150', name:'Lamine Yamal',      nation:'Espagne',    clubTeam:'Barcelona'},
+  {id:'286831', name:'Michael Olise',     nation:'France',     clubTeam:'Bayern Munich'},
+  {id:'291281', name:'Jude Bellingham',   nation:'Angleterre', clubTeam:'Real Madrid'},
+  {id:'173896', name:'Mohamed Salah',     nation:'Égypte',     clubTeam:'Liverpool'},
+  {id:'303748', name:'Florian Wirtz',     nation:'Allemagne',  clubTeam:'Liverpool'},
+  {id:'303821', name:'Jamal Musiala',     nation:'Allemagne',  clubTeam:'Bayern Munich'},
+  {id:'231182', name:'Kai Havertz',       nation:'Allemagne',  clubTeam:'Arsenal'},
+  {id:'229744', name:'Ousmane Dembélé',   nation:'France',     clubTeam:'Paris Saint-Germain'},
+  {id:'298008', name:'Rayan Cherki',      nation:'France',     clubTeam:'Manchester City'},
+  {id:'249524', name:'Cody Gakpo',        nation:'Pays-Bas',   clubTeam:'Liverpool'},
+];
+
 async function init() {
   try {
     const [dataRes, photosRes] = await Promise.all([
@@ -716,6 +736,11 @@ async function init() {
     const data      = await dataRes.json();
     const photosMap = photosRes?.ok ? await photosRes.json() : {};
     window._photosMap = photosMap;
+
+    // Stocker les joueurs clubs pour les stats des stars avant CDM
+    window._clubPlayers = (data.players || []).filter(p => p.leagueId !== 6).map(p => ({
+      ...p, photo: photosMap[p.id] || photosMap[String(p.id)] || p.photo || ""
+    }));
 
     // Joueurs CDM depuis data.json (vrais matchs une fois CDM lancée)
     const cdmFromData = (data.players || []).filter(p => p.leagueId === 6).map(p => ({
@@ -763,9 +788,12 @@ async function init() {
   }
 }
 
+
+
 // ── RENDER ──────────────────────────────────────────────────────────────────
 function render() {
   const list = allPlayers;
+  const cdmStarted = new Date() >= new Date('2026-06-11T17:00:00Z');
 
   // KPIs
   const totalGoals = list.reduce((s, p) => s + (p.totalGoals||0), 0);
@@ -782,8 +810,27 @@ function render() {
     return (b.signal||0) - (a.signal||0);
   });
 
-  renderAlerts(list, window._fixtures || []);
-  renderGrid(list);
+  // Avant CDM : enrichir les stars avec leurs stats club
+  if (!cdmStarted) {
+    const clubMap = {};
+    (window._clubPlayers || []).forEach(p => { clubMap[String(p.id)] = p; });
+    CDM_STAR_IDS.forEach(star => {
+      const cdmP = list.find(p => String(p.id) === star.id);
+      const clubP = clubMap[star.id];
+      if (cdmP && clubP) {
+        cdmP._clubGoals   = (clubP.last5||[]).slice(0,5).reduce((s,m)=>s+(m.goals||0),0);
+        cdmP._clubAssists = (clubP.last5||[]).slice(0,5).reduce((s,m)=>s+(m.assists||0),0);
+        cdmP._clubGames   = clubP.totalGames   || 0;
+        cdmP._clubSignal  = clubP.signal       || 0;
+        cdmP._clubLast5   = clubP.last5        || [];
+        cdmP._clubPhoto   = clubP.photo        || cdmP.photo || '';
+        cdmP._isStar      = true;
+      }
+    });
+  }
+
+  renderAlerts(list, window._fixtures || [], cdmStarted);
+  renderGrid(list, cdmStarted);
   renderTable(sorted, window._photosMap || {});
 }
 
@@ -904,68 +951,106 @@ function renderAlerts(list, fixtures) {
   });
 
   if (c.children.length === 0) {
-    c.innerHTML = '<div style="color:var(--m);font-size:13px;padding:16px">Données insuffisantes pour générer des prédictions.</div>';
+    c.innerHTML = '<div style="color:var(--m);font-size:13px;padding:16px">&#9203; Les premières prédictions seront disponibles dès le coup d\'envoi du premier match le <strong style="color:var(--g)">11 juin 2026</strong>. On attend les vrais matchs pour vous donner les meilleures prédictions !</div>';
   }
 }
 
 // ── GRILLE JOUEURS ──────────────────────────────────────────────────────────
-function renderGrid(list) {
-  // Avant CDM : afficher les 8 joueurs avec le plus de stats (ou signal)
-  // Pendant CDM : joueurs avec buts/passes en premier
-  // Exclure les joueurs absents des cadres
+// ── GRILLE JOUEURS ──────────────────────────────────────────────────────────
+function renderGrid(list, cdmStarted) {
   const activeList = list.filter(p => p.cdmStatus !== 'absent');
-  const withStats = activeList.filter(p => (p.totalGoals||0) + (p.totalAssists||0) > 0);
-  const hot = withStats.length >= 8
-    ? withStats.sort((a,b) => ((b.totalGoals||0)+(b.totalAssists||0)) - ((a.totalGoals||0)+(a.totalAssists||0))).slice(0,8)
-    : activeList.filter(p => p.hot || (p.signal||0) > 0).slice(0,8);
+
+  // Joueurs CDM avec vraies stats (buts ou passes)
+  const withCdmStats = activeList
+    .filter(p => (p.totalGoals||0) + (p.totalAssists||0) > 0 || (p.trendScore||0) > 0)
+    .sort((a,b) => {
+      const bpA = (a.totalGoals||0) + (a.totalAssists||0);
+      const bpB = (b.totalGoals||0) + (b.totalAssists||0);
+      if (bpB !== bpA) return bpB - bpA;
+      return (b.trendScore||b.signal||0) - (a.trendScore||a.signal||0);
+    });
+
+  // Stars sans stats CDM réelles → afficher avec stats club
+  const cdmStarIds = new Set(CDM_STAR_IDS.map(s => s.id));
+  const starsWithoutCdmStats = CDM_STAR_IDS
+    .map(s => activeList.find(p => String(p.id) === s.id))
+    .filter(p => p && !((p.totalGoals||0) + (p.totalAssists||0) > 0));
+
+  // Remplir les 8 slots : vrais stats CDM d'abord, stars en complément
+  const slotsFromCdm = withCdmStats.slice(0, 8);
+  const remaining = 8 - slotsFromCdm.length;
+  const starFill = remaining > 0 ? starsWithoutCdmStats.slice(0, remaining) : [];
+  const hot = [...slotsFromCdm, ...starFill];
+
   const c = document.getElementById('pgrid');
   c.innerHTML = '';
   hot.forEach((p, i) => {
-    const last5    = (p.last5 || []).slice(0, 5);
-    const recent_g = last5.reduce((s, m) => s + (m.goals  || 0), 0);
-    const recent_a = last5.reduce((s, m) => s + (m.assists || 0), 0);
-    const formHtml = (p.last5 || []).map((match, idx) => {
-      if (match?.played === null)  return '<div class="fd ab">❌</div>';
+    // isStar = star sans stats CDM réelles → afficher stats club
+    const hasCdmStats = (p.totalGoals||0) + (p.totalAssists||0) > 0;
+    const isStar = !hasCdmStats && p._isStar;
+    const last5    = isStar ? (p._clubLast5 || []).slice(0,5) : (p.last5 || []).slice(0,5);
+    const recent_g = last5.reduce((s,m) => s+(m.goals||0), 0);
+    const recent_a = last5.reduce((s,m) => s+(m.assists||0), 0);
+    const signal   = isStar ? (p._clubSignal || 0) : (p.signal || 0);
+    const photo    = isStar ? (p._clubPhoto  || p.photo || '') : (p.photo || '');
+
+    const formHtml = last5.map(match => {
+      if (match?.played === null)  return '<div class="fd ab">\u274c</div>';
       if (match?.played === false) return '<div class="fd b">🪑</div>';
       const won   = match?.teamWon;
       const label = won === true ? 'V' : won === false ? 'D' : 'N';
       const cls   = won === true ? 'g' : won === false ? 'r' : 'x';
       return '<div class="fd ' + cls + '">' + label + '</div>';
     }).join('');
-    const sc = p.signal > 88 ? 'var(--o)' : p.signal > 78 ? 'var(--g)' : 'var(--b)';
+
+    const sc = signal > 88 ? 'var(--o)' : signal > 78 ? 'var(--g)' : 'var(--b)';
+    const tagHtml = isStar
+      ? '<div class="hot-tag" style="background:rgba(212,168,67,0.7)">\u2b50 \u00c0 SUIVRE</div>'
+      : '<div class="hot-tag">\ud83d\udd25 EN FORME</div>';
+    const subLabel = (p.teamName||'')
+      + (p.leagueFlag ? ' <img src="https://flagcdn.com/w20/' + p.leagueFlag + '.png" style="width:16px;height:11px;object-fit:cover;border-radius:2px;vertical-align:middle;margin-left:2px">' : '')
+      + '';
 
     const card = document.createElement('div');
     card.className = 'pc';
     card.style.animationDelay = (i*0.06)+'s';
+    if (isStar) {
+      card.style.borderColor = 'rgba(0,229,160,0.35)';
+      card.style.background = 'linear-gradient(135deg,rgba(0,229,160,0.06) 0%,var(--s1) 60%)';
+      card.style.boxShadow = '0 2px 16px rgba(0,229,160,0.06)';
+    }
     card.onclick = () => openCardModal(p);
     card.innerHTML =
-      '<div class="hot-tag">🔥 EN FORME</div>'
-      + '<div class="ct">'
+      tagHtml
+      + (isStar ? '<div style="position:absolute;top:0;left:0;right:80px;font-family:Orbitron,sans-serif;font-size:7px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#00e5a0;background:rgba(0,229,160,0.12);border-bottom:1px solid rgba(0,229,160,0.25);border-right:1px solid rgba(0,229,160,0.2);border-radius:0 0 8px 0;padding:4px 10px;">STATS EN CLUB</div>' : '')
+      + '<div class="ct" style="' + (isStar ? 'margin-top:20px;' : '') + '">'
       +   '<div class="pinfo">'
-      +     '<div class="pav"><img src="' + (p.photo||'') + '" referrerpolicy="no-referrer" onerror="this.outerHTML=\'⚽\'" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/></div>'
+      +     '<div class="pav"><img src="' + photo + '" referrerpolicy="no-referrer" onerror="this.outerHTML=\'\u26bd\'" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/></div>'
       +     '<div>'
       +       '<div class="pname">' + p.name + '</div>'
-      +       '<div class="pteam">' + (p.teamName||'') + (p.leagueFlag ? ' <img src="https://flagcdn.com/w20/' + p.leagueFlag + '.png" style="width:16px;height:11px;object-fit:cover;border-radius:2px;vertical-align:middle;margin-left:2px">' : '') + '</div>'
+      +       '<div class="pteam">' + subLabel + '</div>'
       +     '</div>'
       +   '</div>'
-      +   '<div class="pscore"><div class="pscore-n" style="color:' + sc + '">' + p.signal + '</div><div class="pscore-l">TendScore</div></div>'
+      +   '<div class="pscore"><div class="pscore-n" style="color:' + sc + '">' + signal + '</div><div class="pscore-l">TendScore</div></div>'
       + '</div>'
       + '<div class="formrow"><span class="fl">' + last5.length + ' match' + (last5.length>1?'s':'') + '</span><div class="fdots">' + formHtml + '</div></div>'
       + '<div class="chips">'
       +   '<div class="chip"><div class="chip-n" style="color:var(--g)">' + recent_g + '</div><div class="chip-l">Buts</div></div>'
       +   '<div class="chip"><div class="chip-n" style="color:var(--b)">' + recent_a + '</div><div class="chip-l">Passes</div></div>'
-      +   '<div class="chip"><div class="chip-n" style="color:var(--o)">' + (recent_g+recent_a) + '</div><div class="chip-l">GA/5J</div></div>'
+      +   '<div class="chip"><div class="chip-n" style="color:var(--o)">' + (recent_g+recent_a) + '</div><div class="chip-l">' + (isStar ? 'GA/5J' : 'GA TOTAL') + '</div></div>'
       +   '<div class="chip"><div class="chip-n" style="color:var(--y)">' + ((recent_g+recent_a)/Math.max(Math.min(last5.length||1,5),1)).toFixed(2) + '</div><div class="chip-l">Moy.</div></div>'
       + '</div>'
-      + '<div class="sigbar"><div class="sigbar-head"><span>TendScore</span><span>' + p.signal + '%</span></div><div class="track"><div class="fill" style="width:' + p.signal + '%"></div></div></div>'
+      + '<div class="sigbar"><div class="sigbar-head"><span>TendScore</span><span>' + signal + '%</span></div><div class="track"><div class="fill" style="width:' + signal + '%"></div></div></div>'
       + '<div class="ltag" style="display:flex;align-items:center;justify-content:space-between;">'
       +   '<div><span class="lpill cdm">CDM</span> Coupe du Monde</div>'
-      +   '<a href="https://www.winamax.fr/paris-sportifs/sports/1?code=CMONBN" target="_blank" rel="noopener sponsored" onclick="event.stopPropagation()" style="font-size:10px;font-weight:700;color:#fff;background:#e30613;padding:4px 10px;border-radius:4px;text-decoration:none;white-space:nowrap;">Voir la cote →</a>'
+      +   '<a href="https://www.winamax.fr/paris-sportifs/sports/1?code=CMONBN" target="_blank" rel="noopener sponsored" onclick="event.stopPropagation()" style="font-size:10px;font-weight:700;color:#fff;background:#e30613;padding:4px 10px;border-radius:4px;text-decoration:none;white-space:nowrap;">Voir la cote \u2192</a>'
       + '</div>';
     c.appendChild(card);
   });
-  if (hot.length === 0) c.innerHTML = '<div style="color:var(--m);font-size:13px;padding:16px">Aucun joueur disponible pour cette sélection.</div>';
+  if (hot.length === 0) c.innerHTML = '<div style="color:var(--m);font-size:13px;padding:16px">Aucun joueur disponible.</div>';
 }
+
+
 
 // ── CLASSEMENT ──────────────────────────────────────────────────────────────
 function renderTable(list, photosMap, page) {
@@ -1288,6 +1373,61 @@ function renderGroups(matches) {
 init();
 </script>
 
-<div style="text-align:center;padding:12px 24px;font-size:11px;color:#4b5563;border-top:1px solid #111318;">© 2026 TendanceStats. Tous droits réservés.</div>
+<!-- FOOTER STANDARD -->
+<div style="height:1px;background:rgba(255,255,255,0.15);"></div>
+<div style="background:linear-gradient(90deg,#e30613,#c0000f);padding:10px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+  <div style="color:#fff;font-size:13px;font-weight:600;">🎁 Winamax — Jusqu'à <strong>200€ offerts</strong> sur votre 1er dépôt</div>
+  <a href="https://www.winamax.fr/parrain?code=CMONBN" target="_blank" rel="noopener sponsored" style="background:#fff;color:#e30613;font-size:12px;font-weight:700;padding:7px 16px;border-radius:6px;text-decoration:none;white-space:nowrap;letter-spacing:0.5px;">J'en profite →</a>
+</div>
+<div style="background:#0a0b0f;text-align:center;padding:8px 24px;font-size:10px;color:#6b7280;line-height:1.6;">
+  Les jeux d'argent et de hasard sont interdits aux mineurs. Jouer comporte des risques : endettement, dépendance.
+  Appelez le <strong style="color:#9ca3af;">09 74 75 13 13</strong> (appel non surtaxé) |
+  <a href="https://www.joueurs-info-service.fr" target="_blank" style="color:#9ca3af;">joueurs-info-service.fr</a> |
+  18+ | Winamax est agréé par l'ANJ
+</div>
+<div style="height:2px;background:rgba(255,255,255,0.15);"></div>
+<div style="background:var(--bg);padding:16px 24px 8px;text-align:center;">
+  <div style="font-size:12px;color:var(--m);margin-bottom:8px;">
+    <strong style="color:#9ca3af">Tendance Stats</strong> &nbsp;·&nbsp;
+    Coupe du Monde 2026 &nbsp;·&nbsp;
+    Données : <span style="color:#9ca3af">sources publiques</span> &nbsp;·&nbsp;
+    <span id="last-update"></span> &nbsp;·&nbsp;
+    <a href="stats-cdm-2026.html" style="color:var(--m);font-size:11px;text-decoration:none;opacity:0.6;transition:opacity .2s" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.6'">Stats détaillées CDM →</a>
+  </div>
+  <div style="font-size:11px;color:#3a3545;">
+    <a href="index.html" style="color:#3a3545;text-decoration:none;margin:0 8px;">Stats saison clubs</a>·
+    <a href="predictions-cdm.html" style="color:#3a3545;text-decoration:none;margin:0 8px;">Prédictions CDM</a>·
+    <a href="classement-cdm.html" style="color:#3a3545;text-decoration:none;margin:0 8px;">Classement CDM 2026</a>·
+    <a href="squad.html" style="color:#3a3545;text-decoration:none;margin:0 8px;">Effectifs 48 nations</a>·
+    <a href="stats-cdm-2026.html" style="color:#3a3545;text-decoration:none;margin:0 8px;">Stats Coupe du Monde 2026</a>
+  </div>
+</div>
+<div style="background:#05040a;border-top:1px solid rgba(255,255,255,0.06);padding:16px 24px;text-align:center;font-size:11px;color:#4b5563;">
+  <div style="margin-bottom:8px;">
+    <a href="mentions-legales.html" style="color:#6b7280;text-decoration:none;margin:0 10px;transition:color .2s;" onmouseover="this.style.color='#9ca3af'" onmouseout="this.style.color='#6b7280'">Mentions légales</a>·
+    <a href="confidentialite.html" style="color:#6b7280;text-decoration:none;margin:0 10px;transition:color .2s;" onmouseover="this.style.color='#9ca3af'" onmouseout="this.style.color='#6b7280'">Confidentialité</a>·
+    <a href="contact.html" style="color:#6b7280;text-decoration:none;margin:0 10px;transition:color .2s;" onmouseover="this.style.color='#9ca3af'" onmouseout="this.style.color='#6b7280'">Contact</a>
+  </div>
+  <div style="color:#3a3f4a;">© 2026 TendanceStats. Tous droits réservés.</div>
+</div>
+
+<script>
+function toggleMenu() {
+  var btn = document.getElementById('hamburger');
+  var menu = document.getElementById('mobileMenu');
+  btn.classList.toggle('open');
+  menu.classList.toggle('open');
+}
+document.addEventListener('click', function(e) {
+  var btn = document.getElementById('hamburger');
+  var menu = document.getElementById('mobileMenu');
+  if (btn && menu && !btn.contains(e.target) && !menu.contains(e.target)) {
+    btn.classList.remove('open');
+    menu.classList.remove('open');
+  }
+});
+</script>
+
+<script src="cookies.js"></script>
 </body>
 </html>
